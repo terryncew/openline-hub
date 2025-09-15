@@ -1,0 +1,66 @@
+<!doctype html><meta charset="utf-8">
+<title>OpenLine Hub</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+  body{font:16px system-ui,-apple-system,Segoe UI,Roboto,sans-serif;margin:24px;max-width:960px}
+  h1{font-size:22px;margin:0 0 16px}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px}
+  .tile{border:1px solid #eee;border-radius:12px;padding:12px}
+  .err{background:#ffe9ea;color:#8a1f1f;border:1px solid #f3b2b6;border-radius:8px;padding:10px;margin-top:8px}
+  small{color:#666}
+  code{background:#f6f6f6;padding:1px 4px;border-radius:4px}
+</style>
+
+<!-- PIN THE CARD SCRIPT TO A COMMIT -->
+<!-- Replace <PINNED_COMMIT> with a real commit SHA from terryncew/openline-core -->
+<script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@<PINNED_COMMIT>/receipts-kit/openline-card.js"></script>
+
+<h1>OpenLine Hub</h1>
+<p><small>Live receipts aggregated from your repos. If a tile shows “No JSON found”, enable Pages on that repo (main → /docs) and add <code>docs/receipt.latest.json</code>.</small></p>
+
+<div id="grid" class="grid"></div>
+
+<script type="module">
+  // Turn on while developing to bypass GitHub Pages cache
+  const DEV_BUST = false;
+
+  // IMPORTANT: keep repo names EXACT (note the trailing dash in COLE)
+  const sources = [
+    "https://terryncew.github.io/COLE-Coherence-Layer-Engine-/receipt.latest.json",
+    "https://terryncew.github.io/dynamic-sentience-maps/receipt.latest.json",
+    "https://terryncew.github.io/terrynce-curve-emergence-tuner/receipt.latest.json",
+    "https://terryncew.github.io/tuner-engine-or-ContentTuner/receipt.latest.json"
+  ];
+
+  const grid = document.getElementById('grid');
+  for (const base of sources) {
+    const url = DEV_BUST ? `${base}?v=${Date.now()}` : base;
+
+    const wrap = document.createElement('div');
+    wrap.className = 'tile';
+
+    const nice = base.replace(/^https:\/\/terryncew\.github\.io\//,'');
+    const title = document.createElement('div');
+    title.innerHTML = `<b>${nice}</b>`;
+    wrap.appendChild(title);
+
+    const card = document.createElement('openline-card');
+    card.setAttribute('mode','compact');
+    card.setAttribute('src', url);
+
+    const onErr = () => {
+      // only add once
+      if (wrap.querySelector('.err')) return;
+      const e = document.createElement('div');
+      e.className = 'err';
+      e.innerHTML = `No JSON found or fetch failed.<br><small>${base}</small>`;
+      wrap.appendChild(e);
+    };
+    // Handle both event names just in case
+    card.addEventListener('olp-error', onErr);
+    card.addEventListener('error', onErr);
+
+    wrap.appendChild(card);
+    grid.appendChild(wrap);
+  }
+</script>
