@@ -10,7 +10,7 @@
   .label{font-weight:600;margin-bottom:8px}
 </style>
 
-<!-- Pin to a commit or tag so it’s stable -->
+<!-- Pin to a commit later if you want; main is fine for now -->
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js">
 </script>
@@ -19,6 +19,10 @@
 <p class="lead">
   Live receipts aggregated from your repos. If a tile shows “No JSON found”, enable
   Pages on that repo (main → <code>/docs</code>) and add <code>docs/receipt.latest.json</code>.
+</p>
+
+<p class="lead" style="margin-top:8px">
+  ➜ <a href="./nca.html">NCA Grow &amp; Heal demo → signed receipt</a>
 </p>
 
 <div id="grid" class="grid"></div>
@@ -42,8 +46,8 @@ for (const r of repos) {
   card.setAttribute("mode","compact");
   card.setAttribute("src", src);
 
-  // Show a friendly message if the JSON is missing
-  const msg = document.createElement("div"); msg.style.color="#b00"; msg.style.marginTop="6px";
+  const msg = document.createElement("div");
+  msg.style.color="#b00"; msg.style.marginTop="6px";
   const onErr = () => { msg.textContent = "No JSON found (enable Pages + add docs/receipt.latest.json)"; };
   card.addEventListener("olp-error", onErr);
   card.addEventListener("error", onErr);
@@ -52,5 +56,3 @@ for (const r of repos) {
   grid.appendChild(tile);
 }
 </script>
-
-<script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@<SHA>/receipts-kit/openline-card.js"></script>
