@@ -13,7 +13,7 @@ labels: ["bid","exclusive"]
 - Endowment: (≥ $10M, no governance)
 
 **Distribution & Proof**
-- Reach (where the badge shows up):
+- Reach (who sees the badge):
 - Public case study in 90 days (plan):
 
 **Ops**
@@ -21,5 +21,5 @@ labels: ["bid","exclusive"]
 - Legal/Procurement contact:
 - Start date readiness:
 
-**Confirm non-negotiables**
+**Confirm you accept the non-negotiables**
 - No MFN, no ROFR, no board seat; mark revocable; open standard remains open.
