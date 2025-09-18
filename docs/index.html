@@ -2,11 +2,11 @@
 <title>OpenLine Hub</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-  body{font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;margin:28px}
+  body{font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;margin:28px;background:#fafafa}
   h1{font-size:32px;margin:0 0 10px}
   p.lead{color:#666;margin:0 0 20px}
-  .grid{display:grid;gap:14px}
-  .tile{padding:14px;border:1px solid #eee;border-radius:12px;background:#fff}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
+  .tile{padding:14px;border:1px solid #eee;border-radius:12px;background:#fff;text-decoration:none;color:inherit}
   .label{font-weight:600;margin-bottom:8px}
 </style>
 
@@ -37,17 +37,24 @@ const repos = [
 
 const grid = document.getElementById("grid");
 
+// 1) Dynamic repo receipt tiles
 for (const r of repos) {
   const src = `https://terryncew.github.io/${r}/receipt.latest.json`;
-  const tile = document.createElement("div"); tile.className = "tile";
-  const label = document.createElement("div"); label.className="label";
+
+  const tile = document.createElement("div");
+  tile.className = "tile";
+
+  const label = document.createElement("div");
+  label.className = "label";
   label.textContent = `${r}/receipt.latest.json`;
+
   const card = document.createElement("openline-card");
   card.setAttribute("mode","compact");
   card.setAttribute("src", src);
 
   const msg = document.createElement("div");
   msg.style.color="#b00"; msg.style.marginTop="6px";
+
   const onErr = () => { msg.textContent = "No JSON found (enable Pages + add docs/receipt.latest.json)"; };
   card.addEventListener("olp-error", onErr);
   card.addEventListener("error", onErr);
@@ -55,4 +62,19 @@ for (const r of repos) {
   tile.append(label, card, msg);
   grid.appendChild(tile);
 }
+
+// 2) Static tile: TW Stack (secondary row)
+const tw = document.createElement("a");
+tw.className = "tile";
+tw.href = "https://terryncew.github.io/terrynce-stack/?utm_source=openline-hub";
+tw.target = "_blank";
+tw.rel = "noopener";
+tw.innerHTML = `
+  <h3 style="margin:0 0 6px">TW Stack</h3>
+  <p style="margin:0 0 8px;opacity:.8">
+    The frameworks behind Open Line—Structured Sentience, ULT 4.6, Winning Equation, Emergence Stack.
+  </p>
+  <div style="font-size:12px;opacity:.7">Docs · Overview · Philosophy</div>
+`;
+grid.appendChild(tw);
 </script>
