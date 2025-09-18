@@ -2,68 +2,114 @@
 <title>OpenLine Hub</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
-  body{font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;margin:28px;background:#fafafa}
+  :root{--bg:#fafafa;--ink:#111;--muted:#666;--line:#eee}
+  body{font:16px/1.45 -apple-system,BlinkMacSystemFont,Segoe UI,Helvetica,Arial,sans-serif;margin:28px;background:var(--bg);color:var(--ink)}
   h1{font-size:32px;margin:0 0 10px}
   h2{font-size:18px;margin:22px 0 10px;color:#333}
-  p.lead{color:#666;margin:0 0 20px}
+  p.lead{color:var(--muted);margin:0 0 20px}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}
-  .tile{padding:14px;border:1px solid #eee;border-radius:12px;background:#fff;text-decoration:none;color:inherit}
+  .tile{padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;text-decoration:none;color:inherit}
   .label{font-weight:600;margin-bottom:8px}
+  .muted{color:var(--muted)}
 </style>
 
+<!-- receipt card web component -->
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js">
 </script>
 
 <h1>OpenLine Hub</h1>
 <p class="lead">
-  Live receipts aggregated from your repos. If a tile shows “No JSON found”, enable
+  Live receipts + how to buy. If a receipt tile shows “No JSON found,” enable
   Pages on that repo (main → <code>/docs</code>) and add <code>docs/receipt.latest.json</code>.
 </p>
 
-<p class="lead" style="margin-top:8px">
-  ➜ <a href="./nca.html">NCA Grow &amp; Heal demo → signed receipt</a>
-</p>
-
-<!-- FEATURED: FlowState receipt from terrynce-stack -->
+<!-- ===== Featured ===== -->
 <h2>Featured receipt</h2>
 <div class="tile">
   <div class="label">terrynce-stack / receipt.latest.json</div>
   <openline-card mode="compact"
     src="https://terryncew.github.io/terrynce-stack/receipt.latest.json"></openline-card>
-  <div style="color:#999;margin-top:6px">Source: terrynce-stack</div>
+  <div class="muted" style="margin-top:6px">Source: terrynce-stack</div>
 </div>
 
+<!-- ===== Hubs & Demos ===== -->
+<h2 style="margin-top:24px">Hubs & Demos</h2>
+<div class="grid">
+  <!-- Buy page -->
+  <a class="tile" href="./exclusive.html">
+    <h3 style="margin:0 0 6px">Exclusive Lane (12 months)</h3>
+    <p style="margin:0 0 8px;opacity:.8">
+      One lane, one year. $30M cash + $10M endowment. Terms & sealed bid →
+    </p>
+    <div class="muted" style="font-size:12px">No MFN · No ROFR · Open standard</div>
+  </a>
+
+  <!-- Incident demo -->
+  <a class="tile" href="https://terryncew.github.io/openline-incident/?utm_source=openline-hub" target="_blank" rel="noopener">
+    <h3 style="margin:0 0 6px">Incident Response Demo</h3>
+    <p style="margin:0 0 8px;opacity:.8">
+      Normal → Incident → Recovery. Forensic receipts + automatic rollback.
+    </p>
+    <div class="muted" style="font-size:12px">Live receipts · 3-card view</div>
+  </a>
+
+  <!-- Receipt demo (terminal wrapper) -->
+  <a class="tile" href="https://terryncew.github.io/playground-receipt-/?utm_source=openline-hub" target="_blank" rel="noopener">
+    <h3 style="margin:0 0 6px">Receipt Demo (terminal)</h3>
+    <p style="margin:0 0 8px;opacity:.8">
+      Every command emits a one-screen proof file. “No receipt, no ship.”
+    </p>
+    <div class="muted" style="font-size:12px">Viewer · JSON in /docs</div>
+  </a>
+
+  <!-- OpenLine Exchange -->
+  <a class="tile" href="https://terryncew.github.io/openline-exchange/?utm_source=openline-hub" target="_blank" rel="noopener">
+    <h3 style="margin:0 0 6px">OpenLine Exchange</h3>
+    <p style="margin:0 0 8px;opacity:.8">
+      List offers with preview receipts and rights-in-file.
+    </p>
+    <div class="muted" style="font-size:12px">Offers · Receipts-native</div>
+  </a>
+
+  <!-- TW Stack -->
+  <a class="tile" href="https://terryncew.github.io/terrynce-stack/?utm_source=openline-hub" target="_blank" rel="noopener">
+    <h3 style="margin:0 0 6px">TW Stack (Theory)</h3>
+    <p style="margin:0 0 8px;opacity:.8">
+      Frameworks behind OpenLine — Structured Sentience, ULT 4.6, Winning Equation, Emergence Stack.
+    </p>
+    <div class="muted" style="font-size:12px">Docs · Overview · Philosophy</div>
+  </a>
+</div>
+
+<!-- ===== Repo receipts ===== -->
 <h2 style="margin-top:24px">Repo receipts</h2>
 <div id="grid" class="grid"></div>
 
 <script>
-// Tiles for other repos
 const repos = [
   "COLE-Coherence-Layer-Engine-",
   "dynamic-sentience-maps",
   "terrynce-curve-emergence-tuner",
   "tuner-engine-or-ContentTuner",
+  // add more repo slugs here as you publish receipts
 ];
 
 const grid = document.getElementById("grid");
-
 for (const r of repos) {
   const src = `https://terryncew.github.io/${r}/receipt.latest.json`;
+  const tile = document.createElement("a"); tile.className = "tile";
+  tile.href = `https://terryncew.github.io/${r}/?utm_source=openline-hub`; tile.target = "_blank"; tile.rel = "noopener";
 
-  const tile = document.createElement("div");
-  tile.className = "tile";
-
-  const label = document.createElement("div");
-  label.className = "label";
-  label.textContent = `${r}/receipt.latest.json`;
+  const label = document.createElement("div"); label.className = "label";
+  label.textContent = `${r} / receipt.latest.json`;
 
   const card = document.createElement("openline-card");
-  card.setAttribute("mode","compact");
-  card.setAttribute("src", src);
+  card.setAttribute("mode","compact"); card.setAttribute("src", src);
 
   const msg = document.createElement("div");
-  msg.style.color="#b00"; msg.style.marginTop="6px";
+  msg.className = "muted"; msg.style.marginTop = "6px";
+
   const onErr = () => { msg.textContent = "No JSON found (enable Pages + add docs/receipt.latest.json)"; };
   card.addEventListener("olp-error", onErr);
   card.addEventListener("error", onErr);
