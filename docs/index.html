@@ -11,9 +11,9 @@
   .tile{padding:14px;border:1px solid var(--line);border-radius:12px;background:#fff;text-decoration:none;color:inherit}
   .label{font-weight:600;margin-bottom:8px}
   .muted{color:var(--muted)}
+  code{font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px}
 </style>
 
-<!-- receipt card web component -->
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js">
 </script>
@@ -29,7 +29,7 @@
 <div class="tile">
   <div class="label">terrynce-stack / receipt.latest.json</div>
   <openline-card mode="compact"
-    src="https://terryncew.github.io/terrynce-stack/receipt.latest.json"></openline-card>
+    src="https://terryncew.github.io/terrynce-stack/receipt.latest.json?v=1"></openline-card>
   <div class="muted" style="margin-top:6px">Source: terrynce-stack</div>
 </div>
 
@@ -54,11 +54,20 @@
     <div class="muted" style="font-size:12px">Live receipts · 3-card view</div>
   </a>
 
+  <!-- CSM (Canon · Coach · Students) -->
+  <a class="tile" href="https://terryncew.github.io/openline-csm/?utm_source=openline-hub" target="_blank" rel="noopener">
+    <h3 style="margin:0 0 6px">CSM (Canon · Coach · Students)</h3>
+    <p style="margin:0 0 8px;opacity:.8">
+      Budget & Bend law with style-tuning. Shadow → Tuning Receipt → Live.
+    </p>
+    <div class="muted" style="font-size:12px">Receipts-native · Zero-infra</div>
+  </a>
+
   <!-- Receipt demo (terminal wrapper) -->
   <a class="tile" href="https://terryncew.github.io/playground-receipt-/?utm_source=openline-hub" target="_blank" rel="noopener">
     <h3 style="margin:0 0 6px">Receipt Demo (terminal)</h3>
     <p style="margin:0 0 8px;opacity:.8">
-      Every command emits a one-screen proof file. “No receipt, no ship.”
+      Every command emits a one-screen proof. “No receipt, no ship.”
     </p>
     <div class="muted" style="font-size:12px">Viewer · JSON in /docs</div>
   </a>
@@ -91,30 +100,49 @@ const repos = [
   "COLE-Coherence-Layer-Engine-",
   "dynamic-sentience-maps",
   "terrynce-curve-emergence-tuner",
-  "tuner-engine-or-ContentTuner",
-  // add more repo slugs here as you publish receipts
+  "tuner-engine-or-ContentTuner"
 ];
 
 const grid = document.getElementById("grid");
-for (const r of repos) {
-  const src = `https://terryncew.github.io/${r}/receipt.latest.json`;
-  const tile = document.createElement("a"); tile.className = "tile";
-  tile.href = `https://terryncew.github.io/${r}/?utm_source=openline-hub`; tile.target = "_blank"; tile.rel = "noopener";
+const bust = '?v=' + Date.now();
 
-  const label = document.createElement("div"); label.className = "label";
-  label.textContent = `${r} / receipt.latest.json`;
+function tileFor(repo) {
+  const urlBase = `https://terryncew.github.io/${repo}`;
+  const src1 = `${urlBase}/receipt.latest.json${bust}`;
+  const srcRaw = `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.latest.json${bust}`;
+
+  const a = document.createElement("a");
+  a.className = "tile";
+  a.href = `${urlBase}/?utm_source=openline-hub`;
+  a.target = "_blank"; a.rel="noopener";
+
+  const label = document.createElement("div");
+  label.className = "label";
+  label.textContent = `${repo} / receipt.latest.json`;
 
   const card = document.createElement("openline-card");
-  card.setAttribute("mode","compact"); card.setAttribute("src", src);
+  card.setAttribute("mode","compact");
+  card.setAttribute("src", src1);
 
   const msg = document.createElement("div");
   msg.className = "muted"; msg.style.marginTop = "6px";
 
-  const onErr = () => { msg.textContent = "No JSON found (enable Pages + add docs/receipt.latest.json)"; };
-  card.addEventListener("olp-error", onErr);
-  card.addEventListener("error", onErr);
+  // If Pages hasn’t propagated yet, swap to RAW as fallback
+  const fallback = () => {
+    if (!card.dataset.fellback) {
+      card.dataset.fellback = "1";
+      card.setAttribute("src", srcRaw);
+      msg.textContent = "fallback: RAW";
+    } else {
+      msg.textContent = "No JSON found (enable Pages + add docs/receipt.latest.json)";
+    }
+  };
+  card.addEventListener("olp-error", fallback);
+  card.addEventListener("error", fallback);
 
-  tile.append(label, card, msg);
-  grid.appendChild(tile);
+  a.append(label, card, msg);
+  return a;
 }
+
+for (const r of repos) grid.appendChild(tileFor(r));
 </script>
