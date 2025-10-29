@@ -1,36 +1,71 @@
 <!doctype html><meta charset="utf-8">
-<title>Exclusive Lane Pilot — The Stamp by Sir Terrynce</title>
+<title>Field-of-Use Exclusivity (12 months) — OpenLine</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <style>
   body{font:16px/1.5 system-ui,-apple-system,Segoe UI,Helvetica,Arial;margin:28px;color:#111;background:#fafafa}
   h1{font-size:28px;margin:0 0 12px}
   .box{border:1px solid #eee;border-radius:12px;padding:16px;margin:16px 0;background:#fff}
   .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid #111;text-decoration:none;color:#111}
-  .muted{color:#666} ul{margin:8px 0 0 18px} code{background:#f6f6f6;padding:2px 4px;border-radius:6px}
+  .muted{color:#666}
+  ul{margin:8px 0 0 18px}
+  code{background:#f6f6f6;padding:2px 4px;border-radius:6px}
+  .pill{display:inline-block;border:1px solid #111;border-radius:999px;padding:4px 10px;margin:4px 6px 0 0;font-size:12px}
 </style>
 
-<h1>Exclusive Lane Pilot (12 months)</h1>
-<p class="muted">Open standard, neutral referee. One lane only. 12 months. No auto-renew.</p>
+<h1>Field-of-Use Exclusivity (12 months)</h1>
+<p class="muted">Open standard. Neutral referee. One field only. 12 months. No auto-renew.</p>
+
+<div class="box">
+  <h3 style="margin:0 0 8px">Offer tiers</h3>
+  <ul>
+    <li><b>Tier A — Evaluation License</b> (non-exclusive): <b>$12,000,000</b><br>
+      Access to PIK modules (<i>RWCA, ELQF/ODQT, PTS, CMI</i>), support, SRE hours. Runs anywhere receipts run.</li>
+    <li><b>Tier B — Field-of-Use Exclusivity</b> (add-on): <b>+$10–15M</b><br>
+      12-month exclusivity scoped to <i>[one product/region/vertical]</i>. No MFN. No ROFR.</li>
+    <li><b>Optional KPI Kicker (escrowed)</b>: <b>+$8–12M</b> on audited success.
+      <div class="muted">Targets below. Paid on independent audit only.</div>
+    </li>
+  </ul>
+  <div class="muted" style="margin-top:8px">Net effect: whales still land at $30–39M; smaller buyers can start at $12M without losing face.</div>
+</div>
+
+<div class="box">
+  <h3 style="margin:0 0 8px">Success gates (falsifiable)</h3>
+  <div class="pill">ROAS ≥ +1.5% (geo-lift; p&lt;.05)</div>
+  <div class="pill">Energy ≥ −2% J/request (no p95 latency regress)</div>
+  <div class="pill">Integrity lead ≥ 14 days (CMI → incident)</div>
+  <p class="muted" style="margin-top:8px">Hit any one gate to trigger the KPI kicker. All thresholds pre-agreed in the SOW.</p>
+</div>
 
 <div class="box">
   <h3 style="margin:0 0 8px">Terms (non-negotiables)</h3>
   <ul>
-    <li>Cash: <b>$30,000,000</b> on signing (floor $25M). 70% on signature, 30% on Day 30 (escrow ok).</li>
-    <li>Endowment: <b>$10,000,000</b> to a neutral foundation; no governance or naming rights.</li>
-    <li>Scope: Exclusivity limited to <i>[one lane: product / region / vertical]</i>.</li>
-    <li>Standard remains open; no MFN, no ROFR, no board seat, no roadmap control.</li>
+    <li>Base: <b>from $30,000,000</b> (floor $25M). 70% on signature, 30% Day 30 (escrow ok).</li>
+    <li>Exclusivity: +$10–15M, <i>field-scoped</i> (one product/region/vertical), 12 months.</li>
+    <li>Standard remains open; <b>no</b> MFN, ROFR, board seat, or roadmap control.</li>
     <li>Mark: “Receipt-Ready by Sir Terrynce”, revocable for misuse (30-day takedown).</li>
-    <li>Deliverables: install rail in lane; quarterly updates; one public case study within 90 days.</li>
+    <li>Deliverables: install the rail in field; quarterly updates; one public case study ≤ 90 days.</li>
     <li>Time cap: ≤ 6 days/month; travel optional.</li>
-    <li>Data: lessons only; rights-in-file; signed trail.</li>
+    <li>Data: rights-in-file; lessons only; signed trail.</li>
     <li>Auto-renew: none. At 12 months, exclusivity ends; I may license others.</li>
   </ul>
 </div>
 
-<div class="box">
+<div class="box" id="sow">
+  <h3 style="margin:0 0 8px">SOW & KPI spec (snapshot)</h3>
+  <ul>
+    <li><b>KPIs</b>: ROAS (ads), J/request & p95 latency (infra), integrity lead time (trust).</li>
+    <li><b>Method</b>: geo-experiment (ads), energy & egress meters (infra), incident taxonomy + CMI truthset (trust).</li>
+    <li><b>Evidence</b>: receipts coverage ≥ 85%, verification ≥ 99%, missing-link ≤ 0.5%/incident.</li>
+    <li><b>Audit</b>: independent reviewer; pre-registered thresholds; shared scripts.</li>
+  </ul>
+  <a class="btn" href="#bid">See how to bid ↓</a>
+</div>
+
+<div class="box" id="bid">
   <h3 style="margin:0 0 8px">How to bid (48-hour sealed window)</h3>
-  <p>Opens a pre-filled issue with your lane, price, distribution, and 90-day public win plan.</p>
-  <a class="btn" href="https://github.com/terryncew/openline-hub/issues/new?template=exclusive_bid.md&title=Bid:+[Company]+—+Exclusive+Lane&labels=bid,exclusive&utm_source=hub-excl" target="_blank" rel="noopener">Submit Bid →</a>
+  <p>Opens a pre-filled issue with your field, price, distribution, and 90-day public win plan.</p>
+  <a class="btn" href="https://github.com/terryncew/openline-hub/issues/new?template=exclusive_bid.md&title=Bid:+[Company]+—+Field-of-Use+Exclusivity&labels=bid,exclusive&utm_source=hub-excl" target="_blank" rel="noopener">Submit Bid →</a>
   <p class="muted" style="margin-top:10px">I reserve the right to accept none.</p>
 </div>
 
@@ -38,7 +73,7 @@
   <h3 style="margin:0 0 8px">Featured receipt (live)</h3>
   <script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js"></script>
   <openline-card mode="compact" src="https://terryncew.github.io/terrynce-stack/receipt.latest.json"></openline-card>
-  <p class="muted">“No proof file, no ship.” One screen. Green/Yellow/Red.</p>
+  <p class="muted">“No proof file, no ship.” One screen. Green/Amber/Red.</p>
 </div>
 
 <p class="muted"><a href="./index.html">← Back to Hub</a></p>
