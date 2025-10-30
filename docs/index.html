@@ -1,67 +1,52 @@
 <!doctype html>
-<html lang="en">
-<head>
-  <meta charset="utf-8">
-  <title>OpenLine Hub · Portable Proof for AI</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <meta name="description" content="Live receipts, demos, and researcher kit for OpenLine · COLE · Coherence Dynamics. Proof moves; data doesn't.">
+<meta charset="utf-8">
+<title>OpenLine Hub · Portable Proof for AI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="description" content="Live receipts, demos, and researcher kit for OpenLine · COLE · Coherence Dynamics. Proof moves; data doesn't.">
+<meta property="og:title" content="OpenLine Hub · Portable Proof for AI">
+<meta property="og:description" content="Live receipts, demos, and researcher kit. Proof moves; data doesn't.">
+<meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png">
+<meta property="og:url" content="https://terryncew.github.io/openline-hub/">
+<meta name="twitter:card" content="summary_large_image">
+<style>
+  :root{--bg:#0f1115; --ink:#e9eef7; --muted:#9aa4b2; --tile:#151821; --line:#232838; --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --accent:#00ffa6;}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
+  a{color:inherit;text-decoration:none}
+  code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
+  .wrap{max-width:980px;margin:0 auto;padding:20px}
+  header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
+  .brand{font-weight:700;letter-spacing:.2px}
+  .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+  .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
+  .hero h1{margin:0 0 6px;font-size:22px}
+  .hero p{margin:0;color:var(--muted)}
+  .inline{display:flex;gap:8px;flex-wrap:wrap}
+  .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
+  .btn.secondary{border-color:var(--line);color:var(--ink)}
+  .section{margin:20px 0}
+  .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+  .tile h3{margin:0 0 8px;font-size:16px}
+  .muted{color:var(--muted)}
+  .note{font-size:12px;color:var(--muted)}
+  .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+  .card-wrap{margin-top:8px}
+  .statusdot{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;}
+  .s-g{background:var(--ok)} .s-a{background:var(--warn)} .s-r{background:var(--bad)}
+  .trend{position:absolute;top:10px;right:26px;font-size:12px;color:var(--muted)}
+  .strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .dot.g{background:var(--ok)} .dot.a{background:var(--warn)} .dot.r{background:var(--bad)}
+  .ts{color:var(--muted);font-size:12px;margin-left:auto}
+  input{width:100%;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px}
+  @media (max-width:420px){.btn{padding:9px 12px}.hero h1{font-size:20px}}
+</style>
 
-  <!-- Open Graph / Twitter cards -->
-  <meta property="og:title" content="OpenLine Hub · Portable Proof for AI">
-  <meta property="og:description" content="Live receipts, demos, and researcher kit. Proof moves; data doesn't.">
-  <meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png">
-  <meta property="og:url" content="https://terryncew.github.io/openline-hub/">
-  <meta name="twitter:card" content="summary_large_image">
+<script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js"></script>
 
-  <style>
-    :root{
-      --bg:#0f1115; --ink:#e9eef7; --muted:#9aa4b2; --tile:#151821; --line:#232838;
-      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --accent:#00ffa6;
-    }
-    *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
-    a{color:inherit;text-decoration:none}
-    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
-    .wrap{max-width:980px;margin:0 auto;padding:20px}
-    header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
-    .brand{font-weight:700;letter-spacing:.2px}
-    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-    .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
-    .hero h1{margin:0 0 6px;font-size:22px}
-    .hero p{margin:0;color:var(--muted)}
-    .inline{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
-    .btn.secondary{border-color:var(--line);color:var(--ink)}
-    .section{margin:20px 0}
-    .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-    .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
-    .tile h3{margin:0 0 8px;font-size:16px}
-    .muted{color:var(--muted)}
-    .note{font-size:12px;color:var(--muted)}
-    .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-    .card-wrap{margin-top:8px}
-    .statusdot{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;}
-    .s-g{background:var(--ok)} .s-a{background:var(--warn)} .s-r{background:var(--bad)}
-    .trend{position:absolute;top:10px;right:26px;font-size:12px;color:var(--muted)}
-    /* portfolio strip */
-    .strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}
-    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
-    .dot{width:8px;height:8px;border-radius:50%}
-    .dot.g{background:var(--ok)} .dot.a{background:var(--warn)} .dot.r{background:var(--bad)}
-    .ts{color:var(--muted);font-size:12px;margin-left:auto}
-    /* inputs */
-    input[type="text"]{width:100%;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px}
-    @media (max-width:420px){
-      .btn{padding:9px 12px}
-      .hero h1{font-size:20px}
-    }
-  </style>
-
-  <!-- OpenLine card web component -->
-  <script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js"></script>
-</head>
-<body>
 <div class="wrap">
   <header>
     <div class="brand">OpenLine Hub</div>
@@ -76,7 +61,6 @@
       <a class="btn" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Read: Coherence Dynamics v1.2 (Erratum)</a>
       <a class="btn secondary" href="https://github.com/terryncew/openline-core" target="_blank" rel="noopener">GitHub · openline-core</a>
     </div>
-    <!-- Portfolio snapshot -->
     <div class="strip" id="portfolio">
       <div class="pill"><span class="dot g"></span><span id="cG">G: Loading…</span></div>
       <div class="pill"><span class="dot a"></span><span id="cA">A: —</span></div>
@@ -86,7 +70,6 @@
     </div>
   </div>
 
-  <!-- Featured -->
   <div class="section">
     <h2 style="margin:0 0 10px">Featured receipt</h2>
     <div class="tile">
@@ -101,44 +84,18 @@
     </div>
   </div>
 
-  <!-- Demos -->
   <div class="section">
     <h2 style="margin:0 0 8px">Lab & Demos</h2>
     <div class="grid">
-      <a class="tile" href="./exclusive.html">
-        <h3>Field-of-Use Exclusivity (12 months)</h3>
-        <p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p>
-        <div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14 d</div>
-      </a>
-      <a class="tile" href="https://terryncew.github.io/openline-incident/?utm_source=openline-hub" target="_blank" rel="noopener">
-        <h3>Incident Response Demo</h3>
-        <p class="muted">Normal → Incident → Recovery. Forensic receipts + auto rollback.</p>
-        <div class="note">Live receipts · 3-card view</div>
-      </a>
-      <a class="tile" href="https://terryncew.github.io/openline-csm/?utm_source=openline-hub" target="_blank" rel="noopener">
-        <h3>CSM (Canon · Coach · Students)</h3>
-        <p class="muted">Budget & Bend law with style-tuning. Shadow → Tuning Receipt → Live.</p>
-        <div class="note">Receipts-native · Zero-infra</div>
-      </a>
-      <a class="tile" href="https://terryncew.github.io/playground-receipt-/?utm_source=openline-hub" target="_blank" rel="noopener">
-        <h3>Receipt Demo (terminal)</h3>
-        <p class="muted">Every command emits a one-screen proof. “No receipt, no ship.”</p>
-        <div class="note">Viewer · JSON in /docs</div>
-      </a>
-      <a class="tile" href="https://terryncew.github.io/openline-exchange/?utm_source=openline-hub" target="_blank" rel="noopener">
-        <h3>OpenLine Exchange</h3>
-        <p class="muted">List offers with preview receipts and rights-in-file.</p>
-        <div class="note">Offers · Receipts-native</div>
-      </a>
-      <a class="tile" href="https://terryncew.github.io/terrynce-stack/?utm_source=openline-hub" target="_blank" rel="noopener">
-        <h3>TW Stack (Theory)</h3>
-        <p class="muted">Structured Sentience · ULT 4.6 · Winning Equation · Emergence Stack.</p>
-        <div class="note">Docs · Overview · Philosophy</div>
-      </a>
+      <a class="tile" href="./exclusive.html"><h3>Field-of-Use Exclusivity (12 months)</h3><p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p><div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14 d</div></a>
+      <a class="tile" href="https://terryncew.github.io/openline-incident/?utm_source=openline-hub" target="_blank" rel="noopener"><h3>Incident Response Demo</h3><p class="muted">Normal → Incident → Recovery. Forensic receipts + auto rollback.</p><div class="note">Live receipts · 3-card view</div></a>
+      <a class="tile" href="https://terryncew.github.io/openline-csm/?utm_source=openline-hub" target="_blank" rel="noopener"><h3>CSM (Canon · Coach · Students)</h3><p class="muted">Budget & Bend law with style-tuning. Shadow → Tuning Receipt → Live.</p><div class="note">Receipts-native · Zero-infra</div></a>
+      <a class="tile" href="https://terryncew.github.io/playground-receipt-/?utm_source=openline-hub" target="_blank" rel="noopener"><h3>Receipt Demo (terminal)</h3><p class="muted">Every command emits a one-screen proof. “No receipt, no ship.”</p><div class="note">Viewer · JSON in /docs</div></a>
+      <a class="tile" href="https://terryncew.github.io/openline-exchange/?utm_source=openline-hub" target="_blank" rel="noopener"><h3>OpenLine Exchange</h3><p class="muted">List offers with preview receipts and rights-in-file.</p><div class="note">Offers · Receipts-native</div></a>
+      <a class="tile" href="https://terryncew.github.io/terrynce-stack/?utm_source=openline-hub" target="_blank" rel="noopener"><h3>TW Stack (Theory)</h3><p class="muted">Structured Sentience · ULT 4.6 · Winning Equation · Emergence Stack.</p><div class="note">Docs · Overview · Philosophy</div></a>
     </div>
   </div>
 
-  <!-- Researcher Kit + Validator -->
   <div class="section">
     <h2 style="margin:0 0 8px">Researcher kit</h2>
     <div class="panel">
@@ -169,7 +126,6 @@
     </div>
   </div>
 
-  <!-- Repo receipts -->
   <div class="section">
     <h2 style="margin:0 0 10px">Repo receipts</h2>
     <div id="grid" class="grid"></div>
@@ -182,7 +138,6 @@
 </div>
 
 <script>
-/* ---- configure which repos to show ---- */
 const repos = [
   "COLE-Coherence-Layer-Engine-",
   "dynamic-sentience-maps",
@@ -190,11 +145,9 @@ const repos = [
   "tuner-engine-or-ContentTuner"
 ];
 
-/* ---- DOM handles ---- */
 const grid = document.getElementById("grid");
 const bust = '?v=' + Date.now();
 
-/* ---- portfolio counters ---- */
 let ctG=0, ctA=0, ctR=0, ctT=0;
 const cG = document.getElementById('cG');
 const cA = document.getElementById('cA');
@@ -214,18 +167,17 @@ function updateStrip(loading=false){
   cG.textContent = 'G: ' + ctG;
   cA.textContent = 'A: ' + ctA;
   cR.textContent = 'R: ' + ctR;
-  const pct = ctT? Math.round((ctG/ctT)*100) : 0;
-  health.textContent = ctT? (pct + '% GREEN') : '—';
+  const pct = ctT ? Math.round((ctG/ctT)*100) : 0;
+  health.textContent = ctT ? (pct + '% GREEN') : '—';
   ts.textContent = 'Updated ' + new Date().toLocaleTimeString();
 }
 updateStrip(true);
 
-/* ---- build a repo tile ---- */
 function tileFor(repo){
   const urlBase=`https://terryncew.github.io/${repo}`;
-  const src1   = `${urlBase}/receipt.latest.json${bust}`;
+  const src1 = `${urlBase}/receipt.latest.json${bust}`;
   const srcRaw = `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.latest.json${bust}`;
-  const histUrl= `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.history.json${bust}`;
+  const histUrl = `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.history.json${bust}`;
 
   const a=document.createElement("a");
   a.className="tile";
@@ -240,10 +192,10 @@ function tileFor(repo){
     <div class="note"></div>
   `;
 
-  const card  = a.querySelector("openline-card");
-  const note  = a.querySelector(".note");
-  const dot   = a.querySelector(".statusdot");
-  const trend = a.querySelector(".trend");
+  const card = a.querySelector("openline-card");
+  const note = a.querySelector(".note");
+  const dot  = a.querySelector(".statusdot");
+  const trend= a.querySelector(".trend");
 
   const fallback=()=>{
     if(!card.dataset.fell){ card.dataset.fell=1; card.setAttribute("src",srcRaw); note.textContent="fallback: RAW"; }
@@ -252,102 +204,68 @@ function tileFor(repo){
   card.addEventListener("olp-error",fallback);
   card.addEventListener("error",fallback);
 
-  // fetch latest for color + trend + counters
-  fetch(srcRaw)
-    .then(r=>r.ok?r.text():Promise.reject(new Error('fetch failed')))
-    .then(txt=>{
-      let obj; try{ obj=JSON.parse(txt);}catch{ throw new Error('parse error'); }
+  fetch(srcRaw).then(r=>r.ok?r.text():Promise.reject(new Error('fetch failed'))).then(txt=>{
+    let obj; try{ obj=JSON.parse(txt);}catch{ throw new Error('parse error'); }
 
-      // 1) prefer declared status; 2) otherwise infer from thresholds
-      let declared = (obj?.attrs?.status||'').toLowerCase();
-      const k = (obj?.telem?.kappa_eff) ?? (obj?.signals?.kappa) ?? 0;
-      const h = (obj?.telem?.delta_hol) ?? (obj?.signals?.delta_hol) ?? 0;
-      const cycles = (obj?.digest?.cycle_plus) ?? 0;
-
-      let isRed=false, isAmber=false;
-      if(declared==='red'){ isRed=true; }
-      else if(declared==='amber'){ isAmber=true; }
-      else if(declared==='green'){ /* stays green */ }
-      else {
-        // fallback to inference when no declared status
-        isRed   = cycles>0 || k>=0.75 || h>=0.35;
-        isAmber = !isRed && (k>=0.60 || h>=0.25);
-        declared = isRed ? 'red' : isAmber ? 'amber' : 'green';
-      }
-
-      dot.className = 'statusdot ' + (isRed ? 's-r' : isAmber ? 's-a' : 's-g');
-
-      // counters only for valid receipts
-      ctT++;
-      if(isRed) ctR++; else if(isAmber) ctA++; else ctG++;
+    // 1) TRUST declared status if present
+    const s = String((obj?.attrs?.status || obj?.status || '')).toLowerCase();
+    let cls = 's-g';
+    if (s==='red') cls='s-r'; else if (s==='amber') cls='s-a'; else if (s==='green') cls='s-g';
+    if (s) {
+      ctT++; if(s==='red') ctR++; else if(s==='amber') ctA++; else if(s==='green') ctG++;
+      dot.className = 'statusdot ' + cls;
       updateStrip();
+    } else {
+      // 2) FALLBACK derive color from κ/Δhol thresholds
+      const k = (obj?.telem?.kappa_eff ?? obj?.signals?.kappa ?? 0);
+      const h = (obj?.telem?.delta_hol ?? obj?.signals?.dhol ?? 0);
+      const cycles = (obj?.digest?.cycle_plus ?? obj?.guards?.cycles ?? 0);
+      const isRed   = cycles>0 || k>=0.75 || h>=0.35;
+      const isAmber = !isRed && (k>=0.60 || h>=0.25);
+      dot.className = 'statusdot ' + (isRed ? 's-r' : isAmber ? 's-a' : 's-g');
+      ctT++; if(isRed) ctR++; else if(isAmber) ctA++; else ctG++; updateStrip();
+    }
 
-      // trend from history
-      fetch(histUrl).then(r=>r.ok?r.json():[]).then(hist=>{
-        if(Array.isArray(hist) && hist.length>=2){
-          const last  = hist[hist.length-1];
-          const prev  = hist[hist.length-2];
-          const kl = (last?.telem?.kappa_eff) ?? (last?.signals?.kappa);
-          const kp = (prev?.telem?.kappa_eff) ?? (prev?.signals?.kappa);
-          if(typeof kl==='number' && typeof kp==='number'){
-            const d = kl - kp;
-            trend.textContent = d>0.01 ? '↑' : d<-0.01 ? '↓' : '→';
-          }
+    // trend from history if present
+    fetch(histUrl).then(r=>r.ok?r.json():[]).then(hist=>{
+      if(Array.isArray(hist) && hist.length>=2){
+        const last  = hist[hist.length-1];
+        const prev  = hist[hist.length-2];
+        const kl = (last?.telem?.kappa_eff ?? last?.signals?.kappa);
+        const kp = (prev?.telem?.kappa_eff ?? prev?.signals?.kappa);
+        if(typeof kl==='number' && typeof kp==='number'){
+          const d = kl - kp; trend.textContent = d>0.01 ? '↑' : d<-0.01 ? '↓' : '→';
         }
-      }).catch(()=>{ /* silent */ });
-    })
-    .catch((e)=>{
-      note.textContent = `Receipt unavailable (${e.message || 'error'})`;
-    });
+      }
+    }).catch(()=>{});
+  }).catch((e)=>{ note.textContent = `Receipt unavailable (${e.message || 'error'})`; });
 
   return a;
 }
 
-/* ---- render tiles ---- */
 for(const r of repos) grid.appendChild(tileFor(r));
 
-/* ---- validator ---- */
 function copyTemplate(){
-  const template = {
-    receipt_version: "0.1",
-    attrs: { status: "green" },
-    telem: { kappa_eff: 0.25, delta_hol: 0.05 },
-    digest: { b0:1, cycle_plus:0, x_frontier:0, s_over_c:1.0, depth:1 }
-  };
-  const txt = JSON.stringify(template, null, 2);
-  navigator.clipboard.writeText(txt).then(()=>{
-    const out = document.getElementById('valOut');
-    out.textContent = '📋 Template copied to clipboard';
-  });
+  const template = {receipt_version:"0.1",attrs:{status:"green"},telem:{kappa_eff:0.25,delta_hol:0.05},digest:{b0:1,cycle_plus:0,x_frontier:0,s_over_c:1.0,depth:1}};
+  navigator.clipboard.writeText(JSON.stringify(template,null,2)).then(()=>{ document.getElementById('valOut').textContent='📋 Template copied to clipboard'; });
 }
 
 document.getElementById('valBtn')?.addEventListener('click', async ()=>{
-  const out = document.getElementById('valOut');
-  out.textContent = '…checking';
+  const out = document.getElementById('valOut'); out.textContent = '…checking';
   const url = (document.getElementById('valUrl').value||'').trim();
   if(!url){ out.textContent='Provide a URL to a JSON receipt.'; return; }
   try{
-    const res = await fetch(url, {cache:'no-store'});
-    if(!res.ok) throw new Error('fetch failed');
-    const txt = await res.text();
-    const bytes = new TextEncoder().encode(txt).length;
-    const j = JSON.parse(txt);
-
+    const res = await fetch(url,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed');
+    const txt = await res.text(); const bytes = new TextEncoder().encode(txt).length; const j = JSON.parse(txt);
     const errs = [];
     if(!j.receipt_version) errs.push('missing receipt_version');
     if(!(j.attrs && typeof j.attrs.status==='string')) errs.push('missing attrs.status');
     const kpath = (j.telem && (('kappa_eff' in j.telem) || (j.signals && ('kappa' in j.signals))));
     if(!kpath) errs.push('missing telem.kappa_eff or signals.kappa');
-
     const status = (j.attrs?.status||'').toLowerCase();
     if(status==='green' && bytes>640) errs.push(`green exceeds 640B (${bytes})`);
     if((status==='amber'||status==='red') && bytes>800) errs.push(`${status} exceeds 800B (${bytes})`);
-
     out.textContent = errs.length? `❌ FAIL\n- ${errs.join('\n- ')}` : `✅ PASS\nbytes=${bytes}, status=${status||'n/a'}`;
-  }catch(e){
-    document.getElementById('valOut').textContent = `❌ ${e.message||'Could not fetch/parse JSON'}`;
-  }
+  }catch(e){ document.getElementById('valOut').textContent = `❌ ${e.message||'Could not fetch/parse JSON'}`; }
 });
 </script>
-</body>
-</html>
