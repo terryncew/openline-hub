@@ -1,4 +1,5 @@
 <!doctype html>
+<html lang="en">
 <meta charset="utf-8">
 <title>OpenLine Hub · Portable Proof for AI</title>
 <meta name="viewport" content="width=device-width,initial-scale=1">
@@ -19,21 +20,33 @@
   .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
   .hero h1{margin:0 0 6px;font-size:22px}
   .hero p{margin:0;color:var(--muted)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-  .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile);transition:border-color .2s}
-  .tile h3{margin:0 0 8px;font-size:16px}
-  .muted{color:var(--muted)}
-  .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-  .section{margin:20px 0}
-  .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+  .inline{display:flex;gap:8px;flex-wrap:wrap}
   .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
   .btn.secondary{border-color:var(--line);color:var(--ink)}
+  .section{margin:20px 0}
+  .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+  .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+  .tile h3{margin:0 0 8px;font-size:16px}
+  .muted{color:var(--muted)}
   .note{font-size:12px;color:var(--muted)}
+  .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+  .card-wrap{margin-top:8px}
   .statusdot{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;}
   .s-g{background:var(--ok)} .s-a{background:var(--warn)} .s-r{background:var(--bad)}
   .trend{position:absolute;top:10px;right:26px;font-size:12px;color:var(--muted)}
-  .inline{display:flex;gap:8px;flex-wrap:wrap}
-  .card-wrap{margin-top:8px}
+  /* portfolio strip */
+  .strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}
+  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+  .dot{width:8px;height:8px;border-radius:50%}
+  .dot.g{background:var(--ok)} .dot.a{background:var(--warn)} .dot.r{background:var(--bad)}
+  .ts{color:var(--muted);font-size:12px;margin-left:auto}
+  /* inputs */
+  input[type="text"]{width:100%;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px}
+  @media (max-width:420px){
+    .btn{padding:9px 12px}
+    .hero h1{font-size:20px}
+  }
 </style>
 
 <!-- OpenLine card web component -->
@@ -55,12 +68,20 @@
       <a class="btn" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Read: Coherence Dynamics v1.2 (Erratum)</a>
       <a class="btn secondary" href="https://github.com/terryncew/openline-core" target="_blank" rel="noopener">GitHub · openline-core</a>
     </div>
+    <!-- Portfolio snapshot (auto-computed) -->
+    <div class="strip" id="portfolio">
+      <div class="pill"><span class="dot g"></span><span id="cG">G: —</span></div>
+      <div class="pill"><span class="dot a"></span><span id="cA">A: —</span></div>
+      <div class="pill"><span class="dot r"></span><span id="cR">R: —</span></div>
+      <div class="pill">Health: <b id="health">—</b></div>
+      <div class="ts" id="ts">Updated —</div>
+    </div>
   </div>
 
   <!-- Featured -->
   <div class="section">
     <h2 style="margin:0 0 10px">Featured receipt</h2>
-    <div class="tile" data-live-tile>
+    <div class="tile">
       <div class="inline" style="justify-content:space-between;align-items:center">
         <div class="muted">terrynce-stack / <code>receipt.latest.json</code></div>
         <span class="chip">live</span>
@@ -80,7 +101,7 @@
       <a class="tile" href="./exclusive.html">
         <h3>Field-of-Use Exclusivity (12 months)</h3>
         <p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p>
-        <div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14d</div>
+        <div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14 d</div>
       </a>
       <a class="tile" href="https://terryncew.github.io/openline-incident/?utm_source=openline-hub" target="_blank" rel="noopener">
         <h3>Incident Response Demo</h3>
@@ -118,7 +139,7 @@
       <div style="margin-top:8px">
         <div class="note">Validate a receipt URL</div>
         <div class="inline" style="margin-top:6px">
-          <input id="valUrl" placeholder="https://.../docs/receipt.latest.json" style="flex:1;min-width:220px;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px">
+          <input id="valUrl" type="text" placeholder="https://.../docs/receipt.latest.json" style="flex:1;min-width:220px">
           <button class="btn" id="valBtn" type="button">Validate</button>
         </div>
         <pre id="valOut" class="note" style="white-space:pre-wrap;margin-top:8px"></pre>
@@ -153,15 +174,36 @@
 </div>
 
 <script>
+/* ---- configure which repos to show ---- */
 const repos = [
   "COLE-Coherence-Layer-Engine-",
   "dynamic-sentience-maps",
   "terrynce-curve-emergence-tuner",
   "tuner-engine-or-ContentTuner"
 ];
+
+/* ---- DOM handles ---- */
 const grid = document.getElementById("grid");
 const bust = '?v=' + Date.now();
 
+/* ---- portfolio counters ---- */
+let ctG=0, ctA=0, ctR=0, ctT=0;
+const cG = document.getElementById('cG');
+const cA = document.getElementById('cA');
+const cR = document.getElementById('cR');
+const health = document.getElementById('health');
+const ts = document.getElementById('ts');
+
+function updateStrip(){
+  cG.textContent = 'G: ' + ctG;
+  cA.textContent = 'A: ' + ctA;
+  cR.textContent = 'R: ' + ctR;
+  const pct = ctT? Math.round((ctG/ctT)*100) : 0;
+  health.textContent = ctT? (pct + '% GREEN') : '—';
+  ts.textContent = 'Updated ' + new Date().toLocaleTimeString();
+}
+
+/* ---- build a repo tile ---- */
 function tileFor(repo){
   const urlBase=`https://terryncew.github.io/${repo}`;
   const src1 = `${urlBase}/receipt.latest.json${bust}`;
@@ -193,32 +235,29 @@ function tileFor(repo){
   card.addEventListener("olp-error",fallback);
   card.addEventListener("error",fallback);
 
-  // fetch latest for color + trend (tiny GET, CORS ok on raw.githubusercontent)
+  // fetch latest for color + trend + counters
   fetch(srcRaw).then(r=>r.ok?r.text():Promise.reject()).then(txt=>{
-    // size guard
-    const bytes = new TextEncoder().encode(txt).length;
     let obj; try{ obj=JSON.parse(txt);}catch{ return; }
     const k = (obj?.telem?.kappa_eff) ?? (obj?.signals?.kappa) ?? 0;
     const h = (obj?.telem?.delta_hol) ?? (obj?.signals?.delta_hol) ?? 0;
     const cycles = (obj?.digest?.cycle_plus) ?? 0;
 
-    // thresholds → RED / AMBER / GREEN
     const isRed   = cycles>0 || k>=0.75 || h>=0.35;
     const isAmber = !isRed && (k>=0.60 || h>=0.25);
     dot.className = 'statusdot ' + (isRed ? 's-r' : isAmber ? 's-a' : 's-g');
 
-    // byte budget check (informational)
-    if(obj?.attrs?.status==='green' && bytes>640) note.textContent = (note.textContent||'') + ' size>640B(green)';
-    if((obj?.attrs?.status==='amber' || obj?.attrs?.status==='red') && bytes>800) note.textContent = (note.textContent||'') + ' size>800B(ar)';
+    ctT++;
+    if(isRed) ctR++; else if(isAmber) ctA++; else ctG++;
+    updateStrip();
 
-    // trend from history if present
+    // trend from history
     fetch(histUrl).then(r=>r.ok?r.json():[]).then(hist=>{
       if(Array.isArray(hist) && hist.length>=2){
         const last  = hist[hist.length-1];
         const prev  = hist[hist.length-2];
-        const kl = (last?.telem?.kappa_eff) ?? (last?.signals?.kappa) ?? null;
-        const kp = (prev?.telem?.kappa_eff) ?? (prev?.signals?.kappa) ?? null;
-        if(kl!=null && kp!=null){
+        const kl = (last?.telem?.kappa_eff) ?? (last?.signals?.kappa);
+        const kp = (prev?.telem?.kappa_eff) ?? (prev?.signals?.kappa);
+        if(typeof kl==='number' && typeof kp==='number'){
           const d = kl - kp;
           trend.textContent = d>0.01 ? '↑' : d<-0.01 ? '↓' : '→';
         }
@@ -229,9 +268,11 @@ function tileFor(repo){
   return a;
 }
 
+/* ---- render tiles ---- */
 for(const r of repos) grid.appendChild(tileFor(r));
+updateStrip();
 
-// validator
+/* ---- validator ---- */
 const valBtn = document.getElementById('valBtn');
 valBtn?.addEventListener('click', async ()=>{
   const out = document.getElementById('valOut');
@@ -245,19 +286,19 @@ valBtn?.addEventListener('click', async ()=>{
     const j = JSON.parse(txt);
 
     const errs = [];
-    // required fields
     if(!j.receipt_version) errs.push('missing receipt_version');
     if(!(j.attrs && typeof j.attrs.status==='string')) errs.push('missing attrs.status');
     const kpath = (j.telem && (('kappa_eff' in j.telem) || (j.signals && ('kappa' in j.signals))));
     if(!kpath) errs.push('missing telem.kappa_eff or signals.kappa');
-    // size guards
+
     const status = (j.attrs?.status||'').toLowerCase();
     if(status==='green' && bytes>640) errs.push(`green exceeds 640B (${bytes})`);
     if((status==='amber'||status==='red') && bytes>800) errs.push(`${status} exceeds 800B (${bytes})`);
 
     out.textContent = errs.length? `❌ FAIL\n- ${errs.join('\n- ')}` : `✅ PASS\nbytes=${bytes}, status=${status||'n/a'}`;
   }catch(e){
-    out.textContent = '❌ Could not fetch/parse JSON';
+    document.getElementById('valOut').textContent = '❌ Could not fetch/parse JSON';
   }
 });
 </script>
+</html>
