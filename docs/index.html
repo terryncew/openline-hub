@@ -16,30 +16,27 @@
   header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
   .brand{font-weight:700;letter-spacing:.2px}
   .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-  .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522, #0f1115)}
+  .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
   .hero h1{margin:0 0 6px;font-size:22px}
   .hero p{margin:0;color:var(--muted)}
   .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-  .tile{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+  .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile);transition:border-color .2s}
   .tile h3{margin:0 0 8px;font-size:16px}
   .muted{color:var(--muted)}
   .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
   .section{margin:20px 0}
-  .row{display:grid;grid-template-columns:1fr;gap:14px}
-  @media (min-width:840px){.row{grid-template-columns:1.1fr .9fr}}
   .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
   .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
   .btn.secondary{border-color:var(--line);color:var(--ink)}
+  .note{font-size:12px;color:var(--muted)}
+  .statusdot{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;}
+  .s-g{background:var(--ok)} .s-a{background:var(--warn)} .s-r{background:var(--bad)}
+  .trend{position:absolute;top:10px;right:26px;font-size:12px;color:var(--muted)}
   .inline{display:flex;gap:8px;flex-wrap:wrap}
   .card-wrap{margin-top:8px}
-  .note{font-size:12px;color:var(--muted)}
-  .status{display:inline-block;padding:4px 8px;border-radius:6px;font-size:11px;font-weight:700}
-  .g{background:var(--ok);color:#051407}
-  .a{background:var(--warn);color:#140a00}
-  .r{background:var(--bad);color:#fff}
-  canvas{max-width:100%;height:180px}
 </style>
 
+<!-- OpenLine card web component -->
 <script type="module"
   src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js">
 </script>
@@ -63,7 +60,7 @@
   <!-- Featured -->
   <div class="section">
     <h2 style="margin:0 0 10px">Featured receipt</h2>
-    <div class="tile">
+    <div class="tile" data-live-tile>
       <div class="inline" style="justify-content:space-between;align-items:center">
         <div class="muted">terrynce-stack / <code>receipt.latest.json</code></div>
         <span class="chip">live</span>
@@ -76,85 +73,70 @@
     </div>
   </div>
 
-  <!-- Demos & Lab -->
-  <div class="section row">
-    <div class="panel">
-      <h2 style="margin:0 0 8px">Lab & Demos</h2>
-      <div class="grid">
-        <a class="tile" href="./exclusive.html">
-          <h3>Field-of-Use Exclusivity (12 months)</h3>
-          <p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p>
-          <div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14d</div>
-        </a>
-
-        <a class="tile" href="https://terryncew.github.io/openline-incident/?utm_source=openline-hub" target="_blank" rel="noopener">
-          <h3>Incident Response Demo</h3>
-          <p class="muted">Normal → Incident → Recovery. Forensic receipts + auto rollback.</p>
-          <div class="note">Live receipts · 3-card view</div>
-        </a>
-
-        <a class="tile" href="https://terryncew.github.io/openline-csm/?utm_source=openline-hub" target="_blank" rel="noopener">
-          <h3>CSM (Canon · Coach · Students)</h3>
-          <p class="muted">Budget & Bend law with style-tuning. Shadow → Tuning Receipt → Live.</p>
-          <div class="note">Receipts-native · Zero-infra</div>
-        </a>
-
-        <a class="tile" href="https://terryncew.github.io/playground-receipt-/?utm_source=openline-hub" target="_blank" rel="noopener">
-          <h3>Receipt Demo (terminal)</h3>
-          <p class="muted">Every command emits a one-screen proof. “No receipt, no ship.”</p>
-          <div class="note">Viewer · JSON in /docs</div>
-        </a>
-
-        <a class="tile" href="https://terryncew.github.io/openline-exchange/?utm_source=openline-hub" target="_blank" rel="noopener">
-          <h3>OpenLine Exchange</h3>
-          <p class="muted">List offers with preview receipts and rights-in-file.</p>
-          <div class="note">Offers · Receipts-native</div>
-        </a>
-
-        <a class="tile" href="https://terryncew.github.io/terrynce-stack/?utm_source=openline-hub" target="_blank" rel="noopener">
-          <h3>TW Stack (Theory)</h3>
-          <p class="muted">Structured Sentience · ULT 4.6 · Winning Equation · Emergence Stack.</p>
-          <div class="note">Docs · Overview · Philosophy</div>
-        </a>
-      </div>
-    </div>
-
-    <!-- Inline EWI Simulator -->
-    <div class="panel">
-      <h2 style="margin:0 8px 8px 0">Early-Warning Simulator</h2>
-      <p class="muted" style="margin:0 0 8px">Toy stress run (κ<sub>C</sub> vs κ<sub>P</sub>). Triage demo only.</p>
-      <canvas id="kappaChart"></canvas>
-      <div class="inline" style="margin-top:10px">
-        <span class="status g" id="ewiState">GREEN</span>
-        <span class="note">κ threshold 0.75 · Δhol threshold 0.35</span>
-      </div>
-      <div class="inline" style="margin-top:10px">
-        <button class="btn" id="runBtn" type="button">Run Simulation</button>
-        <a class="btn secondary" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Read the Erratum</a>
-      </div>
+  <!-- Demos -->
+  <div class="section">
+    <h2 style="margin:0 0 8px">Lab & Demos</h2>
+    <div class="grid">
+      <a class="tile" href="./exclusive.html">
+        <h3>Field-of-Use Exclusivity (12 months)</h3>
+        <p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p>
+        <div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14d</div>
+      </a>
+      <a class="tile" href="https://terryncew.github.io/openline-incident/?utm_source=openline-hub" target="_blank" rel="noopener">
+        <h3>Incident Response Demo</h3>
+        <p class="muted">Normal → Incident → Recovery. Forensic receipts + auto rollback.</p>
+        <div class="note">Live receipts · 3-card view</div>
+      </a>
+      <a class="tile" href="https://terryncew.github.io/openline-csm/?utm_source=openline-hub" target="_blank" rel="noopener">
+        <h3>CSM (Canon · Coach · Students)</h3>
+        <p class="muted">Budget & Bend law with style-tuning. Shadow → Tuning Receipt → Live.</p>
+        <div class="note">Receipts-native · Zero-infra</div>
+      </a>
+      <a class="tile" href="https://terryncew.github.io/playground-receipt-/?utm_source=openline-hub" target="_blank" rel="noopener">
+        <h3>Receipt Demo (terminal)</h3>
+        <p class="muted">Every command emits a one-screen proof. “No receipt, no ship.”</p>
+        <div class="note">Viewer · JSON in /docs</div>
+      </a>
+      <a class="tile" href="https://terryncew.github.io/openline-exchange/?utm_source=openline-hub" target="_blank" rel="noopener">
+        <h3>OpenLine Exchange</h3>
+        <p class="muted">List offers with preview receipts and rights-in-file.</p>
+        <div class="note">Offers · Receipts-native</div>
+      </a>
+      <a class="tile" href="https://terryncew.github.io/terrynce-stack/?utm_source=openline-hub" target="_blank" rel="noopener">
+        <h3>TW Stack (Theory)</h3>
+        <p class="muted">Structured Sentience · ULT 4.6 · Winning Equation · Emergence Stack.</p>
+        <div class="note">Docs · Overview · Philosophy</div>
+      </a>
     </div>
   </div>
 
-  <!-- Researcher Kit -->
+  <!-- Researcher Kit + Validator -->
   <div class="section">
     <h2 style="margin:0 0 8px">Researcher kit</h2>
     <div class="panel">
-      <p class="muted">Clone, run, and verify receipts locally.</p>
+      <p class="muted">Clone, run, and verify receipts locally · or paste a URL to validate.</p>
       <div style="margin-top:8px">
-        <div class="note">Validate a receipt</div>
+        <div class="note">Validate a receipt URL</div>
+        <div class="inline" style="margin-top:6px">
+          <input id="valUrl" placeholder="https://.../docs/receipt.latest.json" style="flex:1;min-width:220px;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px">
+          <button class="btn" id="valBtn" type="button">Validate</button>
+        </div>
+        <pre id="valOut" class="note" style="white-space:pre-wrap;margin-top:8px"></pre>
+      </div>
+      <div style="margin-top:12px">
+        <div class="note">CLI quickstart</div>
         <div style="margin-top:6px"><code>uv run olp-validate docs/receipt.latest.json</code></div>
+        <div style="margin-top:6px"><code>uv run olp-server --port 8088</code> · <code>curl -X POST localhost:8088/frame -d @examples/frame.json</code></div>
       </div>
-      <div style="margin-top:12px">
-        <div class="note">Start the demo server (8088)</div>
-        <div style="margin-top:6px"><code>uv run olp-server --port 8088</code></div>
-      </div>
-      <div style="margin-top:12px">
-        <div class="note">Emit a test receipt</div>
-        <div style="margin-top:6px"><code>curl -X POST localhost:8088/frame -d @examples/frame.json</code></div>
-      </div>
-      <div style="margin-top:12px">
-        <div class="note">Policy: Green ≤640 B; Amber/Red ≤800 B. “Triage, not truth.”</div>
-      </div>
+      <details style="margin-top:12px">
+        <summary class="note">Mini-schema (fields the validator checks)</summary>
+<pre class="note" style="white-space:pre-wrap;margin-top:6px">{
+  "required": ["receipt_version","attrs","telem"],
+  "attrs.required": ["status"],
+  "telem.any": ["kappa_eff","signals.kappa"],
+  "size.guards": {"green_max":640,"amber_red_max":800}
+}</pre>
+      </details>
     </div>
   </div>
 
@@ -162,6 +144,7 @@
   <div class="section">
     <h2 style="margin:0 0 10px">Repo receipts</h2>
     <div id="grid" class="grid"></div>
+    <div class="note" style="margin-top:8px">Tip: add <code>docs/receipt.history.json</code> (array of recent snapshots) to enable ↑/↓ trend arrows.</div>
   </div>
 
   <footer class="section" style="margin-bottom:30px">
@@ -169,8 +152,6 @@
   </footer>
 </div>
 
-<!-- Minimal chart (no external CSS) -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <script>
 const repos = [
   "COLE-Coherence-Layer-Engine-",
@@ -179,51 +160,104 @@ const repos = [
   "tuner-engine-or-ContentTuner"
 ];
 const grid = document.getElementById("grid");
-const bust='?v='+Date.now();
+const bust = '?v=' + Date.now();
 
 function tileFor(repo){
   const urlBase=`https://terryncew.github.io/${repo}`;
-  const src1=`${urlBase}/receipt.latest.json${bust}`;
-  const srcRaw=`https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.latest.json${bust}`;
-  const a=document.createElement("a"); a.className="tile";
-  a.href=`${urlBase}/?utm_source=openline-hub`; a.target="_blank"; a.rel="noopener";
-  a.innerHTML=`<h3 style="margin:0 0 8px">${repo}</h3>
-               <div class="muted"><code>receipt.latest.json</code></div>
-               <div class="card-wrap"><openline-card mode="compact" src="${src1}"></openline-card></div>
-               <div class="note"></div>`;
-  const card=a.querySelector("openline-card");
-  const note=a.querySelector(".note");
-  const fallback=()=>{ if(!card.dataset.fell){card.dataset.fell=1; card.setAttribute("src",srcRaw); note.textContent="fallback: RAW";} else {note.textContent="No JSON found (enable Pages + docs/receipt.latest.json)";}};
-  card.addEventListener("olp-error",fallback); card.addEventListener("error",fallback);
+  const src1 = `${urlBase}/receipt.latest.json${bust}`;
+  const srcRaw = `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.latest.json${bust}`;
+  const histUrl = `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.history.json${bust}`;
+
+  const a=document.createElement("a");
+  a.className="tile";
+  a.href=`${urlBase}/?utm_source=openline-hub`;
+  a.target="_blank"; a.rel="noopener";
+  a.innerHTML = `
+    <span class="statusdot s-g" aria-hidden="true"></span>
+    <span class="trend">—</span>
+    <h3>${repo}</h3>
+    <div class="muted"><code>receipt.latest.json</code></div>
+    <div class="card-wrap"><openline-card mode="compact" src="${src1}"></openline-card></div>
+    <div class="note"></div>
+  `;
+
+  const card = a.querySelector("openline-card");
+  const note = a.querySelector(".note");
+  const dot  = a.querySelector(".statusdot");
+  const trend= a.querySelector(".trend");
+
+  const fallback=()=>{
+    if(!card.dataset.fell){ card.dataset.fell=1; card.setAttribute("src",srcRaw); note.textContent="fallback: RAW"; }
+    else { note.textContent="No JSON found (enable Pages + docs/receipt.latest.json)"; }
+  };
+  card.addEventListener("olp-error",fallback);
+  card.addEventListener("error",fallback);
+
+  // fetch latest for color + trend (tiny GET, CORS ok on raw.githubusercontent)
+  fetch(srcRaw).then(r=>r.ok?r.text():Promise.reject()).then(txt=>{
+    // size guard
+    const bytes = new TextEncoder().encode(txt).length;
+    let obj; try{ obj=JSON.parse(txt);}catch{ return; }
+    const k = (obj?.telem?.kappa_eff) ?? (obj?.signals?.kappa) ?? 0;
+    const h = (obj?.telem?.delta_hol) ?? (obj?.signals?.delta_hol) ?? 0;
+    const cycles = (obj?.digest?.cycle_plus) ?? 0;
+
+    // thresholds → RED / AMBER / GREEN
+    const isRed   = cycles>0 || k>=0.75 || h>=0.35;
+    const isAmber = !isRed && (k>=0.60 || h>=0.25);
+    dot.className = 'statusdot ' + (isRed ? 's-r' : isAmber ? 's-a' : 's-g');
+
+    // byte budget check (informational)
+    if(obj?.attrs?.status==='green' && bytes>640) note.textContent = (note.textContent||'') + ' size>640B(green)';
+    if((obj?.attrs?.status==='amber' || obj?.attrs?.status==='red') && bytes>800) note.textContent = (note.textContent||'') + ' size>800B(ar)';
+
+    // trend from history if present
+    fetch(histUrl).then(r=>r.ok?r.json():[]).then(hist=>{
+      if(Array.isArray(hist) && hist.length>=2){
+        const last  = hist[hist.length-1];
+        const prev  = hist[hist.length-2];
+        const kl = (last?.telem?.kappa_eff) ?? (last?.signals?.kappa) ?? null;
+        const kp = (prev?.telem?.kappa_eff) ?? (prev?.signals?.kappa) ?? null;
+        if(kl!=null && kp!=null){
+          const d = kl - kp;
+          trend.textContent = d>0.01 ? '↑' : d<-0.01 ? '↓' : '→';
+        }
+      }
+    }).catch(()=>{});
+  }).catch(()=>{});
+
   return a;
 }
+
 for(const r of repos) grid.appendChild(tileFor(r));
 
-// EWI simulator
-const ctx=document.getElementById('kappaChart').getContext('2d');
-const labels=Array.from({length:20},(_,i)=>`t=${i+1}`);
-const dataC=[0.20,0.22,0.25,0.23,0.28,0.32,0.35,0.40,0.45,0.52,0.60,0.65,0.72,0.68,0.70,0.75,0.78,0.82,0.85,0.88];
-const dataP=[0.20,0.21,0.22,0.23,0.24,0.26,0.28,0.30,0.33,0.36,0.40,0.45,0.50,0.55,0.59,0.63,0.67,0.70,0.73,0.76];
-const chart=new Chart(ctx,{type:'line',data:{labels,datasets:[
-  {label:'κ_C (concurrent)', data:dataC, tension:.35, fill:true},
-  {label:'κ_P (predictive)', data:dataP, tension:.35, fill:true},
-  {label:'Threshold 0.75', data:Array(20).fill(.75), borderDash:[5,5], pointRadius:0}
-]},options:{plugins:{legend:{labels:{color:'#cdd3dd'}}},scales:{y:{min:0,max:1,grid:{color:'#222a3a'},ticks:{color:'#9aa4b2'}},x:{grid:{color:'#222a3a'},ticks:{color:'#9aa4b2'}}}}});
+// validator
+const valBtn = document.getElementById('valBtn');
+valBtn?.addEventListener('click', async ()=>{
+  const out = document.getElementById('valOut');
+  out.textContent = '…checking';
+  const url = (document.getElementById('valUrl').value||'').trim();
+  if(!url){ out.textContent='Provide a URL to a JSON receipt.'; return; }
+  try{
+    const res = await fetch(url, {cache:'no-store'});
+    const txt = await res.text();
+    const bytes = new TextEncoder().encode(txt).length;
+    const j = JSON.parse(txt);
 
-document.getElementById('runBtn').addEventListener('click',()=>{
-  let t=0; const badge=document.getElementById('ewiState');
-  const iv=setInterval(()=>{
-    t++;
-    const stress=Math.min(.95, .2 + t*0.05 + Math.random()*0.08);
-    const pred = Math.max(0, stress*0.85);
-    chart.data.datasets[0].data.push(stress);
-    chart.data.datasets[1].data.push(pred);
-    chart.data.labels.push(`t=${t+20}`);
-    if(chart.data.labels.length>24){for(const ds of chart.data.datasets){ds.data.shift()} chart.data.labels.shift()}
-    chart.update('none');
-    const state = (stress>=.75) ? 'RED' : (stress>=.60 ? 'AMBER' : 'GREEN');
-    badge.textContent=state; badge.className='status ' + (state==='RED'?'r': state==='AMBER'?'a':'g');
-    if(state==='RED' || t>30) clearInterval(iv);
-  },300);
+    const errs = [];
+    // required fields
+    if(!j.receipt_version) errs.push('missing receipt_version');
+    if(!(j.attrs && typeof j.attrs.status==='string')) errs.push('missing attrs.status');
+    const kpath = (j.telem && (('kappa_eff' in j.telem) || (j.signals && ('kappa' in j.signals))));
+    if(!kpath) errs.push('missing telem.kappa_eff or signals.kappa');
+    // size guards
+    const status = (j.attrs?.status||'').toLowerCase();
+    if(status==='green' && bytes>640) errs.push(`green exceeds 640B (${bytes})`);
+    if((status==='amber'||status==='red') && bytes>800) errs.push(`${status} exceeds 800B (${bytes})`);
+
+    out.textContent = errs.length? `❌ FAIL\n- ${errs.join('\n- ')}` : `✅ PASS\nbytes=${bytes}, status=${status||'n/a'}`;
+  }catch(e){
+    out.textContent = '❌ Could not fetch/parse JSON';
+  }
 });
 </script>
