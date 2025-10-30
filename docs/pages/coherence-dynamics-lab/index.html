@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Coherence Dynamics Lab · COLE v1.2</title>
+<meta name="description" content="Play with κ (kappa), Δhol, and the v1.2 early-warning composite. No backend. Paste a series or run the simulator.">
+<style>
+  :root{
+    --bg:#0b0b10; --ink:#e6eaf3; --muted:#9aa3b2; --line:#272a33;
+    --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --tile:#141824; --chip:#1b2030;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.55 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial,sans-serif}
+  .wrap{max-width:980px;margin:0 auto;padding:18px}
+  header{display:flex;justify-content:space-between;align-items:baseline;gap:12px;margin-bottom:12px}
+  h1{font-size:22px;margin:0}
+  .muted{color:var(--muted)}
+  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px;margin:12px 0}
+  .card{background:var(--tile);border:1px solid var(--line);border-radius:10px;padding:12px}
+  .label{font-size:12px;letter-spacing:.4px;color:var(--muted);text-transform:uppercase}
+  .big{font-size:24px;font-weight:700;margin:6px 0}
+  .badge{display:inline-block;padding:4px 8px;border-radius:6px;font-weight:700;font-size:12px}
+  .green{background:var(--ok);color:#041006}
+  .amber{background:var(--warn);color:#1c1202}
+  .red{background:var(--bad);color:#fff}
+  input,textarea,button{width:100%;border-radius:8px;border:1px solid var(--line);background:#0f1220;color:var(--ink);padding:10px}
+  textarea{min-height:90px}
+  button{cursor:pointer;background:#1f2937;border:1px solid #384152}
+  button:hover{background:#263043}
+  .row{display:flex;gap:10px}
+  canvas{width:100%;height:240px}
+  .code{font-family:ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;font-size:12.5px;background:#0f1220;border:1px solid var(--line);border-radius:8px;padding:10px;overflow:auto}
+  .note{font-size:13px;color:var(--muted)}
+  a{color:#7cc7ff;text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>Coherence Dynamics Lab <span class="muted">· COLE v1.2</span></h1>
+    <div class="muted">“Triage, not truth.” · κ & Δhol playground</div>
+  </header>
+
+  <div class="grid">
+    <div class="card">
+      <div class="label">Overall status</div>
+      <div id="status" class="big"><span class="badge green">GREEN</span></div>
+      <div class="note">Policy demo defaults: κ≥0.75 or Δhol≥0.35 → RED; else AMBER bands at 0.60 / 0.25.</div>
+    </div>
+    <div class="card">
+      <div class="label">κ (kappa · stress/curvature)</div>
+      <div class="big" id="kappaNow">0.20</div>
+      <div class="note">Thresholds are demo defaults; tune for your domain.</div>
+    </div>
+    <div class="card">
+      <div class="label">Δhol (holonomy gap · drift)</div>
+      <div class="big" id="dholNow">0.05</div>
+      <div class="note">Detects divergence across steps.</div>
+    </div>
+    <div class="card">
+      <div class="label">κ gap (κ_C − κ_P)</div>
+      <div class="big" id="kgapNow">0.00</div>
+      <div class="note">Lead-time proxy via concurrent vs smoothed κ.</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">Paste κ series (comma-separated) · optional</div>
+    <textarea id="kappaInput" placeholder="e.g. 0.20,0.22,0.25,0.23,0.28,0.32,0.35,0.40,0.45,0.52,0.60,0.65,0.72,0.68,0.70,0.75,0.78,0.82,0.85,0.88"></textarea>
+    <div class="row" style="margin-top:8px">
+      <button id="runPaste">Run on pasted κ</button>
+      <button id="runSim">Run live simulator</button>
+      <button id="reset">Reset</button>
+    </div>
+    <div class="note" style="margin-top:6px">
+      We derive κ_P via EMA(κ, α=0.25) and compute a simple Early-Warning Index: EWI = I[Var(κ) ↑ OR ρ₁(κ) ↑] ∨ [κ_C − κ_P ≥ τ_gap]. This is a toy—calibrate on your data.
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="label">Charts</div>
+    <canvas id="chart"></canvas>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <div class="label">Current receipt (demo)</div>
+      <pre id="receipt" class="code">{
+  "attrs": {"status": "green"},
+  "telem": {"kappa": 0.20, "delta_hol": 0.05},
+  "policy": {"k_thresh": 0.75, "hol_thresh": 0.35}
+}</pre>
+      <div class="note">This is a synthetic receipt for the demo. Your real receipts stay in repo <code>docs/receipt.latest.json</code>.</div>
+    </div>
+    <div class="card">
+      <div class="label">How to use this demo</div>
+      <div class="note">
+        • Paste a κ series to test κ_C/κ_P lead-time and bands.<br>
+        • Or tap “Run live simulator.”<br>
+        • Status coloring is illustrative; production policy should self-tune per domain.<br>
+        • No backend. Everything runs in-browser.
+      </div>
+    </div>
+  </div>
+
+  <footer class="muted" style="margin-top:14px">
+    MIT · OpenLine/COLE. Learn more at the <a href="/openline-hub/">OpenLine Hub</a>.
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+  const chartEl = document.getElementById('chart').getContext('2d');
+  const chart = new Chart(chartEl, {
+    type: 'line',
+    data: {
+      labels: [],
+      datasets: [
+        {label:'κ_C (concurrent)', data:[], borderColor:'#ef4444', backgroundColor:'rgba(239,68,68,.15)', fill:true, tension:.25, pointRadius:0},
+        {label:'κ_P (predictive · EMA)', data:[], borderColor:'#16a34a', backgroundColor:'rgba(22,163,74,.12)', fill:true, tension:.25, pointRadius:0},
+        {label:'0.75', data:[], borderColor:'#f59e0b', borderDash:[5,5], pointRadius:0},
+        {label:'0.60', data:[], borderColor:'#9aa3b2', borderDash:[4,6], pointRadius:0}
+      ]
+    },
+    options:{
+      responsive:true, maintainAspectRatio:true,
+      plugins:{legend:{labels:{color:'#e6eaf3'}}},
+      scales:{
+        y:{beginAtZero:true, max:1, ticks:{color:'#9aa3b2'}, grid:{color:'#272a33'}},
+        x:{ticks:{color:'#9aa3b2'}, grid:{color:'#272a33'}}
+      }
+    }
+  });
+
+  // Helpers
+  const ema = (arr, alpha=0.25)=>{
+    const out=[]; let s=arr[0]??0;
+    for (let i=0;i<arr.length;i++){ s = alpha*arr[i] + (1-alpha)*s; out.push(s); }
+    return out;
+  };
+  const variance = (xs)=>{
+    if (xs.length<5) return 0;
+    const m = xs.reduce((a,b)=>a+b,0)/xs.length;
+    return xs.reduce((a,b)=>a+(b-m)*(b-m),0)/xs.length;
+  };
+  const ac1 = (xs)=>{
+    if (xs.length<6) return 0;
+    const m = xs.reduce((a,b)=>a+b,0)/xs.length;
+    const xc = xs.map(v=>v-m);
+    let num=0, den=0;
+    for (let i=1;i<xc.length;i++){ num += xc[i]*xc[i-1]; den += xc[i]*xc[i]; }
+    const r = den>1e-9 ? num/den : 0;
+    return Math.max(0, Math.min(1, r));
+  };
+
+  // UI wires
+  const elStatus = document.getElementById('status');
+  const elK = document.getElementById('kappaNow');
+  const elH = document.getElementById('dholNow');
+  const elGap = document.getElementById('kgapNow');
+  const elReceipt = document.getElementById('receipt');
+  const input = document.getElementById('kappaInput');
+  const runPaste = document.getElementById('runPaste');
+  const runSim = document.getElementById('runSim');
+  const resetBtn = document.getElementById('reset');
+
+  const bands = {kRed:0.75, kAmber:0.60, holRed:0.35, holAmber:0.25, gap:0.08};
+  let t=0, timer=null, ks=[], hs=[];
+
+  function setStatus(k, h){
+    let html = '<span class="badge green">GREEN</span>';
+    if (k >= bands.kRed || h >= bands.holRed) html = '<span class="badge red">RED</span>';
+    else if (k >= bands.kAmber || h >= bands.holAmber) html = '<span class="badge amber">AMBER</span>';
+    elStatus.innerHTML = html;
+  }
+
+  function updateUI(){
+    const kp = ema(ks);
+    const gap = (ks.at(-1)??0) - (kp.at(-1)??0);
+    const k = ks.at(-1)??0, h = hs.at(-1)??0;
+    elK.textContent = k.toFixed(2);
+    elH.textContent = h.toFixed(2);
+    elGap.textContent = (gap).toFixed(2);
+    setStatus(k,h);
+
+    // receipt preview
+    const r = {
+      attrs:{status:(k>=bands.kRed||h>=bands.holRed)?'red':(k>=bands.kAmber||h>=bands.holAmber)?'amber':'green'},
+      telem:{kappa: Number(k.toFixed(3)), delta_hol: Number(h.toFixed(3))},
+      policy:{k_thresh: bands.kRed, hol_thresh: bands.holRed}
+    };
+    elReceipt.textContent = JSON.stringify(r, null, 2);
+
+    // chart
+    chart.data.labels = ks.map((_,i)=>'t='+String(i+1));
+    chart.data.datasets[0].data = ks;
+    chart.data.datasets[1].data = kp;
+    chart.data.datasets[2].data = ks.map(_=>bands.kRed);
+    chart.data.datasets[3].data = ks.map(_=>bands.kAmber);
+    chart.update('none');
+  }
+
+  function resetAll(){
+    clearInterval(timer); timer=null; t=0; ks=[]; hs=[];
+    updateUI();
+  }
+
+  runPaste.onclick = ()=>{
+    resetAll();
+    const vals = (input.value||'').split(/[, \n]+/).map(Number).filter(v=>!isNaN(v));
+    if (vals.length===0){ alert('Paste a comma-separated κ series first.'); return; }
+    ks = vals;
+    // quick drift toy: Δhol rises slowly with κ
+    hs = ks.map((v,i)=>Math.max(0, Math.min(1, 0.04 + 0.02*i)));
+    updateUI();
+  };
+
+  runSim.onclick = ()=>{
+    resetAll();
+    timer = setInterval(()=>{
+      t++;
+      const k = Math.min(0.95, 0.18 + 0.04*t + (Math.random()*0.06 - 0.02));
+      const h = Math.min(0.60, 0.04 + 0.018*t + Math.random()*0.01);
+      ks.push(Math.max(0, k));
+      hs.push(Math.max(0, h));
+
+      // toy early-warning index (CSD-ish)
+      const v = variance(ks.slice(-20));
+      const r = ac1(ks.slice(-20));
+      const kp = ema(ks).at(-1)??0;
+      const gap = (ks.at(-1)??0) - kp;
+      // demo coloring tweak: if (v or r rising) and gap big → nudge AMBER
+      if ((v>0.02 || r>0.4) && gap > bands.gap && ks.at(-1) < bands.kRed){
+        // small cosmetic nudge: mark AMBER by bumping Δhol
+        hs[hs.length-1] = Math.min(bands.holAmber+0.02, hs.at(-1)+0.02);
+      }
+
+      updateUI();
+      if (t>200) clearInterval(timer);
+    }, 300);
+  };
+
+  resetBtn.onclick = resetAll;
+  // initial draw
+  updateUI();
+</script>
+</body>
+</html>
