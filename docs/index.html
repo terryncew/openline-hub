@@ -1,59 +1,67 @@
 <!doctype html>
 <html lang="en">
-<meta charset="utf-8">
-<title>OpenLine Hub · Portable Proof for AI</title>
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="description" content="Live receipts, demos, and researcher kit for OpenLine · COLE · Coherence Dynamics. Proof moves; data doesn't.">
-<style>
-  :root{
-    --bg:#0f1115; --ink:#e9eef7; --muted:#9aa4b2; --tile:#151821; --line:#232838;
-    --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --accent:#00ffa6;
-  }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
-  a{color:inherit;text-decoration:none}
-  code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
-  .wrap{max-width:980px;margin:0 auto;padding:20px}
-  header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
-  .brand{font-weight:700;letter-spacing:.2px}
-  .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-  .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
-  .hero h1{margin:0 0 6px;font-size:22px}
-  .hero p{margin:0;color:var(--muted)}
-  .inline{display:flex;gap:8px;flex-wrap:wrap}
-  .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
-  .btn.secondary{border-color:var(--line);color:var(--ink)}
-  .section{margin:20px 0}
-  .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-  .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
-  .tile h3{margin:0 0 8px;font-size:16px}
-  .muted{color:var(--muted)}
-  .note{font-size:12px;color:var(--muted)}
-  .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-  .card-wrap{margin-top:8px}
-  .statusdot{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;}
-  .s-g{background:var(--ok)} .s-a{background:var(--warn)} .s-r{background:var(--bad)}
-  .trend{position:absolute;top:10px;right:26px;font-size:12px;color:var(--muted)}
-  /* portfolio strip */
-  .strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}
-  .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
-  .dot{width:8px;height:8px;border-radius:50%}
-  .dot.g{background:var(--ok)} .dot.a{background:var(--warn)} .dot.r{background:var(--bad)}
-  .ts{color:var(--muted);font-size:12px;margin-left:auto}
-  /* inputs */
-  input[type="text"]{width:100%;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px}
-  @media (max-width:420px){
-    .btn{padding:9px 12px}
-    .hero h1{font-size:20px}
-  }
-</style>
+<head>
+  <meta charset="utf-8">
+  <title>OpenLine Hub · Portable Proof for AI</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Live receipts, demos, and researcher kit for OpenLine · COLE · Coherence Dynamics. Proof moves; data doesn't.">
 
-<!-- OpenLine card web component -->
-<script type="module"
-  src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js">
-</script>
+  <!-- Open Graph / Twitter cards -->
+  <meta property="og:title" content="OpenLine Hub · Portable Proof for AI">
+  <meta property="og:description" content="Live receipts, demos, and researcher kit. Proof moves; data doesn't.">
+  <meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png">
+  <meta property="og:url" content="https://terryncew.github.io/openline-hub/">
+  <meta name="twitter:card" content="summary_large_image">
 
+  <style>
+    :root{
+      --bg:#0f1115; --ink:#e9eef7; --muted:#9aa4b2; --tile:#151821; --line:#232838;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --accent:#00ffa6;
+    }
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
+    a{color:inherit;text-decoration:none}
+    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
+    .wrap{max-width:980px;margin:0 auto;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
+    .brand{font-weight:700;letter-spacing:.2px}
+    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+    .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
+    .hero h1{margin:0 0 6px;font-size:22px}
+    .hero p{margin:0;color:var(--muted)}
+    .inline{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
+    .btn.secondary{border-color:var(--line);color:var(--ink)}
+    .section{margin:20px 0}
+    .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
+    .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+    .tile h3{margin:0 0 8px;font-size:16px}
+    .muted{color:var(--muted)}
+    .note{font-size:12px;color:var(--muted)}
+    .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+    .card-wrap{margin-top:8px}
+    .statusdot{position:absolute;top:10px;right:10px;width:10px;height:10px;border-radius:50%;}
+    .s-g{background:var(--ok)} .s-a{background:var(--warn)} .s-r{background:var(--bad)}
+    .trend{position:absolute;top:10px;right:26px;font-size:12px;color:var(--muted)}
+    /* portfolio strip */
+    .strip{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:10px 0 0}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+    .dot{width:8px;height:8px;border-radius:50%}
+    .dot.g{background:var(--ok)} .dot.a{background:var(--warn)} .dot.r{background:var(--bad)}
+    .ts{color:var(--muted);font-size:12px;margin-left:auto}
+    /* inputs */
+    input[type="text"]{width:100%;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px}
+    @media (max-width:420px){
+      .btn{padding:9px 12px}
+      .hero h1{font-size:20px}
+    }
+  </style>
+
+  <!-- OpenLine card web component -->
+  <script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js"></script>
+</head>
+<body>
 <div class="wrap">
   <header>
     <div class="brand">OpenLine Hub</div>
@@ -68,13 +76,13 @@
       <a class="btn" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Read: Coherence Dynamics v1.2 (Erratum)</a>
       <a class="btn secondary" href="https://github.com/terryncew/openline-core" target="_blank" rel="noopener">GitHub · openline-core</a>
     </div>
-    <!-- Portfolio snapshot (auto-computed) -->
+    <!-- Portfolio snapshot -->
     <div class="strip" id="portfolio">
-      <div class="pill"><span class="dot g"></span><span id="cG">G: —</span></div>
+      <div class="pill"><span class="dot g"></span><span id="cG">G: Loading…</span></div>
       <div class="pill"><span class="dot a"></span><span id="cA">A: —</span></div>
       <div class="pill"><span class="dot r"></span><span id="cR">R: —</span></div>
-      <div class="pill">Health: <b id="health">—</b></div>
-      <div class="ts" id="ts">Updated —</div>
+      <div class="pill">Health: <b id="health">Loading…</b></div>
+      <div class="ts" id="ts">Scanning repos…</div>
     </div>
   </div>
 
@@ -87,8 +95,7 @@
         <span class="chip">live</span>
       </div>
       <div class="card-wrap">
-        <openline-card mode="compact"
-          src="https://terryncew.github.io/terrynce-stack/receipt.latest.json?v=1"></openline-card>
+        <openline-card mode="compact" src="https://terryncew.github.io/terrynce-stack/receipt.latest.json?v=1"></openline-card>
       </div>
       <div class="note">If a tile shows “No JSON found,” enable Pages (main → <code>/docs</code>) and add <code>docs/receipt.latest.json</code>.</div>
     </div>
@@ -141,6 +148,7 @@
         <div class="inline" style="margin-top:6px">
           <input id="valUrl" type="text" placeholder="https://.../docs/receipt.latest.json" style="flex:1;min-width:220px">
           <button class="btn" id="valBtn" type="button">Validate</button>
+          <button class="btn secondary" type="button" onclick="copyTemplate()">Copy Template</button>
         </div>
         <pre id="valOut" class="note" style="white-space:pre-wrap;margin-top:8px"></pre>
       </div>
@@ -194,7 +202,15 @@ const cR = document.getElementById('cR');
 const health = document.getElementById('health');
 const ts = document.getElementById('ts');
 
-function updateStrip(){
+function updateStrip(loading=false){
+  if(loading){
+    cG.textContent = 'G: Loading…';
+    cA.textContent = 'A: —';
+    cR.textContent = 'R: —';
+    health.textContent = 'Loading…';
+    ts.textContent = 'Scanning repos…';
+    return;
+  }
   cG.textContent = 'G: ' + ctG;
   cA.textContent = 'A: ' + ctA;
   cR.textContent = 'R: ' + ctR;
@@ -202,13 +218,14 @@ function updateStrip(){
   health.textContent = ctT? (pct + '% GREEN') : '—';
   ts.textContent = 'Updated ' + new Date().toLocaleTimeString();
 }
+updateStrip(true);
 
 /* ---- build a repo tile ---- */
 function tileFor(repo){
   const urlBase=`https://terryncew.github.io/${repo}`;
-  const src1 = `${urlBase}/receipt.latest.json${bust}`;
+  const src1   = `${urlBase}/receipt.latest.json${bust}`;
   const srcRaw = `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.latest.json${bust}`;
-  const histUrl = `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.history.json${bust}`;
+  const histUrl= `https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.history.json${bust}`;
 
   const a=document.createElement("a");
   a.className="tile";
@@ -223,10 +240,10 @@ function tileFor(repo){
     <div class="note"></div>
   `;
 
-  const card = a.querySelector("openline-card");
-  const note = a.querySelector(".note");
-  const dot  = a.querySelector(".statusdot");
-  const trend= a.querySelector(".trend");
+  const card  = a.querySelector("openline-card");
+  const note  = a.querySelector(".note");
+  const dot   = a.querySelector(".statusdot");
+  const trend = a.querySelector(".trend");
 
   const fallback=()=>{
     if(!card.dataset.fell){ card.dataset.fell=1; card.setAttribute("src",srcRaw); note.textContent="fallback: RAW"; }
@@ -236,51 +253,82 @@ function tileFor(repo){
   card.addEventListener("error",fallback);
 
   // fetch latest for color + trend + counters
-  fetch(srcRaw).then(r=>r.ok?r.text():Promise.reject()).then(txt=>{
-    let obj; try{ obj=JSON.parse(txt);}catch{ return; }
-    const k = (obj?.telem?.kappa_eff) ?? (obj?.signals?.kappa) ?? 0;
-    const h = (obj?.telem?.delta_hol) ?? (obj?.signals?.delta_hol) ?? 0;
-    const cycles = (obj?.digest?.cycle_plus) ?? 0;
+  fetch(srcRaw)
+    .then(r=>r.ok?r.text():Promise.reject(new Error('fetch failed')))
+    .then(txt=>{
+      let obj; try{ obj=JSON.parse(txt);}catch{ throw new Error('parse error'); }
 
-    const isRed   = cycles>0 || k>=0.75 || h>=0.35;
-    const isAmber = !isRed && (k>=0.60 || h>=0.25);
-    dot.className = 'statusdot ' + (isRed ? 's-r' : isAmber ? 's-a' : 's-g');
+      // 1) prefer declared status; 2) otherwise infer from thresholds
+      let declared = (obj?.attrs?.status||'').toLowerCase();
+      const k = (obj?.telem?.kappa_eff) ?? (obj?.signals?.kappa) ?? 0;
+      const h = (obj?.telem?.delta_hol) ?? (obj?.signals?.delta_hol) ?? 0;
+      const cycles = (obj?.digest?.cycle_plus) ?? 0;
 
-    ctT++;
-    if(isRed) ctR++; else if(isAmber) ctA++; else ctG++;
-    updateStrip();
-
-    // trend from history
-    fetch(histUrl).then(r=>r.ok?r.json():[]).then(hist=>{
-      if(Array.isArray(hist) && hist.length>=2){
-        const last  = hist[hist.length-1];
-        const prev  = hist[hist.length-2];
-        const kl = (last?.telem?.kappa_eff) ?? (last?.signals?.kappa);
-        const kp = (prev?.telem?.kappa_eff) ?? (prev?.signals?.kappa);
-        if(typeof kl==='number' && typeof kp==='number'){
-          const d = kl - kp;
-          trend.textContent = d>0.01 ? '↑' : d<-0.01 ? '↓' : '→';
-        }
+      let isRed=false, isAmber=false;
+      if(declared==='red'){ isRed=true; }
+      else if(declared==='amber'){ isAmber=true; }
+      else if(declared==='green'){ /* stays green */ }
+      else {
+        // fallback to inference when no declared status
+        isRed   = cycles>0 || k>=0.75 || h>=0.35;
+        isAmber = !isRed && (k>=0.60 || h>=0.25);
+        declared = isRed ? 'red' : isAmber ? 'amber' : 'green';
       }
-    }).catch(()=>{});
-  }).catch(()=>{});
+
+      dot.className = 'statusdot ' + (isRed ? 's-r' : isAmber ? 's-a' : 's-g');
+
+      // counters only for valid receipts
+      ctT++;
+      if(isRed) ctR++; else if(isAmber) ctA++; else ctG++;
+      updateStrip();
+
+      // trend from history
+      fetch(histUrl).then(r=>r.ok?r.json():[]).then(hist=>{
+        if(Array.isArray(hist) && hist.length>=2){
+          const last  = hist[hist.length-1];
+          const prev  = hist[hist.length-2];
+          const kl = (last?.telem?.kappa_eff) ?? (last?.signals?.kappa);
+          const kp = (prev?.telem?.kappa_eff) ?? (prev?.signals?.kappa);
+          if(typeof kl==='number' && typeof kp==='number'){
+            const d = kl - kp;
+            trend.textContent = d>0.01 ? '↑' : d<-0.01 ? '↓' : '→';
+          }
+        }
+      }).catch(()=>{ /* silent */ });
+    })
+    .catch((e)=>{
+      note.textContent = `Receipt unavailable (${e.message || 'error'})`;
+    });
 
   return a;
 }
 
 /* ---- render tiles ---- */
 for(const r of repos) grid.appendChild(tileFor(r));
-updateStrip();
 
 /* ---- validator ---- */
-const valBtn = document.getElementById('valBtn');
-valBtn?.addEventListener('click', async ()=>{
+function copyTemplate(){
+  const template = {
+    receipt_version: "0.1",
+    attrs: { status: "green" },
+    telem: { kappa_eff: 0.25, delta_hol: 0.05 },
+    digest: { b0:1, cycle_plus:0, x_frontier:0, s_over_c:1.0, depth:1 }
+  };
+  const txt = JSON.stringify(template, null, 2);
+  navigator.clipboard.writeText(txt).then(()=>{
+    const out = document.getElementById('valOut');
+    out.textContent = '📋 Template copied to clipboard';
+  });
+}
+
+document.getElementById('valBtn')?.addEventListener('click', async ()=>{
   const out = document.getElementById('valOut');
   out.textContent = '…checking';
   const url = (document.getElementById('valUrl').value||'').trim();
   if(!url){ out.textContent='Provide a URL to a JSON receipt.'; return; }
   try{
     const res = await fetch(url, {cache:'no-store'});
+    if(!res.ok) throw new Error('fetch failed');
     const txt = await res.text();
     const bytes = new TextEncoder().encode(txt).length;
     const j = JSON.parse(txt);
@@ -297,8 +345,9 @@ valBtn?.addEventListener('click', async ()=>{
 
     out.textContent = errs.length? `❌ FAIL\n- ${errs.join('\n- ')}` : `✅ PASS\nbytes=${bytes}, status=${status||'n/a'}`;
   }catch(e){
-    document.getElementById('valOut').textContent = '❌ Could not fetch/parse JSON';
+    document.getElementById('valOut').textContent = `❌ ${e.message||'Could not fetch/parse JSON'}`;
   }
 });
 </script>
+</body>
 </html>
