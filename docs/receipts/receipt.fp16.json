@@ -1,21 +1,20 @@
 {
+  "receipt_version": "1.5-P",
   "version": "OLR/1.5-P",
+  "model": { "family": "demo-llm" },
   "issued_at": "2025-11-02T00:00:00Z",
-  "model": { "family": "demo-llm", "fingerprint": "demo-fingerprint" },
-  "precision": { "train_dtype": "fp16", "infer_dtype": "fp16", "mismatch": false, "note": "Declared only; no activations logged." },
-  "run": { "id": "4b9a7d7d-0000-4000-9000-111111111111", "ts": "2025-11-02T00:00:00Z" },
-  "dials": {
-    "stress": 0.121,
-    "drift": 0.083,
-    "coherence": 0.734,
-    "precision_consistency": 1.0,
-    "precision_risk": 0.0
+  "attrs": { "status": "green" },
+
+  "precision": { "train_dtype": "fp16", "infer_dtype": "fp16" },
+
+  "point":   "Run the demo at fp16/fp16 for speed on commodity GPUs.",
+  "because": "κ and Δhol remain within green bounds across short sequences.",
+  "but":     "Overflow risk rises on very long contexts and mixed-device runs.",
+  "so":      "Ship fp16 for the hub demo; keep a bf16 path for ≥4k tokens.",
+
+  "telem": {
+    "kappa_eff": 0.22,
+    "delta_hol": 0.03
   },
-  "badge": "GREEN",
-  "signature": {
-    "alg": "none",
-    "pub": "",
-    "sig": "",
-    "digest": "a0f2f9f4f7d2c6b9b2f5a4e1d0c9b8a7"
-  }
+  "digest": { "cycle_plus": 0 }
 }
