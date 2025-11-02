@@ -4,17 +4,11 @@
   "model": { "family": "demo-llm" },
   "issued_at": "2025-11-02T00:00:05Z",
   "attrs": { "status": "green" },
-
   "precision": { "train_dtype": "fp16", "infer_dtype": "bf16" },
-
-  "point":   "Fallback uses fp16 weights with bf16 inference for stability.",
-  "because": "bf16 reduces overflow on long prompts without retraining.",
-  "but":     "Slight throughput penalty vs pure fp16 on some cards.",
-  "so":      "Use for long-context tests; switch to fp16 for quick demos.",
-
-  "telem": {
-    "kappa_eff": 0.24,
-    "delta_hol": 0.04
-  },
+  "point":   "Fallback: fp16 weights, bf16 inference for stability on long prompts.",
+  "because": "bf16 reduces overflow without retraining.",
+  "but":     "Minor throughput penalty vs pure fp16 on some cards.",
+  "so":      "Use for long-context tests; swap to fp16 for quick demos.",
+  "telem": { "kappa_eff": 0.24, "delta_hol": 0.04 },
   "digest": { "cycle_plus": 0 }
 }
