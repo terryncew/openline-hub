@@ -4,17 +4,11 @@
   "model": { "family": "demo-llm" },
   "issued_at": "2025-11-02T00:00:00Z",
   "attrs": { "status": "green" },
-
   "precision": { "train_dtype": "fp16", "infer_dtype": "fp16" },
-
-  "point":   "Run the demo at fp16/fp16 for speed on commodity GPUs.",
-  "because": "κ and Δhol remain within green bounds across short sequences.",
-  "but":     "Overflow risk rises on very long contexts and mixed-device runs.",
-  "so":      "Ship fp16 for the hub demo; keep a bf16 path for ≥4k tokens.",
-
-  "telem": {
-    "kappa_eff": 0.22,
-    "delta_hol": 0.03
-  },
+  "point":   "Run fp16/fp16 for speed on commodity GPUs.",
+  "because": "κ and Δhol remain within green bounds on short sequences.",
+  "but":     "Overflow risk rises on very long contexts or mixed-device runs.",
+  "so":      "Ship fp16 for demos; keep a bf16 path for ≥4k tokens.",
+  "telem": { "kappa_eff": 0.22, "delta_hol": 0.03 },
   "digest": { "cycle_plus": 0 }
 }
