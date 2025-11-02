@@ -1,21 +1,24 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
+  <meta charset="utf-8">
   <title>OpenLine Hub · Portable Proof for AI</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Live receipts + researcher kit for OpenLine. Proof moves; data doesn't." />
-  <meta property="og:title" content="OpenLine Hub · Portable Proof for AI" />
-  <meta property="og:description" content="Live receipts, exclusives, and researcher kit. Proof moves; data doesn't." />
-  <meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png" />
-  <meta property="og:url" content="https://terryncew.github.io/openline-hub/" />
-  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <meta name="description" content="Live receipts, featured demos, and a tiny researcher kit. Proof moves; data doesn’t.">
+  <meta property="og:title" content="OpenLine Hub · Portable Proof for AI">
+  <meta property="og:description" content="Live receipts, demos, and researcher kit. Proof moves; data doesn't.">
+  <meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png">
+  <meta property="og:url" content="https://terryncew.github.io/openline-hub/">
+  <meta name="twitter:card" content="summary_large_image">
   <style>
-    :root{--bg:#0f1115;--ink:#e9eef7;--muted:#9aa4b2;--tile:#151821;--line:#232838;--ok:#16a34a;--warn:#f59e0b;--bad:#ef4444}
+    :root{
+      --bg:#0f1115; --ink:#e9eef7; --muted:#9aa4b2; --tile:#151821; --line:#232838;
+      --ok:#16a34a; --warn:#f59e0b; --bad:#ef4444; --chipbg:#0b0d12; --chipline:#1c2130;
+    }
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
     a{color:inherit;text-decoration:none}
-    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
+    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:var(--chipbg);border:1px solid var(--chipline);border-radius:6px;padding:2px 6px}
     .wrap{max-width:980px;margin:0 auto;padding:20px}
     header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
     .brand{font-weight:700;letter-spacing:.2px}
@@ -32,20 +35,19 @@
     .tile h3{margin:0 0 8px;font-size:16px}
     .muted{color:var(--muted)}
     .note{font-size:12px;color:var(--muted)}
-    .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-    .status{position:absolute;top:12px;right:12px;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line)}
-    .ok{background:#102015;border-color:#1d3b27;color:#a7eab7}
-    .warn{background:#2a220b;border-color:#3d2e0a;color:#ffd089}
-    .bad{background:#2a0d12;border-color:#4a1620;color:#ffb0bb}
-    .r-card{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:#0f1115;padding:12px}
-    .r-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1a1f2b}
-    .r-row:last-child{border-bottom:0}
-    .label{letter-spacing:.5px;color:#9aa4b2}
-    .value{max-width:70%;text-align:right}
-    input[type="text"]{width:100%;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px}
+    .card-wrap{margin-top:8px}
+    /* header meta: status + precision */
+    .meta{display:flex;gap:8px;align-items:center;margin-left:auto}
+    .pill{display:inline-flex;align-items:center;gap:6px;padding:6px 10px;border:1px solid var(--line);border-radius:999px}
+    .pill.status{font-weight:600}
+    .pill.green{border-color:#1d3b29;background:#0f1a12;color:#9fe2b1}
+    .pill.amber{border-color:#3d2e0a;background:#1e180a;color:#ffd089}
+    .pill.red{border-color:#3a1118;background:#1e0c0f;color:#ffb0bb}
+    .pill.prec{background:#0b0d12;border-color:#1c2130;color:#c7d2e0}
+    /* avoid any visual clash with the in-card badge by giving the card breathing room */
+    openline-card{display:block;margin-top:6px}
     @media (max-width:420px){.btn{padding:9px 12px}.hero h1{font-size:20px}}
   </style>
-  <!-- Keep the kit for the *featured* external card only -->
   <script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js"></script>
 </head>
 <body>
@@ -57,44 +59,42 @@
 
   <div class="hero">
     <h1>Proof moves; data doesn’t.</h1>
-    <p>Receipts, exclusives, and a tiny researcher kit. Triage, not truth. Green ≤640 B · Amber/Red ≤800 B.</p>
+    <p>Featured receipts and a tiny researcher kit. <b>OpenLine</b> (receipts) · <b>COLE</b> (coherence).</p>
     <div class="inline" style="margin-top:10px">
       <a class="btn" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Read: Coherence Dynamics v1.2</a>
       <a class="btn secondary" href="https://github.com/terryncew/openline-core" target="_blank" rel="noopener">GitHub · openline-core</a>
     </div>
   </div>
 
-  <!-- Featured (external) -->
+  <!-- Featured receipt -->
   <div class="section">
     <h2 style="margin:0 0 10px">Featured receipt</h2>
     <div class="tile">
       <div class="inline" style="justify-content:space-between;align-items:center">
         <div class="muted">terrynce-stack / <code>receipt.latest.json</code></div>
-        <span class="chip">live</span>
+        <span class="pill prec">live</span>
       </div>
-      <div class="r-card">
+      <div class="card-wrap">
         <openline-card mode="compact" src="https://terryncew.github.io/terrynce-stack/receipt.latest.json?v=1"></openline-card>
       </div>
-      <div class="note">If you see an error here, ensure Pages has <code>/docs/receipt.latest.json</code> in that repo.</div>
+      <div class="note">If you see “No JSON found,” enable Pages (main → <code>/docs</code>) and add <code>docs/receipt.latest.json</code>.</div>
     </div>
   </div>
 
-  <!-- Local receipts (custom lightweight viewer to avoid CDN-resolve bug) -->
+  <!-- Local receipts (Precision Pulse) -->
   <div class="section">
     <h2 style="margin:0 0 8px">Local receipts (Precision Pulse v1.5-P)</h2>
-    <div class="note">Reads <code>docs/receipts/manifest.json</code> and renders each item below.</div>
+    <div class="note">Reads <code>receipts/manifest.json</code> and renders each item below.</div>
     <div id="rxGrid" class="grid" aria-live="polite"></div>
   </div>
 
-  <!-- Exclusive -->
+  <!-- Lab & Demos -->
   <div class="section">
-    <h2 style="margin:0 0 8px">Exclusive</h2>
+    <h2 style="margin:0 0 8px">Lab & Demos</h2>
     <div class="grid">
-      <a class="tile" href="./exclusive.html">
-        <h3>Field-of-Use Exclusivity (12 months)</h3>
-        <p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p>
-        <div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14 d</div>
-      </a>
+      <a class="tile" href="./exclusive.html"><h3>Field-of-Use Exclusivity (12 months)</h3><p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p><div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14 d</div></a>
+      <a class="tile" href="https://terryncew.github.io/openline-incident/?utm_source=openline-hub" target="_blank" rel="noopener"><h3>Incident Response Demo</h3><p class="muted">Normal → Incident → Recovery. Forensic receipts + auto rollback.</p><div class="note">Live receipts · 3-card view</div></a>
+      <a class="tile" href="https://terryncew.github.io/openline-csm/?utm_source=openline-hub" target="_blank" rel="noopener"><h3>CSM (Canon · Coach · Students)</h3><p class="muted">Budget & Bend law with style-tuning. Shadow → Tuning Receipt → Live.</p><div class="note">Receipts-native · Zero-infra</div></a>
     </div>
   </div>
 
@@ -102,9 +102,9 @@
   <div class="section">
     <h2 style="margin:0 0 8px">Researcher kit</h2>
     <div class="tile">
-      <p class="muted">Validate a receipt URL or copy a template.</p>
+      <p class="muted">Paste a receipt URL to validate size/status.</p>
       <div class="inline" style="margin-top:6px">
-        <input id="valUrl" type="text" placeholder="https://.../docs/receipt.latest.json" style="flex:1;min-width:220px" />
+        <input id="valUrl" type="text" placeholder="https://.../docs/receipt.latest.json" style="flex:1;min-width:220px;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px">
         <button class="btn" id="valBtn" type="button">Validate</button>
         <button class="btn secondary" type="button" onclick="copyTemplate()">Copy Template</button>
       </div>
@@ -113,77 +113,76 @@
   </div>
 
   <footer class="section" style="margin-bottom:30px">
-    <div class="muted">OpenLine · COLE · MIT. © Sir Terrynce.</div>
+    <div class="muted">OpenLine · COLE · MIT. Contact via GitHub issues. © Sir Terrynce.</div>
   </footer>
 </div>
 
-<script>
-/* ---------- Local receipts: custom viewer (no web component) ---------- */
+<script type="module">
+/* ---------- Local receipts (Precision Pulse) ---------- */
 const rxGrid = document.getElementById('rxGrid');
 const rxRoot = 'receipts';
 const bust = '?v=' + Date.now();
 
-function chipClass(pair){
-  const [a,b]=(pair||'').toLowerCase().split('/');
-  return (a && b && a===b) ? 'chip ok' : 'chip';
-}
-function badgeClass(status){
-  const s=(status||'').toLowerCase();
-  return s==='red'?'status bad': s==='amber'?'status warn':'status ok';
-}
-function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!==undefined) e.textContent=text; return e; }
+const STATUS_LABEL = { green:'CLEAN', amber:'NOISY', red:'RISK' };
+const STATUS_CLASS = { green:'green', amber:'amber', red:'red' };
 
-async function loadManifestSafe(){
-  try{ const r = await fetch(`${rxRoot}/manifest.json${bust}`, {cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); }
-  catch(_){ return { files: [] }; }
+const el=(t,c,txt)=>{ const e=document.createElement(t); if(c) e.className=c; if(txt!==undefined) e.textContent=txt; return e; };
+
+async function loadManifest(){
+  try{
+    const r = await fetch(`${rxRoot}/manifest.json`, {cache:'no-store'});
+    if(!r.ok) throw new Error('manifest not found');
+    return await r.json();
+  }catch{ return { files: [] }; }
 }
 
-function renderLocalReceipt(path, rec){
+function renderTile(path, rec){
   const tile = el('div','tile');
-  const title = `${rec?.model?.family || 'model'} · ${rec?.version || 'OLR'}`;
-  const precPair = `${rec?.precision?.train_dtype || '—'}/${rec?.precision?.infer_dtype || '—'}`.toLowerCase();
 
-  const head = el('div','inline'); head.style.justifyContent='space-between'; head.style.alignItems='center';
-  const left = el('div'); left.appendChild(el('h3','',title)); left.appendChild(el('div','muted', rec?.issued_at || rec?.run?.ts || ''));
-  const right = el('div'); const chip = el('span', chipClass(precPair), precPair); right.appendChild(chip);
-  head.appendChild(left); head.appendChild(right);
+  const name = (rec?.model?.family || 'demo-llm') + ' · ' + (rec?.version || 'OLR/1.5-P');
+  const h = el('h3','', name);
+  const ts = el('div','muted', rec?.issued_at || rec?.run?.ts || '');
 
-  const badge = el('span', badgeClass(rec?.attrs?.status),'');
-  badge.textContent = (rec?.attrs?.status||'green').toLowerCase()==='green' ? 'OK' :
-                      (rec?.attrs?.status||'').toLowerCase()==='amber' ? 'WARN' : 'ALERT';
-  badge.setAttribute('aria-label', 'status');
+  // header row (left: title/meta; right: status + precision)
+  const row = el('div','inline'); row.style.justifyContent='space-between'; row.style.alignItems='center';
+  const left = el('div'); left.appendChild(h); left.appendChild(ts);
 
-  const card = el('div','r-card');
-  const rows = [
-    ['POINT',   rec?.point   ?? '—'],
-    ['BECAUSE', rec?.because ?? '—'],
-    ['BUT',     rec?.but     ?? '—'],
-    ['SO',      rec?.so      ?? '—']
-  ];
-  for(const [k,v] of rows){
-    const row=el('div','r-row'); row.appendChild(el('div','label',k)); row.appendChild(el('div','value',String(v))); card.appendChild(row);
-  }
+  const status = String(rec?.attrs?.status || 'green').toLowerCase();
+  const statusPill = el('span', `pill status ${STATUS_CLASS[status]||'green'}`, STATUS_LABEL[status]||'CLEAN');
 
-  const srcNote = el('div','note'); srcNote.textContent = 'source: ' + path;
+  const precPair = ((rec?.precision?.train_dtype || 'fp16') + '/' + (rec?.precision?.infer_dtype || 'fp16')).toLowerCase();
+  const prec = el('span','pill prec', precPair);
 
-  tile.appendChild(badge);
-  tile.appendChild(head);
-  tile.appendChild(card);
+  const right = el('div','meta'); right.appendChild(statusPill); right.appendChild(prec);
+  row.appendChild(left); row.appendChild(right);
+
+  const wrap = el('div','card-wrap');
+  const card = document.createElement('openline-card');
+  card.setAttribute('mode','compact');
+  card.setAttribute('src', path + bust);
+  wrap.appendChild(card);
+
+  const srcNote = el('div','note', 'source: ' + path);
+
+  tile.appendChild(row);
+  tile.appendChild(wrap);
   tile.appendChild(srcNote);
   rxGrid.appendChild(tile);
 }
 
-(async function boot(){
-  const manifest = await loadManifestSafe();
-  if(!manifest.files?.length){ rxGrid.appendChild(el('div','note','No local receipts found. Add files to docs/receipts/ and update manifest.json.')); return; }
+(async function render(){
+  const manifest = await loadManifest(); // { files: [...] }
+  if(!manifest.files || manifest.files.length===0){
+    rxGrid.appendChild(el('div','note','No local receipts found. Add files to docs/receipts/ and update manifest.json.'));
+    return;
+  }
   for(const name of manifest.files){
-    const rel = `${rxRoot}/${name}`;
-    const abs = new URL(rel, window.location.href).toString();
+    const path = `${rxRoot}/${name}`;
     try{
-      const r = await fetch(abs + (abs.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+      const r = await fetch(path, {cache:'no-store'});
       if(!r.ok) throw new Error('fetch failed');
       const rec = await r.json();
-      renderLocalReceipt(rel, rec);
+      renderTile(path, rec);
     }catch(e){
       const t = el('div','tile'); t.appendChild(el('div','note', `Failed to load ${name}: ${e.message||'error'}`));
       rxGrid.appendChild(t);
@@ -191,36 +190,36 @@ function renderLocalReceipt(path, rec){
   }
 })();
 
-/* ---------- Tiny validator + template ---------- */
+/* ---------- Validator ---------- */
 function copyTemplate(){
   const template = {
-    receipt_version:"1.5-P",
+    receipt_version:"0.1",
     version:"OLR/1.5-P",
-    model:{family:"demo-llm"},
-    issued_at:new Date().toISOString(),
-    attrs:{status:"green"},
-    precision:{train_dtype:"fp16", infer_dtype:"fp16"},
-    point:"Run fp16/fp16 for speed on commodity GPUs.",
-    because:"κ and Δhol remain within green bounds on short sequences.",
-    but:"Overflow risk rises on very long contexts or mixed-device runs.",
-    so:"Ship fp16 for demos; keep a bf16 path for ≥4k tokens.",
-    telem:{kappa_eff:0.22, delta_hol:0.03},
-    digest:{cycle_plus:0}
+    model:{ family:"demo-llm" },
+    attrs:{ status:"green" },
+    precision:{ train_dtype:"fp16", infer_dtype:"fp16" },
+    run:{ ts:new Date().toISOString() },
+    claims:{ point:"", because:"", but:"", so:"" },
+    telem:{ kappa_eff:0.25, delta_hol:0.05 }
   };
-  navigator.clipboard.writeText(JSON.stringify(template,null,2))
-    .then(()=>{ document.getElementById('valOut').textContent='📋 Template copied to clipboard'; });
+  navigator.clipboard.writeText(JSON.stringify(template,null,2)).then(()=>{
+    document.getElementById('valOut').textContent='📋 Template copied to clipboard';
+  });
 }
+
 document.getElementById('valBtn')?.addEventListener('click', async ()=>{
-  const out = document.getElementById('valOut'); out.textContent = '…checking';
-  const url = (document.getElementById('valUrl').value||'').trim(); if(!url){ out.textContent='Provide a URL to a JSON receipt.'; return; }
+  const out = document.getElementById('valOut');
+  out.textContent = '…checking';
+  const url = (document.getElementById('valUrl').value||'').trim();
+  if(!url){ out.textContent='Provide a URL to a JSON receipt.'; return; }
   try{
     const res = await fetch(url,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed');
     const txt = await res.text(); const bytes = new TextEncoder().encode(txt).length; const j = JSON.parse(txt);
     const errs = [];
     if(!j.receipt_version) errs.push('missing receipt_version');
     if(!(j.attrs && typeof j.attrs.status==='string')) errs.push('missing attrs.status');
-    const hasK = (j.telem && (('kappa_eff' in j.telem) || (j.signals && ('kappa' in j.signals))));
-    if(!hasK) errs.push('missing telem.kappa_eff or signals.kappa');
+    const kpath = (j.telem && (('kappa_eff' in j.telem) || (j.signals && ('kappa' in j.signals))));
+    if(!kpath) errs.push('missing telem.kappa_eff or signals.kappa');
     const status = (j.attrs?.status||'').toLowerCase();
     if(status==='green' && bytes>640) errs.push(`green exceeds 640B (${bytes})`);
     if((status==='amber'||status==='red') && bytes>800) errs.push(`${status} exceeds 800B (${bytes})`);
