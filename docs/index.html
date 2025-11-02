@@ -6,28 +6,46 @@
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <meta name="description" content="Live receipts + researcher kit for OpenLine. Proof moves; data doesn't." />
   <meta property="og:title" content="OpenLine Hub · Portable Proof for AI" />
-  <meta property="og:description" content="Live receipts, demos, and researcher kit. Proof moves; data doesn't." />
+  <meta property="og:description" content="Live receipts, exclusives, and researcher kit. Proof moves; data doesn't." />
   <meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png" />
   <meta property="og:url" content="https://terryncew.github.io/openline-hub/" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
     :root{--bg:#0f1115;--ink:#e9eef7;--muted:#9aa4b2;--tile:#151821;--line:#232838;--ok:#16a34a;--warn:#f59e0b;--bad:#ef4444}
-    *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
-    a{color:inherit;text-decoration:none} code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
-    .wrap{max-width:980px;margin:0 auto;padding:20px} header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
-    .brand{font-weight:700;letter-spacing:.2px} .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
+    *{box-sizing:border-box}
+    html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
+    a{color:inherit;text-decoration:none}
+    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
+    .wrap{max-width:980px;margin:0 auto;padding:20px}
+    header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
+    .brand{font-weight:700;letter-spacing:.2px}
+    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
     .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
-    .hero h1{margin:0 0 6px;font-size:22px} .hero p{margin:0;color:var(--muted)} .inline{display:flex;gap:8px;flex-wrap:wrap}
+    .hero h1{margin:0 0 6px;font-size:22px}
+    .hero p{margin:0;color:var(--muted)}
+    .inline{display:flex;gap:8px;flex-wrap:wrap}
     .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
-    .btn.secondary{border-color:var(--line);color:var(--ink)} .section{margin:20px 0}
+    .btn.secondary{border-color:var(--line);color:var(--ink)}
+    .section{margin:20px 0}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
     .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
-    .tile h3{margin:0 0 8px;font-size:16px} .muted{color:var(--muted)} .note{font-size:12px;color:var(--muted)} .card-wrap{margin-top:8px}
+    .tile h3{margin:0 0 8px;font-size:16px}
+    .muted{color:var(--muted)}
+    .note{font-size:12px;color:var(--muted)}
     .chip{display:inline-block;font-size:11px;padding:4px 8px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-    .chip-prec-green{background:#0f1a12;border-color:#173224;color:#9fe2b1} .chip-prec-amber{background:#1e180a;border-color:#3d2e0a;color:#ffd089}
+    .status{position:absolute;top:12px;right:12px;font-size:12px;padding:4px 8px;border-radius:999px;border:1px solid var(--line)}
+    .ok{background:#102015;border-color:#1d3b27;color:#a7eab7}
+    .warn{background:#2a220b;border-color:#3d2e0a;color:#ffd089}
+    .bad{background:#2a0d12;border-color:#4a1620;color:#ffb0bb}
+    .r-card{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:#0f1115;padding:12px}
+    .r-row{display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid #1a1f2b}
+    .r-row:last-child{border-bottom:0}
+    .label{letter-spacing:.5px;color:#9aa4b2}
+    .value{max-width:70%;text-align:right}
     input[type="text"]{width:100%;background:#0b0d12;color:var(--ink);border:1px solid #1c2130;border-radius:8px;padding:8px}
     @media (max-width:420px){.btn{padding:9px 12px}.hero h1{font-size:20px}}
   </style>
+  <!-- Keep the kit for the *featured* external card only -->
   <script type="module" src="https://cdn.jsdelivr.net/gh/terryncew/openline-core@main/receipts-kit/openline-card.js"></script>
 </head>
 <body>
@@ -39,15 +57,14 @@
 
   <div class="hero">
     <h1>Proof moves; data doesn’t.</h1>
-    <p>Live receipts and a tiny researcher kit for <b>OpenLine</b> (receipts) and <b>COLE</b> (coherence signals).
-       Triage, not truth. Green ≤640 B · Amber/Red ≤800 B.</p>
+    <p>Receipts, exclusives, and a tiny researcher kit. Triage, not truth. Green ≤640 B · Amber/Red ≤800 B.</p>
     <div class="inline" style="margin-top:10px">
       <a class="btn" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Read: Coherence Dynamics v1.2</a>
       <a class="btn secondary" href="https://github.com/terryncew/openline-core" target="_blank" rel="noopener">GitHub · openline-core</a>
     </div>
   </div>
 
-  <!-- Featured receipt -->
+  <!-- Featured (external) -->
   <div class="section">
     <h2 style="margin:0 0 10px">Featured receipt</h2>
     <div class="tile">
@@ -55,21 +72,21 @@
         <div class="muted">terrynce-stack / <code>receipt.latest.json</code></div>
         <span class="chip">live</span>
       </div>
-      <div class="card-wrap">
+      <div class="r-card">
         <openline-card mode="compact" src="https://terryncew.github.io/terrynce-stack/receipt.latest.json?v=1"></openline-card>
       </div>
-      <div class="note">If a tile shows “No JSON found,” enable Pages (<code>/docs</code>) and add <code>docs/receipt.latest.json</code>.</div>
+      <div class="note">If you see an error here, ensure Pages has <code>/docs/receipt.latest.json</code> in that repo.</div>
     </div>
   </div>
 
-  <!-- Local receipts (Precision Pulse) -->
+  <!-- Local receipts (custom lightweight viewer to avoid CDN-resolve bug) -->
   <div class="section">
     <h2 style="margin:0 0 8px">Local receipts (Precision Pulse v1.5-P)</h2>
     <div class="note">Reads <code>docs/receipts/manifest.json</code> and renders each item below.</div>
     <div id="rxGrid" class="grid" aria-live="polite"></div>
   </div>
 
-  <!-- Exclusive offer -->
+  <!-- Exclusive -->
   <div class="section">
     <h2 style="margin:0 0 8px">Exclusive</h2>
     <div class="grid">
@@ -85,17 +102,13 @@
   <div class="section">
     <h2 style="margin:0 0 8px">Researcher kit</h2>
     <div class="tile">
-      <p class="muted">Validate a receipt URL or grab a template.</p>
+      <p class="muted">Validate a receipt URL or copy a template.</p>
       <div class="inline" style="margin-top:6px">
         <input id="valUrl" type="text" placeholder="https://.../docs/receipt.latest.json" style="flex:1;min-width:220px" />
         <button class="btn" id="valBtn" type="button">Validate</button>
         <button class="btn secondary" type="button" onclick="copyTemplate()">Copy Template</button>
       </div>
       <pre id="valOut" class="note" style="white-space:pre-wrap;margin-top:8px"></pre>
-      <div class="note" style="margin-top:10px">
-        CLI: <code>uv run olp-validate docs/receipt.latest.json</code> ·
-        <code>uv run olp-server --port 8088</code>
-      </div>
     </div>
   </div>
 
@@ -105,66 +118,72 @@
 </div>
 
 <script>
-/* --- Local receipts renderer (absolute URL fix) --- */
+/* ---------- Local receipts: custom viewer (no web component) ---------- */
 const rxGrid = document.getElementById('rxGrid');
 const rxRoot = 'receipts';
+const bust = '?v=' + Date.now();
 
-function precisionClass(pair){
-  const [a,b]=(pair||'').split('/');
-  if(!a || !b) return 'chip-prec-amber';
-  return (a===b) ? 'chip-prec-green' : 'chip-prec-amber';
+function chipClass(pair){
+  const [a,b]=(pair||'').toLowerCase().split('/');
+  return (a && b && a===b) ? 'chip ok' : 'chip';
+}
+function badgeClass(status){
+  const s=(status||'').toLowerCase();
+  return s==='red'?'status bad': s==='amber'?'status warn':'status ok';
 }
 function el(tag, cls, text){ const e=document.createElement(tag); if(cls) e.className=cls; if(text!==undefined) e.textContent=text; return e; }
 
 async function loadManifestSafe(){
-  try{
-    const r = await fetch(`${rxRoot}/manifest.json`, {cache:'no-store'});
-    if(!r.ok) throw new Error('manifest not found');
-    return await r.json();
-  }catch(_){ return { files: [] }; }
+  try{ const r = await fetch(`${rxRoot}/manifest.json${bust}`, {cache:'no-store'}); if(!r.ok) throw 0; return await r.json(); }
+  catch(_){ return { files: [] }; }
 }
 
-function renderLocalReceiptTile(path, rec){
+function renderLocalReceipt(path, rec){
   const tile = el('div','tile');
-  const title = (rec.model?.family||'model') + ' · ' + (rec.version||'OLR');
-  const h3 = el('h3','', title);
-  const meta = el('div','muted', (rec.issued_at||rec.run?.ts||'') );
-  const precPair = ((rec.precision?.train_dtype||'unknown')+'/'+(rec.precision?.infer_dtype||'unknown')).toLowerCase();
-  const chip = el('span','chip '+precisionClass(precPair), precPair);
+  const title = `${rec?.model?.family || 'model'} · ${rec?.version || 'OLR'}`;
+  const precPair = `${rec?.precision?.train_dtype || '—'}/${rec?.precision?.infer_dtype || '—'}`.toLowerCase();
 
   const head = el('div','inline'); head.style.justifyContent='space-between'; head.style.alignItems='center';
-  const left = el('div'); left.appendChild(h3); left.appendChild(meta);
-  const right = el('div'); right.appendChild(chip);
+  const left = el('div'); left.appendChild(el('h3','',title)); left.appendChild(el('div','muted', rec?.issued_at || rec?.run?.ts || ''));
+  const right = el('div'); const chip = el('span', chipClass(precPair), precPair); right.appendChild(chip);
   head.appendChild(left); head.appendChild(right);
 
-  const wrap = el('div','card-wrap');
-  const card = document.createElement('openline-card');
-  card.setAttribute('mode','compact');
+  const badge = el('span', badgeClass(rec?.attrs?.status),'');
+  badge.textContent = (rec?.attrs?.status||'green').toLowerCase()==='green' ? 'OK' :
+                      (rec?.attrs?.status||'').toLowerCase()==='amber' ? 'WARN' : 'ALERT';
+  badge.setAttribute('aria-label', 'status');
 
-  // ABSOLUTE URL so the web component doesn't resolve against the CDN origin
-  const abs = new URL(path, window.location.href).toString();
-  const withBust = abs + (abs.includes('?') ? '&' : '?') + 'v=' + Date.now();
-  card.setAttribute('src', withBust);
+  const card = el('div','r-card');
+  const rows = [
+    ['POINT',   rec?.point   ?? '—'],
+    ['BECAUSE', rec?.because ?? '—'],
+    ['BUT',     rec?.but     ?? '—'],
+    ['SO',      rec?.so      ?? '—']
+  ];
+  for(const [k,v] of rows){
+    const row=el('div','r-row'); row.appendChild(el('div','label',k)); row.appendChild(el('div','value',String(v))); card.appendChild(row);
+  }
 
-  wrap.appendChild(card);
-  const note = el('div','note'); note.textContent='source: '+path;
+  const srcNote = el('div','note'); srcNote.textContent = 'source: ' + path;
 
-  tile.appendChild(head); tile.appendChild(wrap); tile.appendChild(note);
+  tile.appendChild(badge);
+  tile.appendChild(head);
+  tile.appendChild(card);
+  tile.appendChild(srcNote);
   rxGrid.appendChild(tile);
 }
 
-(async function renderLocalReceipts(){
-  const manifest = await loadManifestSafe(); // { files: [...] }
-  if(!manifest.files || manifest.files.length===0){
-    const t = el('div','note','No local receipts found. Add files to docs/receipts/ and update manifest.json.');
-    rxGrid.appendChild(t); return;
-  }
+(async function boot(){
+  const manifest = await loadManifestSafe();
+  if(!manifest.files?.length){ rxGrid.appendChild(el('div','note','No local receipts found. Add files to docs/receipts/ and update manifest.json.')); return; }
   for(const name of manifest.files){
-    const path = `${rxRoot}/${name}`;
+    const rel = `${rxRoot}/${name}`;
+    const abs = new URL(rel, window.location.href).toString();
     try{
-      const r = await fetch(path, {cache:'no-store'}); if(!r.ok) throw new Error('fetch failed');
+      const r = await fetch(abs + (abs.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+      if(!r.ok) throw new Error('fetch failed');
       const rec = await r.json();
-      renderLocalReceiptTile(path, rec);
+      renderLocalReceipt(rel, rec);
     }catch(e){
       const t = el('div','tile'); t.appendChild(el('div','note', `Failed to load ${name}: ${e.message||'error'}`));
       rxGrid.appendChild(t);
@@ -172,7 +191,7 @@ function renderLocalReceiptTile(path, rec){
   }
 })();
 
-/* --- Validator + template --- */
+/* ---------- Tiny validator + template ---------- */
 function copyTemplate(){
   const template = {
     receipt_version:"1.5-P",
@@ -188,8 +207,8 @@ function copyTemplate(){
     telem:{kappa_eff:0.22, delta_hol:0.03},
     digest:{cycle_plus:0}
   };
-  const txt = JSON.stringify(template,null,2);
-  navigator.clipboard.writeText(txt).then(()=>{ document.getElementById('valOut').textContent='📋 Template copied to clipboard'; });
+  navigator.clipboard.writeText(JSON.stringify(template,null,2))
+    .then(()=>{ document.getElementById('valOut').textContent='📋 Template copied to clipboard'; });
 }
 document.getElementById('valBtn')?.addEventListener('click', async ()=>{
   const out = document.getElementById('valOut'); out.textContent = '…checking';
