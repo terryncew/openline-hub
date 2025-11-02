@@ -1,0 +1,4 @@
+.chip{display:inline-block;padding:.15rem .5rem;border-radius:10px;border:1px solid #e6eaf3;background:#f4f6fb;font:12px/1.2 system-ui}
+.chip-prec-green{background:#eefbf0;border-color:#d7f3db}
+.chip-prec-amber{background:#fff6e8;border-color:#ffe3b5}
+.chip-prec-red{background:#ffecee;border-color:#ffc8d0}
