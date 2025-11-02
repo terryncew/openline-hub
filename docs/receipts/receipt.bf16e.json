@@ -1,0 +1,21 @@
+{
+  "version": "OLR/1.5-P",
+  "issued_at": "2025-11-02T00:00:05Z",
+  "model": { "family": "demo-llm", "fingerprint": "demo-fingerprint" },
+  "precision": { "train_dtype": "fp16", "infer_dtype": "bf16", "mismatch": true, "note": "Declared only; no activations logged." },
+  "run": { "id": "4b9a7d7d-0000-4000-9000-222222222222", "ts": "2025-11-02T00:00:05Z" },
+  "dials": {
+    "stress": 0.267,
+    "drift": 0.191,
+    "coherence": 0.681,
+    "precision_consistency": 0.0,
+    "precision_risk": 0.5
+  },
+  "badge": "AMBER",
+  "signature": {
+    "alg": "none",
+    "pub": "",
+    "sig": "",
+    "digest": "7d39b2102f6a54ac83e3b2efef11de55"
+  }
+}
