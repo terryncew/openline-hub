@@ -1,311 +1,296 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="utf-8" />
-  <title>OpenLine Hub · Portable Proof for AI</title>
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Uniform receipts gallery + researcher kit. Proof moves; data doesn’t." />
-  <meta property="og:title" content="OpenLine Hub · Portable Proof for AI" />
-  <meta property="og:description" content="Featured receipts, local receipts, and a validator. Triage, not truth." />
-  <meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png" />
-  <meta property="og:url" content="https://terryncew.github.io/openline-hub/" />
-  <meta name="twitter:card" content="summary_large_image" />
-  <style>
-    :root{--bg:#0f1115;--ink:#e9eef7;--muted:#9aa4b2;--tile:#151821;--line:#232838;
-          --ok:#16a34a;--warn:#f59e0b;--bad:#ef4444;--chip:#0b0d12;--chipline:#1c2130}
-    *{box-sizing:border-box}
-    html,body{margin:0;background:var(--bg);color:var(--ink);
-      font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
-    a{color:inherit;text-decoration:none}
-    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;
-      border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
-    .wrap{max-width:980px;margin:0 auto;padding:20px}
-    header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
-    .brand{font-weight:700;letter-spacing:.2px}
-    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);
-      border-radius:999px;color:var(--muted)}
-    .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);
-      border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
-    .hero h1{margin:0 0 6px;font-size:22px}
-    .hero p{margin:0;color:var(--muted)}
-    .inline{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
-    .btn.secondary{border-color:var(--line)}
-    .section{margin:22px 0}
-    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-    .card{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
-    .card h3{margin:0 0 10px;font-size:16px}
-    .row{display:grid;grid-template-columns:110px 1fr;border-top:1px solid #20263a;padding:10px 12px}
-    .row:first-of-type{border-top:none;border-top-left-radius:12px;border-top-right-radius:12px}
-    .left{letter-spacing:.3px;color:#a8b2c3;font-weight:600}
-    .right{white-space:pre-wrap}
-    .meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
-    .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;
-      padding:4px 10px;border:1px solid var(--chipline);border-radius:999px;background:var(--chip);color:#c9d2e3}
-    .chip.ok{background:#0f1a12;border-color:#173224;color:#cfe9da}
-    .chip.warn{background:#1e180a;border-color:#3d2e0a;color:#f6e9c8}
-    .chip.bad{background:#1e0c0f;border-color:#3a1118;color:#f7d0d6}
-    .muted{color:var(--muted)}
-    .note{font-size:12px;color:var(--muted)}
-    footer{margin:26px 0 30px}
-    @media (max-width:420px){.btn{padding:9px 12px}.hero h1{font-size:20px}}
-  </style>
+<meta charset="utf-8">
+<title>OpenLine Hub · Portable Proof for AI</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<style>
+  :root{
+    --bg:#0a0c10; --ink:#e7ecf4; --muted:#97a3b6; --line:#1b2230; --tile:#0f141c;
+    --ok:#1ea672; --warn:#b38b10; --bad:#d23d3d; --chip:#121925; --chipline:#1b2536;
+    --btn:#1e293b; --btnink:#e7ecf4; --btnline:#2a3a55;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Roboto,Helvetica,Arial,sans-serif}
+  a{color:inherit;text-decoration:none}
+  .wrap{max-width:980px;margin:0 auto;padding:18px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+  header h1{font-size:20px;margin:2px 0 0}
+  .sub{color:var(--muted);font-size:13px}
+  .section{margin:18px 0}
+  h2{font-size:16px;margin:0 0 8px}
+  .hero{background:var(--tile);border:1px solid var(--line);padding:14px;border-radius:12px}
+  .inline{display:flex;gap:10px;align-items:center}
+  .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:1px solid var(--btnline);background:var(--btn);color:var(--btnink);font-weight:600}
+  .btn.secondary{opacity:.9}
+  .tile{background:var(--tile);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .card{border:1px solid var(--line);border-radius:10px;margin-top:10px;overflow:hidden}
+  .row{display:flex;gap:14px;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600}
+  .right{flex:1;padding:10px 14px}
+  .chip{display:inline-block;border:1px solid var(--chipline);background:var(--chip);padding:4px 8px;border-radius:999px;font-size:12px}
+  .ok{background:rgba(30,166,114,.15);border-color:rgba(30,166,114,.35)}
+  .warn{background:rgba(179,139,16,.15);border-color:rgba(179,139,16,.35)}
+  .bad{background:rgba(210,61,61,.15);border-color:rgba(210,61,61,.35)}
+  .neutral{opacity:.8}
+  .note{color:var(--muted);font-size:12px;margin:8px 2px}
+  textarea,input{width:100%;background:var(--tile);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px}
+  textarea{min-height:84px;resize:vertical}
+  pre{white-space:pre-wrap;background:var(--tile);border:1px solid var(--line);padding:10px;border-radius:10px}
+  @media (max-width:560px){ .left{min-width:96px} }
+</style>
 </head>
 <body>
 <div class="wrap">
+
   <header>
-    <div class="brand">OpenLine Hub</div>
-    <div class="badge">Portable proof · vendor-neutral</div>
+    <div>
+      <h1>OpenLine Hub</h1>
+      <div class="sub">Portable proof · vendor-neutral</div>
+    </div>
   </header>
 
-  <div class="hero">
-    <h1>Proof moves; data doesn’t.</h1>
-    <p>Uniform view across SKUs (OLR/1.5-P & 1.4L), plus a one-click validator. Triage, not truth.</p>
-    <div class="inline" style="margin-top:10px">
-      <a class="btn" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Coherence Dynamics v1.2 (Erratum)</a>
-      <a class="btn secondary" href="./exclusive.html">Exclusive offer</a>
+  <div class="section hero">
+    <div style="font-size:18px;font-weight:700;margin-bottom:8px">Proof moves; data doesn’t.</div>
+    <div class="sub">Uniform view across SKUs (OLR/1.5-P & 1.4L). One-click validator accepts URL or pasted JSON. Triage, not truth.</div>
+    <div class="inline" style="margin-top:10px;flex-wrap:wrap">
+      <a class="btn" href="https://doi.org/10.5281/zenodo.17476985" target="_blank" rel="noopener">Coherence Dynamics v1.2 (Erratum)</a>
+      <a class="btn secondary" href="#exclusive">Exclusive offer</a>
     </div>
   </div>
 
-  <!-- Featured remote receipts (uniform view) -->
-  <section class="section">
-    <h2 style="margin:0 0 10px">Featured receipts (uniform view)</h2>
-    <div id="featured" class="grid" aria-live="polite"></div>
-  </section>
+  <div class="section">
+    <h2>Featured receipts (uniform view)</h2>
+    <div id="feat1"></div>
+    <div id="feat2" style="margin-top:12px"></div>
+    <div id="feat3" style="margin-top:12px"></div>
+  </div>
 
-  <!-- Local receipts -->
-  <section class="section">
-    <h2 style="margin:0 0 8px">Local receipts (from <code>docs/receipts/manifest.json</code>)</h2>
-    <div id="local" class="grid" aria-live="polite"></div>
-    <div class="note">Add JSON files to <code>docs/receipts/</code> and list them in <code>manifest.json</code>.</div>
-  </section>
+  <div class="section">
+    <h2 id="localTitle">Local receipts</h2>
+    <div class="note">Add JSON files to <code>docs/receipts/</code> (or <code>receipts/</code>) and list them in <code>manifest.json</code>.</div>
+    <div id="local"></div>
+  </div>
 
-  <!-- Researcher kit -->
-  <section class="section">
-    <h2 style="margin:0 0 8px">Researcher kit</h2>
-    <div class="card">
-      <p class="muted">Validate any receipt URL (raw GitHub URL works best). Or copy a tiny template.</p>
-      <div class="inline" style="margin-top:6px">
-        <input id="valUrl" type="text" placeholder="https://raw.githubusercontent.com/.../receipt.latest.json" style="flex:1;min-width:220px">
-        <button class="btn" id="valBtn" type="button">Validate</button>
-        <button class="btn secondary" type="button" id="copyTpl">Copy Template</button>
+  <div class="section" id="exclusive">
+    <h2>Researcher kit</h2>
+    <div class="tile">
+      <div class="note">Validate any receipt URL (raw GitHub URL works best) <em>or paste a JSON receipt</em>. GitHub “blob” links are auto-rewritten to raw.</div>
+      <textarea id="valUrl" placeholder="Paste a receipt URL or the JSON itself…"></textarea>
+      <div class="inline" style="margin-top:10px;flex-wrap:wrap">
+        <a class="btn" id="valBtn" href="#">Validate</a>
+        <a class="btn secondary" id="copyTpl" href="#">Copy Template</a>
       </div>
-      <pre id="valOut" class="note" style="white-space:pre-wrap;margin-top:8px"></pre>
+      <pre id="valOut" style="margin-top:10px">Waiting…</pre>
     </div>
-  </section>
+  </div>
 
-  <footer class="section">
-    <div class="muted">OpenLine · COLE · MIT. © Sir Terrynce.</div>
-  </footer>
+  <div class="section">
+    <div class="sub">OpenLine · COLE · MIT. © Sir Terrynce.</div>
+  </div>
 </div>
 
 <script>
-/* ========= Config ========= */
-const REMOTES = [
-  {
-    label: "COLE-Coherence-Layer-Engine / receipt.latest.json",
-    url: "https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.latest.json"
-  },
-  {
-    label: "open-receipts / receipt.latest.json",
-    url: "https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json"
-  },
-  {
-    label: "openline-csm / receipt.latest.json",
-    url: "https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json"
-  }
-];
-
-const LOCAL_ROOT = "receipts"; // served at /docs/receipts/*
-const CACHE_BUST = "?v=" + Date.now();
-
-/* ========= Helpers ========= */
-const el = (t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!==undefined) e.textContent=txt; return e;};
-const text = v => (v===0? "0" : (v===false? "false" : (v ? String(v) : "—")));
-const take = (o, keys, def="—")=>{
-  for(const k of keys){
-    if(o && typeof o==="object"){
-      const parts = k.split(".");
-      let cur = o;
-      let ok = true;
-      for(const p of parts){ if(cur && p in cur){ cur = cur[p]; } else { ok=false; break; } }
-      if(ok && cur!==undefined && cur!==null && cur!=="") return cur;
+/* ---------- helpers ---------- */
+const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e;};
+const byteLen = s => new TextEncoder().encode(s).length;
+function toRaw(u){
+  try{
+    const url = new URL(u.trim());
+    if (url.hostname === 'github.com') {
+      const p = url.pathname.split('/').filter(Boolean);
+      if (p[2] === 'blob') return `https://raw.githubusercontent.com/${p[0]}/${p[1]}/${p[3]}/${p.slice(4).join('/')}`;
     }
+    return u;
+  }catch{ return u; }
+}
+
+/* ---------- normalizer ---------- */
+function normalize(r){
+  const v = r.version || r.receipt_version || r.receiptVersion || r.sku || '—';
+  const status = (r.attrs?.status || r.status || '').toString();
+  const model = r.model?.family || r.model?.name || r.model?.id || r.model || '—';
+  const issued = r.issued_at || r.issued || r.run?.ts || r.time || r.date || '—';
+  const prec = (() => {
+    const tr = r.precision?.train_dtype || r.precision?.train || r.train_dtype || r.train;
+    const inf = r.precision?.infer_dtype || r.precision?.infer || r.infer_dtype || r.infer;
+    if (tr || inf) return `${(tr||'—')}/${(inf||'—')}`;
+    return r.precision || '—';
+  })();
+  const claims = r.claims || r;
+  const point   = claims.point   ?? '—';
+  const because = claims.because ?? '—';
+  const but     = claims.but     ?? '—';
+  const so      = claims.so      ?? '—';
+  const dials = {
+    κ: (r.kappa ?? r.κ ?? r.dials?.kappa ?? '—'),
+    Δhol: (r.delta_hol ?? r.Δhol ?? r.dials?.delta_hol ?? '—'),
+    fresh: (r.fresh ?? r.dials?.fresh ?? '—')
+  };
+  return {version:v, status, model, issued, prec, point, because, but, so, dials};
+}
+
+function check(r, bytes){
+  const errs = [];
+  const version = r.version || r.receipt_version || r.receiptVersion;
+  const status  = (r.attrs?.status || r.status || '').toLowerCase();
+  if (!version) errs.push('missing receipt_version/version');
+  if (!status)  errs.push('missing attrs.status/status');
+  const cleanish = ['clean','coherent','ok','green'].includes(status);
+  const warnish  = ['amber','warn','check','red','risk','bad'].includes(status);
+  if (cleanish && bytes > 640) errs.push(`CLEAN exceeds 640B (${bytes})`);
+  if (warnish  && bytes > 800) errs.push(`${status} exceeds 800B (${bytes})`);
+  return {ok: errs.length===0, errs, version: version||'—', status: status||'—', bytes};
+}
+
+/* ---------- renderers ---------- */
+function renderUniformTile(title, srcUrl, rec, bytes){
+  const n = normalize(rec);
+  const t = el('div','tile');
+
+  const head = el('div','inline'); head.style.justifyContent='space-between'; head.style.alignItems='center';
+  head.appendChild(el('div','', title));
+  const pills = el('div'); pills.style.display='flex'; pills.style.gap='8px';
+  const statusClass = n.status.match(/clean|ok|green/i)?'ok':n.status.match(/warn|amber|check/i)?'warn':n.status.match(/red|risk|bad/i)?'bad':'neutral';
+  pills.appendChild(el('span','chip '+statusClass, n.status || '—'));
+  pills.appendChild(el('span','chip neutral', n.version));
+  head.appendChild(pills);
+
+  const card = el('div','card');
+  const row=(k,v)=>{const r=el('div','row'); r.appendChild(el('div','left',k)); r.appendChild(el('div','right',v||'—')); return r;};
+  card.appendChild(row('MODEL',n.model));
+  card.appendChild(row('ISSUED',n.issued));
+  card.appendChild(row('PRECISION',n.prec));
+  card.appendChild(row('POINT',n.point));
+  card.appendChild(row('BECAUSE',n.because));
+  card.appendChild(row('BUT',n.but));
+  card.appendChild(row('SO',n.so));
+
+  const dialRow = el('div','inline'); dialRow.style.gap='8px'; dialRow.style.margin='10px 14px';
+  for (const [k,v] of Object.entries(n.dials)) dialRow.appendChild(el('span','chip neutral', `${k} — ${v}`));
+  card.appendChild(dialRow);
+
+  const footer = el('div','note', `source: ${srcUrl} · bytes=${bytes}`);
+
+  const btns = el('div','inline'); btns.style.marginTop='8px';
+  const copyUrl = el('a','btn secondary','Copy URL'); copyUrl.href='#';
+  copyUrl.onclick = (e)=>{e.preventDefault(); navigator.clipboard.writeText(srcUrl);};
+  const copyJson = el('a','btn secondary','Copy JSON'); copyJson.href='#';
+  copyJson.onclick = (e)=>{e.preventDefault(); navigator.clipboard.writeText(JSON.stringify(rec,null,2));};
+  btns.appendChild(copyUrl); btns.appendChild(copyJson);
+
+  t.appendChild(head); t.appendChild(card); t.appendChild(footer); t.appendChild(btns);
+  return t;
+}
+
+/* ---------- loaders ---------- */
+async function loadFeatured(id, url, title){
+  const grid = document.getElementById(id); if (!grid) return;
+  try{
+    const raw = toRaw(url);
+    const res = await fetch(raw, {cache:'no-store'});
+    const txt = await res.text();
+    const bytes = byteLen(txt);
+    const j = JSON.parse(txt);
+    grid.appendChild(renderUniformTile(title, raw, j, bytes));
+  }catch(e){
+    const tile = el('div','tile'); tile.appendChild(el('div','note',`Failed to load ${title}: ${e.message||'error'}`)); grid.appendChild(tile);
   }
-  return def;
-};
-const bytesOf = s => new TextEncoder().encode(s).length;
-
-function statusInfo(rec){
-  const raw = (take(rec,["attrs.status","status"],"") || "").toString().toLowerCase();
-  if(["clean","coherent","ok","green"].includes(raw)) return {cls:"ok", txt:"CLEAN"};
-  if(["amber","warn","check"].includes(raw))          return {cls:"warn", txt:"CHECK"};
-  if(["red","risk","bad"].includes(raw))              return {cls:"bad", txt:"RISK"};
-  return {cls:"", txt:"—"};
-}
-function sku(rec){
-  const v = (take(rec,["version","receipt_version"],"") || "").toString().toLowerCase();
-  if(v.includes("1.5")) return "OLR/1.5-P";
-  if(v.includes("1.4")) return "OLR/1.4L";
-  return "unknown";
-}
-function precision(rec){
-  const a = (take(rec,["precision.train_dtype","precision.train","train_dtype"],"") || "").toString();
-  const b = (take(rec,["precision.infer_dtype","precision.infer","infer_dtype"],"") || "").toString();
-  if(!a && !b) return "—";
-  return (a||b) + (b? ("/"+b) : "");
-}
-function model(rec){
-  const fam = take(rec,["model.family","model.id","model","model_name"],"demo-llm");
-  return fam;
-}
-function issued(rec){
-  return take(rec,["issued_at","run.ts","run.time","time"],"—");
-}
-function dial(rec, keys){
-  let v = take(rec,keys,null);
-  if(typeof v==="number") return Number.isFinite(v)? (Math.abs(v)<0.001? v.toExponential(1) : v.toFixed(3)) : "—";
-  if(typeof v==="string" && v.trim()!=="") return v;
-  return "—";
-}
-function srcBadgeRow(rec){
-  const wrap = el("div","note");
-  wrap.textContent = "source: " + (rec.__src || "—") + (rec.__bytes? " · bytes="+rec.__bytes : "") + (rec.version? " · version="+rec.version : "");
-  return wrap;
 }
 
-/* ========= Renderer (uniform card) ========= */
-function renderCard(title, rec){
-  const card = el("div","card");
-  const h3 = el("h3","",title);
-  card.appendChild(h3);
-
-  const meta = el("div","meta");
-  const st = statusInfo(rec);
-  const stChip = el("span", "chip " + (st.cls||""), st.txt);
-  const skuChip = el("span","chip", sku(rec));
-  meta.appendChild(stChip); meta.appendChild(skuChip);
-  card.appendChild(meta);
-
-  const add = (k,v)=>{ const r=el("div","row"); r.appendChild(el("div","left",k)); r.appendChild(el("div","right",text(v))); card.appendChild(r); };
-
-  add("MODEL", model(rec) + " · " + text(take(rec,["model.variant","model.tag"],"—")));
-  add("ISSUED", issued(rec));
-  add("PRECISION", precision(rec));
-  // Claims (works for both flat and nested 'claims')
-  const claims = rec.claims || {};
-  add("POINT",   take(rec,["point","claims.point"], "—"));
-  add("BECAUSE", take(rec,["because","claims.because"], "—"));
-  add("BUT",     take(rec,["but","claims.but"], "—"));
-  add("SO",      take(rec,["so","claims.so"], "—"));
-
-  // Dials (various spellings)
-  const kappa = dial(rec,["dials.kappa","metrics.kappa","kappa","κ","k"]);
-  const dhol  = dial(rec,["dials.delta_hol","metrics.delta_hol","delta_hol","Δhol","dhol"]);
-  const fresh = dial(rec,["dials.fresh","metrics.fresh","fresh","freshness_ratio"]);
-  const kRow = el("div","meta"); kRow.style.marginTop="8px";
-  kRow.appendChild(el("span","chip","κ — " + kappa));
-  kRow.appendChild(el("span","chip","Δhol — " + dhol));
-  kRow.appendChild(el("span","chip","fresh — " + fresh));
-  card.appendChild(kRow);
-
-  card.appendChild(srcBadgeRow(rec));
-  return card;
-}
-
-/* ========= Fetch & build ========= */
-async function fetchJson(url){
-  const res = await fetch(url,{cache:"no-store"});
-  if(!res.ok) throw new Error("fetch failed");
-  const txt = await res.text();
-  const j = JSON.parse(txt);
-  j.__bytes = bytesOf(txt);
-  j.__src = url;
-  return j;
-}
-
-async function loadFeatured(){
-  const box = document.getElementById("featured");
-  for(const r of REMOTES){
-    const holder = el("div","");
-    holder.appendChild(el("div","note","loading…"));
-    box.appendChild(holder);
+async function fetchFirst(pathList){
+  for (const p of pathList){
     try{
-      const j = await fetchJson(r.url);
-      const card = renderCard(r.label, j);
-      holder.innerHTML = ""; holder.appendChild(card);
-    }catch(e){
-      const c = el("div","card"); c.appendChild(el("div","",r.label));
-      c.appendChild(el("div","note","Failed to load: " + (e.message||"error")));
-      c.appendChild(el("div","note",r.url));
-      holder.innerHTML=""; holder.appendChild(c);
-    }
+      const res = await fetch(p + '?v=' + Date.now(), {cache:'no-store'});
+      if (res.ok) return {path:p, data: await res.json()};
+    }catch{}
   }
+  return null;
 }
 
 async function loadLocal(){
-  const grid = document.getElementById("local");
-  try{
-    const m = await fetch(`${LOCAL_ROOT}/manifest.json${CACHE_BUST}`,{cache:"no-store"});
-    if(!m.ok) throw new Error("manifest missing");
-    const {files=[]} = await m.json();
-    if(files.length===0){ grid.appendChild(el("div","note","No local receipts listed.")); return; }
-    for(const name of files){
-      const url = `${LOCAL_ROOT}/${name}${CACHE_BUST}`;
-      try{
-        const j = await fetchJson(url);
-        grid.appendChild(renderCard(name, j));
-      }catch(e){
-        const c = el("div","card"); c.appendChild(el("h3","",name));
-        c.appendChild(el("div","note","Failed to load: " + (e.message||"error")));
-        c.appendChild(el("div","note",url));
-        grid.appendChild(c);
-      }
+  const target = document.getElementById('local');
+  const title  = document.getElementById('localTitle');
+  const cand = ['docs/receipts/manifest.json','receipts/manifest.json'];
+  const got = await fetchFirst(cand);
+  if (!got){ target.appendChild(el('div','tile', 'No local manifest found.')); return; }
+  title.textContent = `Local receipts (from ${got.path})`;
+
+  const list = Array.isArray(got.data) ? got.data
+              : (got.data.files || got.data.receipts || got.data.items || []);
+  for (const file of list){
+    try{
+      const res = await fetch(file + (file.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+      const txt = await res.text();
+      const bytes = byteLen(txt);
+      const j = JSON.parse(txt);
+      target.appendChild(renderUniformTile(file.split('/').slice(-1)[0], file, j, bytes));
+      const spacer = el('div'); spacer.style.height='12px'; target.appendChild(spacer);
+    }catch(e){
+      const t = el('div','tile'); t.appendChild(el('div','note',`Failed to load ${file}: ${e.message||'error'}`)); target.appendChild(t);
     }
-  }catch(e){
-    grid.appendChild(el("div","note","No local manifest found. Create /docs/receipts/manifest.json"));
   }
 }
 
-loadFeatured();
-loadLocal();
-
-/* ========= Validator ========= */
-document.getElementById('copyTpl')?.addEventListener('click', ()=>{
-  const template = {
-    receipt_version:"1.5-P",
-    version:"OLR/1.5-P",
-    issued_at:new Date().toISOString(),
-    attrs:{status:"clean"},
-    model:{family:"demo-llm"},
-    precision:{train_dtype:"fp16",infer_dtype:"fp16"},
-    point:"fp16/fp16 is fine for short demos.",
-    because:"κ and Δhol stay green on ≤4k tokens.",
-    but:"Long context risks overflow; mixed-device drift possible.",
-    so:"Ship fp16 for speed; keep a bf16 fallback for ≥4k."
-  };
-  const txt = JSON.stringify(template,null,2);
-  navigator.clipboard.writeText(txt).then(()=>{document.getElementById('valOut').textContent='📋 Template copied';});
-});
-
-document.getElementById('valBtn')?.addEventListener('click', async ()=>{
+/* ---------- validator ---------- */
+document.getElementById('valBtn').addEventListener('click', async (ev)=>{
+  ev.preventDefault();
+  const box = document.getElementById('valUrl');
   const out = document.getElementById('valOut');
-  const url = (document.getElementById('valUrl').value||'').trim();
-  out.textContent = '…checking';
-  if(!url){ out.textContent='Provide a URL to a JSON receipt (raw GitHub URL recommended).'; return; }
+  let input = (box.value||'').trim();
+  if (!input) { out.textContent='Provide a URL or paste a JSON receipt.'; return; }
   try{
-    const res = await fetch(url,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed');
-    const txt = await res.text(); const bytes = bytesOf(txt); const j = JSON.parse(txt);
-    const errs = [];
-    if(!j.receipt_version && !j.version) errs.push('missing receipt_version/version');
-    if(!(j.attrs && typeof j.attrs.status==='string') && !j.status) errs.push('missing attrs.status');
-    // Simple size budgets (signal that "tiny is good")
-    const status = (j.attrs?.status || j.status || "").toString().toLowerCase();
-    if(['clean','coherent','ok','green'].includes(status) && bytes>640) errs.push(`CLEAN exceeds 640B (${bytes})`);
-    if(['amber','warn','check','red','risk','bad'].includes(status) && bytes>800) errs.push(`${status} exceeds 800B (${bytes})`);
-    out.textContent = errs.length? `❌ FAIL\n- ${errs.join('\n- ')}` : `✅ PASS\nbytes=${bytes}, status=${status||'n/a'}`;
-  }catch(e){ out.textContent = `❌ ${e.message||'Could not fetch/parse JSON'}`; }
+    let j, bytes;
+    if (input.startsWith('{')) {
+      j = JSON.parse(input);
+      bytes = byteLen(JSON.stringify(j));
+    } else {
+      const raw = toRaw(input);
+      const res = await fetch(raw, {cache:'no-store'});
+      if (!res.ok) throw new Error(`fetch failed (${res.status})`);
+      const txt = await res.text();
+      bytes = byteLen(txt);
+      j = JSON.parse(txt);
+    }
+    const result = check(j, bytes);
+    out.textContent = result.ok
+      ? `✅ PASS\nbytes=${result.bytes} · status=${result.status} · version=${result.version}`
+      : `❌ FAIL\n- ${result.errs.join('\n- ')}`;
+  }catch(e){
+    out.textContent = `❌ ${e.message || 'fetch/parse failed'}`;
+  }
 });
+
+document.getElementById('copyTpl').addEventListener('click', (e)=>{
+  e.preventDefault();
+  const tpl = {
+    "receipt_version":"1.5-P",
+    "version":"OLR/1.5-P",
+    "issued_at":"2025-11-02T00:00:00Z",
+    "attrs":{"status":"CLEAN"},
+    "model":{"family":"demo-llm"},
+    "precision":{"train_dtype":"fp16","infer_dtype":"fp16"},
+    "point":"One clear outcome sentence.",
+    "because":"One reason.",
+    "but":"One risk.",
+    "so":"One action."
+  };
+  navigator.clipboard.writeText(JSON.stringify(tpl,null,2));
+});
+
+/* ---------- boot ---------- */
+loadFeatured('feat1',
+  'https://github.com/terryncew/COLE-Coherence-Layer-Engine-/blob/main/docs/receipt.latest.json',
+  'COLE-Coherence-Layer-Engine / receipt.latest.json');
+loadFeatured('feat2',
+  'https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json',
+  'open-receipts / receipt.latest.json');
+loadFeatured('feat3',
+  'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json',
+  'openline-csm / receipt.latest.json');
+loadLocal();
 </script>
 </body>
 </html>
