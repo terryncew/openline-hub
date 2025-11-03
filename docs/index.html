@@ -30,13 +30,8 @@
   .row:first-child{border-top:0}
   .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600}
   .right{flex:1;padding:10px 14px}
-
-  /* Pills — no weird ovals */
-  .chip{
-    display:inline-flex;align-items:center;justify-content:center;
-    border:1px solid var(--chipline);background:var(--chip);
-    padding:6px 10px;border-radius:999px;font-size:12px;line-height:1;height:26px;
-  }
+  /* fixed pills */
+  .chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--chipline);background:var(--chip);padding:6px 10px;border-radius:999px;font-size:12px;line-height:1;height:26px}
   .ok{background:rgba(30,166,114,.15);border-color:rgba(30,166,114,.35)}
   .warn{background:rgba(179,139,16,.15);border-color:rgba(179,139,16,.35)}
   .bad{background:rgba(210,61,61,.15);border-color:rgba(210,61,61,.35)}
@@ -60,7 +55,7 @@
 
   <div class="section hero">
     <div style="font-size:18px;font-weight:700;margin-bottom:8px">Proof moves; data doesn’t.</div>
-    <div class="sub">Uniform view across SKUs (OLR/1.5-P & 1.4L). One-click validator accepts URL or pasted JSON. Triage, not truth.</div>
+    <div class="sub">One viewer for OLR/1.5-P & 1.4L. Paste any receipt or URL to validate. Triage, not truth.</div>
     <div class="inline" style="margin-top:10px">
       <a class="btn" href="https://doi.org/10.5281/zenodo.17476985" target="_blank" rel="noopener">Coherence Dynamics v1.2 (Erratum)</a>
       <a class="btn secondary" href="exclusive.html">Exclusive offer</a>
@@ -76,33 +71,43 @@
 
   <div class="section">
     <h2 id="localTitle">Local receipts</h2>
-    <div class="note">Add JSON files to <code>docs/receipts/</code> (or <code>receipts/</code>) and list them in <code>manifest.json</code>.</div>
+    <div class="note">Add JSON to <code>docs/receipts/</code> (or <code>receipts/</code>) and list them in <code>manifest.json</code>.</div>
     <div id="local"></div>
+  </div>
+
+  <div class="section" id="exclusive">
+    <h2>Demo partner offer</h2>
+    <div class="tile">
+      <p style="margin:0 0 6px">For teams who want a 2–3 week hands-on: ship agents with portable receipts and a simple PASS/AMBER/RED dial.</p>
+      <ul style="margin:0 0 6px 18px">
+        <li>Drop-in receipts (sub-KB target), no prompts/PII.</li>
+        <li>Guard dials: κ (stress), Δhol (drift), Φ* star score.</li>
+        <li>Offline verify; URL or pasted JSON.</li>
+      </ul>
+      <div class="note">Outcome: quick triage signal you can show to SRE, Sec, and Legal without exposing content.</div>
+    </div>
   </div>
 
   <div class="section" id="exclusive">
     <h2>Researcher kit</h2>
     <div class="tile">
-      <div class="note">Validate any receipt URL (raw GitHub URL works best) <em>or paste a JSON receipt</em>. GitHub “blob” links are auto-rewritten to raw.</div>
+      <div class="note">Validate any receipt URL (raw GitHub works) <em>or paste JSON</em>. “blob” links auto-rewrite to raw.</div>
       <textarea id="valUrl" placeholder="Paste a receipt URL or the JSON itself…"></textarea>
       <div class="inline" style="margin-top:10px">
         <a class="btn" id="valBtn" href="#">Validate</a>
         <a class="btn secondary" id="copyTpl" href="#">Copy Template</a>
       </div>
       <pre id="valOut" style="margin-top:10px">Waiting…</pre>
-      <div class="note" id="whyPass" style="display:none;margin-top:6px">
-        PASS means: (1) schema fields present, (2) status GREEN/AMBER/RED recognized, (3) size within cap (≤640B for GREEN; ≤800B for AMBER/RED). Small receipts travel easily and are safe to share.
-      </div>
     </div>
   </div>
 
   <div class="section">
-    <div class="sub">OpenLine · COLE · MIT. © Sir Terrynce.</div>
+    <div class="sub">OpenLine · COLE · MIT. © 2025 OpenLine Project.</div>
   </div>
 </div>
 
 <script>
-/* ---------- helpers ---------- */
+/* helpers */
 const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e;};
 const byteLen = s => new TextEncoder().encode(s).length;
 function toRaw(u){
@@ -115,8 +120,13 @@ function toRaw(u){
     return u;
   }catch{ return u; }
 }
+function stars(phi){
+  if(typeof phi!=='number' || !isFinite(phi)) return '';
+  const s = phi>=0.92?5:phi>=0.84?4:phi>=0.76?3:phi>=0.68?2:1;
+  return ` (${s}★)`;
+}
 
-/* ---------- normalizer (κ, Δhol, Φ*) ---------- */
+/* normalizer */
 function normalize(r){
   const v = r.version || r.receipt_version || r.receiptVersion || r.sku || '—';
   const status = (r.attrs?.status || r.status || '').toString();
@@ -125,7 +135,8 @@ function normalize(r){
   const prec = (() => {
     const tr = r.precision?.train_dtype || r.precision?.train || r.train_dtype || r.train;
     const inf = r.precision?.infer_dtype || r.precision?.infer || r.infer_dtype || r.infer;
-    if (tr || inf) return `${(tr||'—')}/${(inf||'—')}`; return r.precision || '—';
+    if (tr || inf) return `${(tr||'—')}/${(inf||'—')}`;
+    return r.precision || '—';
   })();
   const claims = r.claims || r;
   const point   = claims.point   ?? '—';
@@ -135,11 +146,12 @@ function normalize(r){
 
   const kappa = r.signals?.kappa ?? r.kappa ?? r.κ ?? r.dials?.kappa ?? r.telem?.kappa_eff ?? '—';
   const dhol  = r.signals?.dhol  ?? r.signals?.delta_hol ?? r.delta_hol ?? r.Δhol ?? r.dials?.delta_hol ?? r.telem?.delta_hol ?? '—';
-  const phiS  = r.signals?.phi_star ?? r.signals?.phi ?? r.phi_star ?? r.telem?.phi_topo ?? '—';
+  const phi   = r.signals?.phi_star ?? r.signals?.phi ?? r.phi_star ?? r.telem?.phi_topo ?? '—';
 
-  return {version:v, status, model, issued, prec, point, because, but, so, dials:{'κ':kappa,'Δhol':dhol,'Φ*':phiS}};
+  return {version:v, status, model, issued, prec, point, because, but, so, dials:{'κ':kappa, 'Δhol':dhol, 'Φ*':phi}};
 }
 
+/* policy check */
 function check(r, bytes){
   const errs = [];
   const version = r.version || r.receipt_version || r.receiptVersion;
@@ -153,7 +165,7 @@ function check(r, bytes){
   return {ok: errs.length===0, errs, version: version||'—', status: status||'—', bytes};
 }
 
-/* ---------- renderers ---------- */
+/* renderer */
 function renderUniformTile(title, srcUrl, rec, bytes){
   const n = normalize(rec);
   const t = el('div','tile');
@@ -178,13 +190,10 @@ function renderUniformTile(title, srcUrl, rec, bytes){
 
   const dialRow = el('div','inline'); dialRow.style.gap='8px'; dialRow.style.margin='10px 14px';
   for (const [k,v] of Object.entries(n.dials)){
-    let valTxt = v;
-    if (typeof v==='number' && Number.isFinite(v)){
-      if (k==='Φ*'){ const stars = Math.max(1, Math.min(5, Math.round(v*5))); valTxt = `${v.toFixed(3)} (${stars}★)`; }
-      else valTxt = v.toFixed(3);
-    }
-    const chip = el('span','chip neutral', `${k} — ${valTxt}`);
-    if (k==='Φ*') chip.title = 'Φ* ~ effective coherence; 5★ ≈ ≥0.9';
+    const isNum = typeof v==='number' && isFinite(v);
+    const val = isNum ? (k==='Φ*'?v.toFixed(3)+stars(v):v.toFixed(3)) : v;
+    const chip = el('span','chip neutral', `${k} — ${val}`);
+    if(k==='Φ*' && isNum){ chip.title='Φ* star bands: 5★≥0.92, 4★≥0.84, 3★≥0.76, 2★≥0.68, else 1★'; }
     dialRow.appendChild(chip);
   }
   card.appendChild(dialRow);
@@ -202,11 +211,11 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   return t;
 }
 
-/* ---------- loaders ---------- */
+/* loaders */
 async function loadFeatured(id, url, title){
   const grid = document.getElementById(id); if (!grid) return;
   try{
-    const raw = toRaw(url);
+    const raw = toRaw(url) + (url.includes('?')?'&':'?') + 'v=' + Date.now(); // CDN-bust
     const res = await fetch(raw, {cache:'no-store'});
     const txt = await res.text();
     const bytes = byteLen(txt);
@@ -216,26 +225,22 @@ async function loadFeatured(id, url, title){
     const tile = el('div','tile'); tile.appendChild(el('div','note',`Failed to load ${title}: ${e.message||'error'}`)); grid.appendChild(tile);
   }
 }
-
-async function fetchFirst(pathList){
-  for (const p of pathList){
+async function fetchFirst(list){
+  for (const p of list){
     try{
-      const res = await fetch(p + '?v=' + Date.now(), {cache:'no-store'});
+      const res = await fetch(p + (p.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
       if (res.ok) return {path:p, data: await res.json()};
     }catch{}
   }
   return null;
 }
-
 async function loadLocal(){
   const target = document.getElementById('local');
   const title  = document.getElementById('localTitle');
   const got = await fetchFirst(['docs/receipts/manifest.json','receipts/manifest.json']);
   if (!got){ target.appendChild(el('div','tile', 'No local manifest found.')); return; }
   title.textContent = `Local receipts (from ${got.path})`;
-
-  const list = Array.isArray(got.data) ? got.data
-              : (got.data.files || got.data.receipts || got.data.items || []);
+  const list = Array.isArray(got.data) ? got.data : (got.data.files || got.data.receipts || got.data.items || []);
   for (const file of list){
     try{
       const res = await fetch(file + (file.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
@@ -248,7 +253,7 @@ async function loadLocal(){
   }
 }
 
-/* ---------- validator ---------- */
+/* validator */
 document.getElementById('valBtn').addEventListener('click', async (ev)=>{
   ev.preventDefault();
   const box = document.getElementById('valUrl');
@@ -259,39 +264,27 @@ document.getElementById('valBtn').addEventListener('click', async (ev)=>{
     let j, bytes;
     if (input.startsWith('{')) { j = JSON.parse(input); bytes = byteLen(JSON.stringify(j)); }
     else {
-      const raw = toRaw(input);
+      const raw = toRaw(input) + (input.includes('?')?'&':'?') + 'v=' + Date.now();
       const res = await fetch(raw, {cache:'no-store'});
       if (!res.ok) throw new Error(`fetch failed (${res.status})`);
       const txt = await res.text(); bytes = byteLen(txt); j = JSON.parse(txt);
     }
     const result = check(j, bytes);
-    const sig = j.signals ? Object.entries(j.signals).map(([k,v])=>`${k}=${(typeof v==='number')?Number(v).toFixed(3):v}`).join(', ') : '—';
+    const sigs = j.signals ? Object.entries(j.signals).map(([k,v])=>`${k}=${(typeof v==='number')?Number(v).toFixed(3):v}`).join(', ') : '—';
     const cap = (result.status==='green'||result.status==='clean'||result.status==='ok') ? 640 : 800;
-    document.getElementById('whyPass').style.display='block';
+    const why = `Why PASS matters: under size cap (≤${cap}B), required fields present, status recognized, signals parseable for κ/Δhol/Φ*.`;
     out.textContent = result.ok
-      ? `✅ PASS\nbytes=${result.bytes} (≤${cap}) · status=${result.status} · version=${result.version}\nSignals: ${sig}`
+      ? `✅ PASS\nbytes=${result.bytes} (≤${cap}) · status=${result.status} · version=${result.version}\nSignals: ${sigs}\n${why}`
       : `❌ FAIL\n- ${result.errs.join('\n- ')}`;
   }catch(e){
     out.textContent = `❌ ${e.message || 'fetch/parse failed'}`;
   }
 });
 
-document.getElementById('copyTpl').addEventListener('click', (e)=>{
-  e.preventDefault();
-  const tpl = {"receipt_version":"1.5-P","version":"OLR/1.5-P","issued_at":"2025-11-02T00:00:00Z","attrs":{"status":"CLEAN"},"model":{"family":"demo-llm"},"precision":{"train_dtype":"fp16","infer_dtype":"fp16"},"point":"One clear outcome sentence.","because":"One reason.","but":"One risk.","so":"One action."};
-  navigator.clipboard.writeText(JSON.stringify(tpl,null,2));
-});
-
-/* ---------- boot ---------- */
-loadFeatured('feat1',
-  'https://github.com/terryncew/COLE-Coherence-Layer-Engine-/blob/main/docs/receipt.latest.min.json',
-  'COLE-Coherence-Layer-Engine / receipt.latest.min.json');
-loadFeatured('feat2',
-  'https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json',
-  'open-receipts / receipt.latest.json');
-loadFeatured('feat3',
-  'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json',
-  'openline-csm / receipt.latest.json');
+/* boot */
+loadFeatured('feat1','https://github.com/terryncew/COLE-Coherence-Layer-Engine-/blob/main/docs/receipt.latest.json','COLE-Coherence-Layer-Engine / receipt.latest.json');
+loadFeatured('feat2','https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json','open-receipts / receipt.latest.json');
+loadFeatured('feat3','https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json','openline-csm / receipt.latest.json');
 loadLocal();
 </script>
 </body>
