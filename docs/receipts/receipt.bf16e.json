@@ -1,12 +1,14 @@
 {
   "receipt_version": "1.5-P",
   "version": "OLR/1.5-P",
-  "issued_at": "2025-11-02T00:00:05Z",
-  "attrs": {"status": "check"},
-  "model": {"family": "demo-llm"},
-  "precision": {"train_dtype": "fp16", "infer_dtype": "bf16"},
-  "point": "Fallback: fp16 weights, bf16 inference for long prompts.",
-  "because": "bf16 reduces overflow without retraining.",
-  "but": "Minor throughput penalty vs fp16 on some cards.",
-  "so": "Use for long-context tests; swap back to fp16 for quick demos."
+  "attrs": {"ts":"2025-11-02T00:00:00Z","run_id":"demo-bf16e","issuer":"did:web:terryncew.github.io","status":"green"},
+  "model":"demo-llm",
+  "issued":"2025-11-02T00:00:00Z",
+  "precision":"bf16/fp16",
+  "point":"Use bf16 to reduce overflow without retraining.",
+  "because":"bf16 widens numeric headroom on long contexts.",
+  "but":"Slight throughput penalty vs fp16 on some cards.",
+  "so":"Use for long-context tests; switch to fp16 for quick demos.",
+  "signals":{"kappa":0.31,"dhol":0.02,"phi_star":0.91},
+  "sig":""
 }
