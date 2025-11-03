@@ -1,12 +1,14 @@
 {
   "receipt_version": "1.5-P",
   "version": "OLR/1.5-P",
-  "issued_at": "2025-11-02T00:00:00Z",
-  "attrs": {"status": "clean"},
-  "model": {"family": "demo-llm"},
-  "precision": {"train_dtype": "fp16", "infer_dtype": "fp16"},
-  "point": "Run fp16/fp16 for speed on commodity GPUs.",
-  "because": "κ and Δhol stay within green bounds on short sequences.",
-  "but": "Overflow risk rises on very long contexts or mixed-device runs.",
-  "so": "Ship fp16 for demos; keep a bf16 path for ≥4k tokens."
+  "attrs": {"ts":"2025-11-02T00:00:00Z","run_id":"demo-fp16","issuer":"did:web:terryncew.github.io","status":"green"},
+  "model":"demo-llm",
+  "issued":"2025-11-02T00:00:00Z",
+  "precision":"fp16/fp16",
+  "point":"Run fp16/fp16 for speed on commodity GPUs.",
+  "because":"κ and Δhol stay within green bounds on short sequences.",
+  "but":"Overflow risk rises on very long contexts or mixed-device runs.",
+  "so":"Ship fp16 for demos; keep a bf16 path for ≥4k tokens.",
+  "signals":{"kappa":0.287,"dhol":0.000,"phi_star":0.93},
+  "sig":""
 }
