@@ -1,1 +1,6 @@
-{ "files": ["receipt.fp16.json", "receipt.bf16e.json"] }
+{
+  "receipts": [
+    "receipts/receipt.fp16.json",
+    "receipts/receipt.bf16e.json"
+  ]
+}
