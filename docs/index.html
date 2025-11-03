@@ -21,7 +21,7 @@
   .section{margin:18px 0}
   h2{font-size:16px;margin:0 0 8px}
   .hero{background:var(--tile);border:1px solid var(--line);padding:14px;border-radius:12px}
-  .inline{display:flex;gap:10px;align-items:center}
+  .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:1px solid var(--btnline);background:var(--btn);color:var(--btnink);font-weight:600}
   .btn.secondary{opacity:.9}
   .tile{background:var(--tile);border:1px solid var(--line);border-radius:12px;padding:12px}
@@ -30,7 +30,13 @@
   .row:first-child{border-top:0}
   .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600}
   .right{flex:1;padding:10px 14px}
-  .chip{display:inline-block;border:1px solid var(--chipline);background:var(--chip);padding:4px 8px;border-radius:999px;font-size:12px}
+
+  /* Pills — fix the oval */
+  .chip{
+    display:inline-flex;align-items:center;justify-content:center;
+    border:1px solid var(--chipline);background:var(--chip);
+    padding:6px 10px;border-radius:999px;font-size:12px;line-height:1;height:26px;
+  }
   .ok{background:rgba(30,166,114,.15);border-color:rgba(30,166,114,.35)}
   .warn{background:rgba(179,139,16,.15);border-color:rgba(179,139,16,.35)}
   .bad{background:rgba(210,61,61,.15);border-color:rgba(210,61,61,.35)}
@@ -55,14 +61,14 @@
   <div class="section hero">
     <div style="font-size:18px;font-weight:700;margin-bottom:8px">Proof moves; data doesn’t.</div>
     <div class="sub">Uniform view across SKUs (OLR/1.5-P & 1.4L). One-click validator accepts URL or pasted JSON. Triage, not truth.</div>
-    <div class="inline" style="margin-top:10px;flex-wrap:wrap">
+    <div class="inline" style="margin-top:10px">
       <a class="btn" href="https://doi.org/10.5281/zenodo.17476985" target="_blank" rel="noopener">Coherence Dynamics v1.2 (Erratum)</a>
       <a class="btn secondary" href="#exclusive">Exclusive offer</a>
     </div>
   </div>
 
   <div class="section">
-    <h2>Featured receipts (uniform view)</h2>
+    <h2>Featured receipts</h2>
     <div id="feat1"></div>
     <div id="feat2" style="margin-top:12px"></div>
     <div id="feat3" style="margin-top:12px"></div>
@@ -79,11 +85,24 @@
     <div class="tile">
       <div class="note">Validate any receipt URL (raw GitHub URL works best) <em>or paste a JSON receipt</em>. GitHub “blob” links are auto-rewritten to raw.</div>
       <textarea id="valUrl" placeholder="Paste a receipt URL or the JSON itself…"></textarea>
-      <div class="inline" style="margin-top:10px;flex-wrap:wrap">
+      <div class="inline" style="margin-top:10px">
         <a class="btn" id="valBtn" href="#">Validate</a>
         <a class="btn secondary" id="copyTpl" href="#">Copy Template</a>
       </div>
       <pre id="valOut" style="margin-top:10px">Waiting…</pre>
+    </div>
+  </div>
+
+  <div class="section" id="howto">
+    <h2>How this demo works</h2>
+    <div class="tile">
+      <ol style="margin:0 0 8px 18px">
+        <li>Each run emits a tiny, signed receipt (no prompts/PII).</li>
+        <li><b>Caps:</b> GREEN ≤ 640 B; AMBER/RED ≤ 800 B. Small = portable proof.</li>
+        <li>Signals show fast health: κ (stress), Δhol (drift), optional freshness dial.</li>
+        <li>The validator checks schema + size caps and reports signals.</li>
+      </ol>
+      <div class="note">Why it matters: size caps force discipline; consistent schema makes receipts interoperable; κ/Δhol catch failure modes early so teams can triage before incidents.</div>
     </div>
   </div>
 
@@ -106,8 +125,9 @@ function toRaw(u){
     return u;
   }catch{ return u; }
 }
+const q8 = v => (typeof v==='number' && v>=0 && v<=255) ? ((v-128)/127).toFixed(2) : v;
 
-/* ---------- normalizer ---------- */
+/* ---------- normalizer (now reads signals.*) ---------- */
 function normalize(r){
   const v = r.version || r.receipt_version || r.receiptVersion || r.sku || '—';
   const status = (r.attrs?.status || r.status || '').toString();
@@ -124,12 +144,14 @@ function normalize(r){
   const because = claims.because ?? '—';
   const but     = claims.but     ?? '—';
   const so      = claims.so      ?? '—';
-  const dials = {
-    κ: (r.kappa ?? r.κ ?? r.dials?.kappa ?? '—'),
-    Δhol: (r.delta_hol ?? r.Δhol ?? r.dials?.delta_hol ?? '—'),
-    fresh: (r.fresh ?? r.dials?.fresh ?? '—')
-  };
-  return {version:v, status, model, issued, prec, point, because, but, so, dials};
+
+  // dials: prefer signals.*, then fallbacks
+  const kappa = r.signals?.kappa ?? r.kappa ?? r.κ ?? r.dials?.kappa ?? r.telem?.kappa_eff ?? '—';
+  const dhol  = r.signals?.dhol  ?? r.signals?.delta_hol ?? r.delta_hol ?? r.Δhol ?? r.dials?.delta_hol ?? r.telem?.delta_hol ?? '—';
+  let fresh   = r.signals?.fresh ?? r.fresh ?? r.dials?.fresh ?? r.telem?.dials?.fresh_ratio_q8 ?? '—';
+  fresh = q8(fresh);
+
+  return {version:v, status, model, issued, prec, point, because, but, so, dials:{'κ':kappa, 'Δhol':dhol, 'fresh':fresh}};
 }
 
 function check(r, bytes){
@@ -169,7 +191,10 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   card.appendChild(row('SO',n.so));
 
   const dialRow = el('div','inline'); dialRow.style.gap='8px'; dialRow.style.margin='10px 14px';
-  for (const [k,v] of Object.entries(n.dials)) dialRow.appendChild(el('span','chip neutral', `${k} — ${v}`));
+  for (const [k,v] of Object.entries(n.dials)){
+    const val = (typeof v==='number' && Number.isFinite(v)) ? (k==='fresh'?v.toString():v.toFixed(3)) : v;
+    dialRow.appendChild(el('span','chip neutral', `${k} — ${val}`));
+  }
   card.appendChild(dialRow);
 
   const footer = el('div','note', `source: ${srcUrl} · bytes=${bytes}`);
@@ -213,8 +238,7 @@ async function fetchFirst(pathList){
 async function loadLocal(){
   const target = document.getElementById('local');
   const title  = document.getElementById('localTitle');
-  const cand = ['docs/receipts/manifest.json','receipts/manifest.json'];
-  const got = await fetchFirst(cand);
+  const got = await fetchFirst(['docs/receipts/manifest.json','receipts/manifest.json']);
   if (!got){ target.appendChild(el('div','tile', 'No local manifest found.')); return; }
   title.textContent = `Local receipts (from ${got.path})`;
 
@@ -223,9 +247,7 @@ async function loadLocal(){
   for (const file of list){
     try{
       const res = await fetch(file + (file.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
-      const txt = await res.text();
-      const bytes = byteLen(txt);
-      const j = JSON.parse(txt);
+      const txt = await res.text(); const bytes = byteLen(txt); const j = JSON.parse(txt);
       target.appendChild(renderUniformTile(file.split('/').slice(-1)[0], file, j, bytes));
       const spacer = el('div'); spacer.style.height='12px'; target.appendChild(spacer);
     }catch(e){
@@ -243,20 +265,19 @@ document.getElementById('valBtn').addEventListener('click', async (ev)=>{
   if (!input) { out.textContent='Provide a URL or paste a JSON receipt.'; return; }
   try{
     let j, bytes;
-    if (input.startsWith('{')) {
-      j = JSON.parse(input);
-      bytes = byteLen(JSON.stringify(j));
-    } else {
+    if (input.startsWith('{')) { j = JSON.parse(input); bytes = byteLen(JSON.stringify(j)); }
+    else {
       const raw = toRaw(input);
       const res = await fetch(raw, {cache:'no-store'});
       if (!res.ok) throw new Error(`fetch failed (${res.status})`);
-      const txt = await res.text();
-      bytes = byteLen(txt);
-      j = JSON.parse(txt);
+      const txt = await res.text(); bytes = byteLen(txt); j = JSON.parse(txt);
     }
     const result = check(j, bytes);
+    const sigs = j.signals ? Object.entries(j.signals)
+      .map(([k,v])=>`${k}=${(typeof v==='number')?Number(v).toFixed(3):v}`).join(', ') : '—';
+    const cap = (result.status==='green'||result.status==='clean'||result.status==='ok') ? 640 : 800;
     out.textContent = result.ok
-      ? `✅ PASS\nbytes=${result.bytes} · status=${result.status} · version=${result.version}`
+      ? `✅ PASS\nbytes=${result.bytes} (≤${cap}) · status=${result.status} · version=${result.version}\nSignals: ${sigs}`
       : `❌ FAIL\n- ${result.errs.join('\n- ')}`;
   }catch(e){
     out.textContent = `❌ ${e.message || 'fetch/parse failed'}`;
@@ -266,16 +287,11 @@ document.getElementById('valBtn').addEventListener('click', async (ev)=>{
 document.getElementById('copyTpl').addEventListener('click', (e)=>{
   e.preventDefault();
   const tpl = {
-    "receipt_version":"1.5-P",
-    "version":"OLR/1.5-P",
-    "issued_at":"2025-11-02T00:00:00Z",
+    "receipt_version":"1.5-P","version":"OLR/1.5-P","issued_at":"2025-11-02T00:00:00Z",
     "attrs":{"status":"CLEAN"},
     "model":{"family":"demo-llm"},
     "precision":{"train_dtype":"fp16","infer_dtype":"fp16"},
-    "point":"One clear outcome sentence.",
-    "because":"One reason.",
-    "but":"One risk.",
-    "so":"One action."
+    "point":"One clear outcome sentence.","because":"One reason.","but":"One risk.","so":"One action."
   };
   navigator.clipboard.writeText(JSON.stringify(tpl,null,2));
 });
