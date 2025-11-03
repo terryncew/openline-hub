@@ -4,48 +4,50 @@
   <meta charset="utf-8" />
   <title>OpenLine Hub · Portable Proof for AI</title>
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <meta name="description" content="Live receipts and researcher kit for OpenLine · COLE. Proof moves; data doesn’t." />
+  <meta name="description" content="Uniform receipts gallery + researcher kit. Proof moves; data doesn’t." />
   <meta property="og:title" content="OpenLine Hub · Portable Proof for AI" />
-  <meta property="og:description" content="Live receipts, demos, and researcher kit. Proof moves; data doesn't." />
+  <meta property="og:description" content="Featured receipts, local receipts, and a validator. Triage, not truth." />
   <meta property="og:image" content="https://terryncew.github.io/openline-hub/og-image.png" />
   <meta property="og:url" content="https://terryncew.github.io/openline-hub/" />
   <meta name="twitter:card" content="summary_large_image" />
   <style>
     :root{--bg:#0f1115;--ink:#e9eef7;--muted:#9aa4b2;--tile:#151821;--line:#232838;
-      --ok:#16a34a;--warn:#f59e0b;--bad:#ef4444}
+          --ok:#16a34a;--warn:#f59e0b;--bad:#ef4444;--chip:#0b0d12;--chipline:#1c2130}
     *{box-sizing:border-box}
     html,body{margin:0;background:var(--bg);color:var(--ink);
       font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
     a{color:inherit;text-decoration:none}
-    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
+    code,kbd{font:12px ui-monospace,Menlo,Consolas,monospace;background:#0b0d12;
+      border:1px solid #1c2130;border-radius:6px;padding:2px 6px}
     .wrap{max-width:980px;margin:0 auto;padding:20px}
     header{display:flex;justify-content:space-between;align-items:center;margin:6px 0 10px}
     .brand{font-weight:700;letter-spacing:.2px}
-    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);border-radius:999px;color:var(--muted)}
-    .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
+    .badge{display:inline-block;padding:6px 10px;border:1px solid var(--line);
+      border-radius:999px;color:var(--muted)}
+    .hero{margin:12px 0 18px;padding:16px;border:1px solid var(--line);
+      border-radius:14px;background:linear-gradient(180deg,#121522,#0f1115)}
     .hero h1{margin:0 0 6px;font-size:22px}
     .hero p{margin:0;color:var(--muted)}
     .inline{display:flex;gap:8px;flex-wrap:wrap}
     .btn{display:inline-block;padding:10px 14px;border-radius:10px;border:1px solid var(--ink);font-weight:600}
     .btn.secondary{border-color:var(--line)}
-    .section{margin:20px 0}
-    .panel{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+    .section{margin:22px 0}
     .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-    .tile{position:relative;padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
-    .tile h3{margin:0 0 8px;font-size:16px}
-    .muted{color:var(--muted)}
-    .note{font-size:12px;color:var(--muted)}
-    .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:4px 10px;border:1px solid var(--line);border-radius:999px;color:var(--ink)}
-    .chip.ok{background:#0f1a12;border-color:#173224}
-    .chip.warn{background:#1e180a;border-color:#3d2e0a}
-    .chip.bad{background:#1e0c0f;border-color:#3a1118}
-    .chip.neutral{background:#0b0d12;border-color:#1c2130;color:#c9d2e3}
-    .card{margin-top:10px;border:1px solid var(--line);border-radius:12px;background:#10131b}
-    .row{display:grid;grid-template-columns:90px 1fr;border-top:1px solid #20263a;padding:12px 14px}
-    .row:first-child{border-top:none;border-top-left-radius:12px;border-top-right-radius:12px}
-    .row:last-child{border-bottom-left-radius:12px;border-bottom-right-radius:12px}
+    .card{padding:14px;border:1px solid var(--line);border-radius:12px;background:var(--tile)}
+    .card h3{margin:0 0 10px;font-size:16px}
+    .row{display:grid;grid-template-columns:110px 1fr;border-top:1px solid #20263a;padding:10px 12px}
+    .row:first-of-type{border-top:none;border-top-left-radius:12px;border-top-right-radius:12px}
     .left{letter-spacing:.3px;color:#a8b2c3;font-weight:600}
     .right{white-space:pre-wrap}
+    .meta{display:flex;gap:8px;flex-wrap:wrap;margin:8px 0}
+    .chip{display:inline-flex;align-items:center;gap:6px;font-size:11px;
+      padding:4px 10px;border:1px solid var(--chipline);border-radius:999px;background:var(--chip);color:#c9d2e3}
+    .chip.ok{background:#0f1a12;border-color:#173224;color:#cfe9da}
+    .chip.warn{background:#1e180a;border-color:#3d2e0a;color:#f6e9c8}
+    .chip.bad{background:#1e0c0f;border-color:#3a1118;color:#f7d0d6}
+    .muted{color:var(--muted)}
+    .note{font-size:12px;color:var(--muted)}
+    footer{margin:26px 0 30px}
     @media (max-width:420px){.btn{padding:9px 12px}.hero h1{font-size:20px}}
   </style>
 </head>
@@ -58,220 +60,217 @@
 
   <div class="hero">
     <h1>Proof moves; data doesn’t.</h1>
-    <p>Uniform cards from any receipt family. Triage, not truth.</p>
+    <p>Uniform view across SKUs (OLR/1.5-P & 1.4L), plus a one-click validator. Triage, not truth.</p>
     <div class="inline" style="margin-top:10px">
       <a class="btn" href="https://zenodo.org/records/17487669" target="_blank" rel="noopener">Coherence Dynamics v1.2 (Erratum)</a>
-      <a class="btn secondary" href="https://github.com/terryncew/openline-core" target="_blank" rel="noopener">GitHub · openline-core</a>
+      <a class="btn secondary" href="./exclusive.html">Exclusive offer</a>
     </div>
   </div>
 
-  <!-- FEATURED -->
-  <div class="section">
-    <h2 style="margin:0 0 10px">Featured receipt</h2>
-    <div id="featured" class="tile"><div class="note">Loading…</div></div>
-  </div>
+  <!-- Featured remote receipts (uniform view) -->
+  <section class="section">
+    <h2 style="margin:0 0 10px">Featured receipts (uniform view)</h2>
+    <div id="featured" class="grid" aria-live="polite"></div>
+  </section>
 
-  <!-- REMOTE SKUs -->
-  <div class="section">
-    <h2 style="margin:0 0 8px">SKU gallery (uniform view)</h2>
-    <div id="skuGrid" class="grid" aria-live="polite"></div>
-  </div>
+  <!-- Local receipts -->
+  <section class="section">
+    <h2 style="margin:0 0 8px">Local receipts (from <code>docs/receipts/manifest.json</code>)</h2>
+    <div id="local" class="grid" aria-live="polite"></div>
+    <div class="note">Add JSON files to <code>docs/receipts/</code> and list them in <code>manifest.json</code>.</div>
+  </section>
 
-  <!-- LOCAL (optional) -->
-  <div class="section">
-    <h2 style="margin:0 0 8px">Local receipts (reads <code>docs/receipts/manifest.json</code>)</h2>
-    <div id="rxGrid" class="grid" aria-live="polite"></div>
-  </div>
-
-  <!-- KIT -->
-  <div class="section">
+  <!-- Researcher kit -->
+  <section class="section">
     <h2 style="margin:0 0 8px">Researcher kit</h2>
-    <div class="panel">
-      <p class="muted">Validate any receipt URL or copy a tiny template.</p>
+    <div class="card">
+      <p class="muted">Validate any receipt URL (raw GitHub URL works best). Or copy a tiny template.</p>
       <div class="inline" style="margin-top:6px">
-        <input id="valUrl" type="text" placeholder="https://raw.githubusercontent.com/.../docs/receipt.latest.json" style="flex:1;min-width:220px">
+        <input id="valUrl" type="text" placeholder="https://raw.githubusercontent.com/.../receipt.latest.json" style="flex:1;min-width:220px">
         <button class="btn" id="valBtn" type="button">Validate</button>
         <button class="btn secondary" type="button" id="copyTpl">Copy Template</button>
       </div>
       <pre id="valOut" class="note" style="white-space:pre-wrap;margin-top:8px"></pre>
     </div>
-  </div>
+  </section>
 
-  <!-- OFFER -->
-  <div class="section">
-    <h2 style="margin:0 0 8px">Exclusive</h2>
-    <div class="grid">
-      <a class="tile" href="./exclusive.html">
-        <h3>Field-of-Use Exclusivity (12 months)</h3>
-        <p class="muted">From $30M base + performance kicker. Non-exclusive eval $12M.</p>
-        <div class="note">KPIs: ROAS +1.5% · Energy −2% · Integrity lead ≥14 d</div>
-      </a>
-      <a class="tile" href="https://terryncew.github.io/openline-exchange/?utm_source=openline-hub" target="_blank" rel="noopener">
-        <h3>OpenLine Exchange</h3>
-        <p class="muted">List offers with preview receipts and rights-in-file.</p>
-        <div class="note">Offers · Receipts-native</div>
-      </a>
-    </div>
-  </div>
-
-  <footer class="section" style="margin-bottom:30px">
+  <footer class="section">
     <div class="muted">OpenLine · COLE · MIT. © Sir Terrynce.</div>
   </footer>
 </div>
 
 <script>
-/* ------------------------ NORMALIZER (first principles) ------------------------ */
-/* Finds first non-empty value among many dotted paths (case-insensitive) */
-function pick(obj, paths, fallback=''){
-  for(const p of paths){
-    const parts = p.split('.'); let cur = obj;
-    for(const raw of parts){
-      if(!cur) { cur = undefined; break; }
-      // case-insensitive key search at each level
-      const key = Object.keys(cur).find(k=>k.toLowerCase()===raw.toLowerCase());
-      cur = key ? cur[key] : undefined;
-    }
-    if(cur!==undefined && cur!==null && cur!=='') return cur;
+/* ========= Config ========= */
+const REMOTES = [
+  {
+    label: "COLE-Coherence-Layer-Engine / receipt.latest.json",
+    url: "https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.latest.json"
+  },
+  {
+    label: "open-receipts / receipt.latest.json",
+    url: "https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json"
+  },
+  {
+    label: "openline-csm / receipt.latest.json",
+    url: "https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json"
   }
-  return fallback;
-}
-
-/* Map a raw receipt to a uniform view */
-function normalize(j={}, sourceUrl=''){
-  const version = String(pick(j, ['version','receipt_version','olr','olr_version'],'')).toLowerCase();
-  const statusRaw = String(pick(j, [
-    'attrs.status','badge.status','status','labels.status','health.status'
-  ], '')).toLowerCase();
-
-  const fam = pick(j, ['model.family','model.name','model.id','model','engine'],'demo-llm');
-  const issued = pick(j, ['issued_at','run.ts','run.time','timestamp','ts'],'');
-  const p = pick(j, ['point','claims.point','CLAIMS.POINT'],'—');
-  const bcz = pick(j, ['because','claims.because'],'—');
-  const but = pick(j, ['but','claims.but'],'—');
-  const so = pick(j, ['so','claims.so'],'—');
-
-  const train = String(pick(j, ['precision.train_dtype','precision.train','dtype.train','dtype'],'')).toLowerCase();
-  const infer = String(pick(j, ['precision.infer_dtype','precision.infer','infer_dtype'],'')).toLowerCase();
-  const dtypes = (train||infer) ? `${train||infer}/${infer||train||'—'}` : '—';
-
-  const kappa = pick(j, ['health.kappa','metrics.kappa','kappa','κ'],'');
-  const drift = pick(j, ['health.delta_hol','health.drift','metrics.delta_hol','Δhol','deltaHol','drift'],'');
-  const fresh = pick(j, ['health.freshness_ratio','metrics.freshness_ratio','freshness','freshness_ratio'],'');
-  const sku = version.includes('1.5') ? 'OLR/1.5-P'
-           : version.includes('1.4') ? 'OLR/1.4L'
-           : (version ? version.toUpperCase() : '—');
-
-  const status = ['green','ok','clean','coherent'].includes(statusRaw) ? 'CLEAN'
-               : ['amber','warn','check','yellow'].includes(statusRaw)   ? 'CHECK'
-               : ['red','risk','bad'].includes(statusRaw)                ? 'RISK'
-               : '—';
-
-  return {sku, status, fam, issued, p,bcz,but,so, dtypes, kappa, drift, fresh, src:sourceUrl};
-}
-
-/* UI helpers */
-const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!==undefined) e.textContent=txt; return e;};
-function chip(status){
-  const map = {CLEAN:'ok', CHECK:'warn', RISK:'bad', '—':'neutral'};
-  const cls = map[status] || 'neutral';
-  const s = el('span',`chip ${cls}`,status);
-  return s;
-}
-function metricsRow(kappa, drift, fresh){
-  const wrap = el('div','inline'); wrap.style.gap='8px'; wrap.style.flexWrap='wrap';
-  const mk = (label,val)=>{ const c=el('span','chip neutral', `${label} ${val!==''?val:'—'}`); return c; };
-  wrap.appendChild(mk('κ', kappa));
-  wrap.appendChild(mk('Δhol', drift));
-  wrap.appendChild(mk('fresh', fresh));
-  return wrap;
-}
-function card(title, view){
-  const t = el('div','tile');
-  const top = el('div','inline'); top.style.justifyContent='space-between'; top.style.alignItems='center';
-  const h = el('div'); h.appendChild(el('h3','',title)); h.appendChild(el('div','muted',view.issued));
-  const r = el('div'); r.style.display='flex'; r.style.gap='8px'; r.appendChild(chip(view.status));
-  r.appendChild(el('span','chip neutral', view.sku));
-  top.appendChild(h); top.appendChild(r);
-
-  const c = el('div','card');
-  const row=(k,v)=>{const rr=el('div','row'); rr.appendChild(el('div','left',k)); rr.appendChild(el('div','right',v||'—')); return rr;};
-  c.appendChild(row('MODEL', `${view.fam} · ${view.dtypes}`));
-  c.appendChild(row('POINT', view.p));
-  c.appendChild(row('BECAUSE', view.bcz));
-  c.appendChild(row('BUT', view.but));
-  c.appendChild(row('SO', view.so));
-  c.appendChild(el('div','row')); // spacer
-  c.lastChild.style.display='none';
-  const mbox = el('div'); mbox.style.padding='10px 14px'; mbox.appendChild(metricsRow(view.kappa,view.drift,view.fresh)); c.appendChild(mbox);
-
-  const src = el('div','note','source: '+view.src);
-
-  t.appendChild(top); t.appendChild(c); t.appendChild(src);
-  return t;
-}
-
-/* ------------------------ DATA SOURCES ------------------------ */
-const RAW = (repo)=>`https://raw.githubusercontent.com/terryncew/${repo}/main/docs/receipt.latest.json`;
-const REMOTE = [
-  {label:'COLE-Coherence-Layer-Engine', url: RAW('COLE-Coherence-Layer-Engine-')},
-  {label:'openline-csm',                 url: RAW('openline-csm')},
-  {label:'openline-amber-demo',          url: RAW('openline-amber-demo')},
-  {label:'open-receipts',                url: RAW('open-receipts')},
-  {label:'terrynce-stack',               url: RAW('terrynce-stack')},
 ];
 
-/* ------------------------ RENDER ------------------------ */
-(async function renderFeatured(){
-  const box = document.getElementById('featured');
-  try{
-    const url = RAW('terrynce-stack');
-    const txt = await fetch(url,{cache:'no-store'}).then(r=>r.text());
-    const bytes = new TextEncoder().encode(txt).length;
-    const j = JSON.parse(txt);
-    const view = normalize(j, `${url} · bytes=${bytes} · version=${(j.version||j.receipt_version||'').toString()}`);
-    box.innerHTML=''; box.appendChild(card('terrynce-stack / receipt.latest.json', view));
-  }catch(e){ box.innerHTML=''; box.appendChild(el('div','note', 'Featured load failed: '+(e.message||'error'))); }
-})();
+const LOCAL_ROOT = "receipts"; // served at /docs/receipts/*
+const CACHE_BUST = "?v=" + Date.now();
 
-(async function renderSKU(){
-  const grid = document.getElementById('skuGrid');
-  for(const r of REMOTE){
-    const tile = el('div','tile'); grid.appendChild(tile);
-    try{
-      const txt = await fetch(r.url,{cache:'no-store'}).then(x=>x.text());
-      const bytes = new TextEncoder().encode(txt).length;
-      const j = JSON.parse(txt);
-      const view = normalize(j, `${r.url} · bytes=${bytes} · version=${(j.version||j.receipt_version||'').toString()}`);
-      const c = card(`${r.label} / receipt.latest.json`, view);
-      tile.replaceWith(c);
-    }catch(e){
-      tile.innerHTML='';
-      tile.appendChild(el('div','note',`${r.label}: failed · ${e.message||'error'}`));
-      tile.appendChild(el('div','note',r.url));
+/* ========= Helpers ========= */
+const el = (t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!==undefined) e.textContent=txt; return e;};
+const text = v => (v===0? "0" : (v===false? "false" : (v ? String(v) : "—")));
+const take = (o, keys, def="—")=>{
+  for(const k of keys){
+    if(o && typeof o==="object"){
+      const parts = k.split(".");
+      let cur = o;
+      let ok = true;
+      for(const p of parts){ if(cur && p in cur){ cur = cur[p]; } else { ok=false; break; } }
+      if(ok && cur!==undefined && cur!==null && cur!=="") return cur;
     }
   }
-})();
+  return def;
+};
+const bytesOf = s => new TextEncoder().encode(s).length;
 
-(async function renderLocal(){
-  const grid = document.getElementById('rxGrid');
-  const root = 'receipts';
-  try{
-    const m = await fetch(`${root}/manifest.json`,{cache:'no-store'}).then(r=>r.ok?r.json():Promise.reject(new Error('manifest missing')));
-    if(!Array.isArray(m.files)||m.files.length===0){ grid.appendChild(el('div','note','No local receipts found. Add files to docs/receipts and list them in manifest.json.')); return; }
-    for(const name of m.files){
-      const url = `${root}/${name}?v=${Date.now()}`;
-      try{
-        const txt = await fetch(url,{cache:'no-store'}).then(r=>r.text());
-        const bytes = new TextEncoder().encode(txt).length;
-        const j = JSON.parse(txt);
-        const view = normalize(j, `${url.replace(/\?.*$/,'')} · bytes=${bytes} · version=${(j.version||j.receipt_version||'').toString()}`);
-        grid.appendChild(card(name, view));
-      }catch(e){ const t=el('div','tile'); t.appendChild(el('div','note',`Failed to load ${name}: ${e.message||'error'}`)); grid.appendChild(t); }
+function statusInfo(rec){
+  const raw = (take(rec,["attrs.status","status"],"") || "").toString().toLowerCase();
+  if(["clean","coherent","ok","green"].includes(raw)) return {cls:"ok", txt:"CLEAN"};
+  if(["amber","warn","check"].includes(raw))          return {cls:"warn", txt:"CHECK"};
+  if(["red","risk","bad"].includes(raw))              return {cls:"bad", txt:"RISK"};
+  return {cls:"", txt:"—"};
+}
+function sku(rec){
+  const v = (take(rec,["version","receipt_version"],"") || "").toString().toLowerCase();
+  if(v.includes("1.5")) return "OLR/1.5-P";
+  if(v.includes("1.4")) return "OLR/1.4L";
+  return "unknown";
+}
+function precision(rec){
+  const a = (take(rec,["precision.train_dtype","precision.train","train_dtype"],"") || "").toString();
+  const b = (take(rec,["precision.infer_dtype","precision.infer","infer_dtype"],"") || "").toString();
+  if(!a && !b) return "—";
+  return (a||b) + (b? ("/"+b) : "");
+}
+function model(rec){
+  const fam = take(rec,["model.family","model.id","model","model_name"],"demo-llm");
+  return fam;
+}
+function issued(rec){
+  return take(rec,["issued_at","run.ts","run.time","time"],"—");
+}
+function dial(rec, keys){
+  let v = take(rec,keys,null);
+  if(typeof v==="number") return Number.isFinite(v)? (Math.abs(v)<0.001? v.toExponential(1) : v.toFixed(3)) : "—";
+  if(typeof v==="string" && v.trim()!=="") return v;
+  return "—";
+}
+function srcBadgeRow(rec){
+  const wrap = el("div","note");
+  wrap.textContent = "source: " + (rec.__src || "—") + (rec.__bytes? " · bytes="+rec.__bytes : "") + (rec.version? " · version="+rec.version : "");
+  return wrap;
+}
+
+/* ========= Renderer (uniform card) ========= */
+function renderCard(title, rec){
+  const card = el("div","card");
+  const h3 = el("h3","",title);
+  card.appendChild(h3);
+
+  const meta = el("div","meta");
+  const st = statusInfo(rec);
+  const stChip = el("span", "chip " + (st.cls||""), st.txt);
+  const skuChip = el("span","chip", sku(rec));
+  meta.appendChild(stChip); meta.appendChild(skuChip);
+  card.appendChild(meta);
+
+  const add = (k,v)=>{ const r=el("div","row"); r.appendChild(el("div","left",k)); r.appendChild(el("div","right",text(v))); card.appendChild(r); };
+
+  add("MODEL", model(rec) + " · " + text(take(rec,["model.variant","model.tag"],"—")));
+  add("ISSUED", issued(rec));
+  add("PRECISION", precision(rec));
+  // Claims (works for both flat and nested 'claims')
+  const claims = rec.claims || {};
+  add("POINT",   take(rec,["point","claims.point"], "—"));
+  add("BECAUSE", take(rec,["because","claims.because"], "—"));
+  add("BUT",     take(rec,["but","claims.but"], "—"));
+  add("SO",      take(rec,["so","claims.so"], "—"));
+
+  // Dials (various spellings)
+  const kappa = dial(rec,["dials.kappa","metrics.kappa","kappa","κ","k"]);
+  const dhol  = dial(rec,["dials.delta_hol","metrics.delta_hol","delta_hol","Δhol","dhol"]);
+  const fresh = dial(rec,["dials.fresh","metrics.fresh","fresh","freshness_ratio"]);
+  const kRow = el("div","meta"); kRow.style.marginTop="8px";
+  kRow.appendChild(el("span","chip","κ — " + kappa));
+  kRow.appendChild(el("span","chip","Δhol — " + dhol));
+  kRow.appendChild(el("span","chip","fresh — " + fresh));
+  card.appendChild(kRow);
+
+  card.appendChild(srcBadgeRow(rec));
+  return card;
+}
+
+/* ========= Fetch & build ========= */
+async function fetchJson(url){
+  const res = await fetch(url,{cache:"no-store"});
+  if(!res.ok) throw new Error("fetch failed");
+  const txt = await res.text();
+  const j = JSON.parse(txt);
+  j.__bytes = bytesOf(txt);
+  j.__src = url;
+  return j;
+}
+
+async function loadFeatured(){
+  const box = document.getElementById("featured");
+  for(const r of REMOTES){
+    const holder = el("div","");
+    holder.appendChild(el("div","note","loading…"));
+    box.appendChild(holder);
+    try{
+      const j = await fetchJson(r.url);
+      const card = renderCard(r.label, j);
+      holder.innerHTML = ""; holder.appendChild(card);
+    }catch(e){
+      const c = el("div","card"); c.appendChild(el("div","",r.label));
+      c.appendChild(el("div","note","Failed to load: " + (e.message||"error")));
+      c.appendChild(el("div","note",r.url));
+      holder.innerHTML=""; holder.appendChild(c);
     }
-  }catch(e){ grid.appendChild(el('div','note', e.message||'No manifest')); }
-})();
+  }
+}
 
-/* ------------------------ VALIDATOR ------------------------ */
+async function loadLocal(){
+  const grid = document.getElementById("local");
+  try{
+    const m = await fetch(`${LOCAL_ROOT}/manifest.json${CACHE_BUST}`,{cache:"no-store"});
+    if(!m.ok) throw new Error("manifest missing");
+    const {files=[]} = await m.json();
+    if(files.length===0){ grid.appendChild(el("div","note","No local receipts listed.")); return; }
+    for(const name of files){
+      const url = `${LOCAL_ROOT}/${name}${CACHE_BUST}`;
+      try{
+        const j = await fetchJson(url);
+        grid.appendChild(renderCard(name, j));
+      }catch(e){
+        const c = el("div","card"); c.appendChild(el("h3","",name));
+        c.appendChild(el("div","note","Failed to load: " + (e.message||"error")));
+        c.appendChild(el("div","note",url));
+        grid.appendChild(c);
+      }
+    }
+  }catch(e){
+    grid.appendChild(el("div","note","No local manifest found. Create /docs/receipts/manifest.json"));
+  }
+}
+
+loadFeatured();
+loadLocal();
+
+/* ========= Validator ========= */
 document.getElementById('copyTpl')?.addEventListener('click', ()=>{
   const template = {
     receipt_version:"1.5-P",
@@ -280,10 +279,10 @@ document.getElementById('copyTpl')?.addEventListener('click', ()=>{
     attrs:{status:"clean"},
     model:{family:"demo-llm"},
     precision:{train_dtype:"fp16",infer_dtype:"fp16"},
-    point:"Run fp16/fp16 for speed on commodity GPUs.",
-    because:"κ and Δhol remain within green bounds on short sequences.",
-    but:"Overflow risk rises on very long contexts or mixed-device runs.",
-    so:"Ship fp16 for demos; keep a bf16 path for ≥4k tokens."
+    point:"fp16/fp16 is fine for short demos.",
+    because:"κ and Δhol stay green on ≤4k tokens.",
+    but:"Long context risks overflow; mixed-device drift possible.",
+    so:"Ship fp16 for speed; keep a bf16 fallback for ≥4k."
   };
   const txt = JSON.stringify(template,null,2);
   navigator.clipboard.writeText(txt).then(()=>{document.getElementById('valOut').textContent='📋 Template copied';});
@@ -292,16 +291,19 @@ document.getElementById('copyTpl')?.addEventListener('click', ()=>{
 document.getElementById('valBtn')?.addEventListener('click', async ()=>{
   const out = document.getElementById('valOut');
   const url = (document.getElementById('valUrl').value||'').trim();
-  out.textContent='…checking';
-  if(!url){ out.textContent='Provide a URL to a JSON receipt.'; return; }
+  out.textContent = '…checking';
+  if(!url){ out.textContent='Provide a URL to a JSON receipt (raw GitHub URL recommended).'; return; }
   try{
     const res = await fetch(url,{cache:'no-store'}); if(!res.ok) throw new Error('fetch failed');
-    const txt = await res.text(); const bytes = new TextEncoder().encode(txt).length; const j = JSON.parse(txt);
-    const v = normalize(j,url);
+    const txt = await res.text(); const bytes = bytesOf(txt); const j = JSON.parse(txt);
     const errs = [];
-    if(v.status==='—') errs.push('missing attrs.status / badge.status');
-    if(v.sku==='—') errs.push('missing version / receipt_version');
-    out.textContent = errs.length? `❌ FAIL\n- ${errs.join('\n- ')}` : `✅ PASS\nbytes=${bytes}, status=${v.status}, sku=${v.sku}`;
+    if(!j.receipt_version && !j.version) errs.push('missing receipt_version/version');
+    if(!(j.attrs && typeof j.attrs.status==='string') && !j.status) errs.push('missing attrs.status');
+    // Simple size budgets (signal that "tiny is good")
+    const status = (j.attrs?.status || j.status || "").toString().toLowerCase();
+    if(['clean','coherent','ok','green'].includes(status) && bytes>640) errs.push(`CLEAN exceeds 640B (${bytes})`);
+    if(['amber','warn','check','red','risk','bad'].includes(status) && bytes>800) errs.push(`${status} exceeds 800B (${bytes})`);
+    out.textContent = errs.length? `❌ FAIL\n- ${errs.join('\n- ')}` : `✅ PASS\nbytes=${bytes}, status=${status||'n/a'}`;
   }catch(e){ out.textContent = `❌ ${e.message||'Could not fetch/parse JSON'}`; }
 });
 </script>
