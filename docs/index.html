@@ -30,8 +30,6 @@
   .row:first-child{border-top:0}
   .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600}
   .right{flex:1;padding:10px 14px}
-
-  /* Pills — fix the oval */
   .chip{
     display:inline-flex;align-items:center;justify-content:center;
     border:1px solid var(--chipline);background:var(--chip);
@@ -63,7 +61,7 @@
     <div class="sub">Uniform view across SKUs (OLR/1.5-P & 1.4L). One-click validator accepts URL or pasted JSON. Triage, not truth.</div>
     <div class="inline" style="margin-top:10px">
       <a class="btn" href="https://doi.org/10.5281/zenodo.17476985" target="_blank" rel="noopener">Coherence Dynamics v1.2 (Erratum)</a>
-      <a class="btn secondary" href="#exclusive">Exclusive offer</a>
+      <a class="btn secondary" href="#exclusive" id="goExclusive">Exclusive offer</a>
     </div>
   </div>
 
@@ -99,10 +97,10 @@
       <ol style="margin:0 0 8px 18px">
         <li>Each run emits a tiny, signed receipt (no prompts/PII).</li>
         <li><b>Caps:</b> GREEN ≤ 640 B; AMBER/RED ≤ 800 B. Small = portable proof.</li>
-        <li>Signals show fast health: κ (stress), Δhol (drift), optional freshness dial.</li>
+        <li>Signals show fast health: κ (stress), Δhol (drift), <b>Φ*</b> (effective coherence).</li>
         <li>The validator checks schema + size caps and reports signals.</li>
       </ol>
-      <div class="note">Why it matters: size caps force discipline; consistent schema makes receipts interoperable; κ/Δhol catch failure modes early so teams can triage before incidents.</div>
+      <div class="note">Φ* star legend: 5★ ≥ 0.90 • 4★ ≥ 0.75 • 3★ ≥ 0.60 • 2★ ≥ 0.45 • 1★ &lt; 0.45.</div>
     </div>
   </div>
 
@@ -125,9 +123,9 @@ function toRaw(u){
     return u;
   }catch{ return u; }
 }
-const q8 = v => (typeof v==='number' && v>=0 && v<=255) ? ((v-128)/127).toFixed(2) : v;
+function stars(phi){ if(!(phi>=0)) return ''; if(phi>=0.90) return ' (5★)'; if(phi>=0.75) return ' (4★)'; if(phi>=0.60) return ' (3★)'; if(phi>=0.45) return ' (2★)'; return ' (1★)'; }
 
-/* ---------- normalizer (now reads signals.*) ---------- */
+/* ---------- normalizer (signals incl. Φ*) ---------- */
 function normalize(r){
   const v = r.version || r.receipt_version || r.receiptVersion || r.sku || '—';
   const status = (r.attrs?.status || r.status || '').toString();
@@ -145,13 +143,11 @@ function normalize(r){
   const but     = claims.but     ?? '—';
   const so      = claims.so      ?? '—';
 
-  // dials: prefer signals.*, then fallbacks
   const kappa = r.signals?.kappa ?? r.kappa ?? r.κ ?? r.dials?.kappa ?? r.telem?.kappa_eff ?? '—';
   const dhol  = r.signals?.dhol  ?? r.signals?.delta_hol ?? r.delta_hol ?? r.Δhol ?? r.dials?.delta_hol ?? r.telem?.delta_hol ?? '—';
-  let fresh   = r.signals?.fresh ?? r.fresh ?? r.dials?.fresh ?? r.telem?.dials?.fresh_ratio_q8 ?? '—';
-  fresh = q8(fresh);
+  const phi   = r.signals?.phi_star ?? r.signals?.phi ?? r.phi_star ?? r['Φ*'] ?? r.coherence?.phi_star ?? r.telem?.phi_star ?? '—';
 
-  return {version:v, status, model, issued, prec, point, because, but, so, dials:{'κ':kappa, 'Δhol':dhol, 'fresh':fresh}};
+  return {version:v, status, model, issued, prec, point, because, but, so, dials:{'κ':kappa, 'Δhol':dhol, 'Φ*':phi}};
 }
 
 function check(r, bytes){
@@ -192,8 +188,12 @@ function renderUniformTile(title, srcUrl, rec, bytes){
 
   const dialRow = el('div','inline'); dialRow.style.gap='8px'; dialRow.style.margin='10px 14px';
   for (const [k,v] of Object.entries(n.dials)){
-    const val = (typeof v==='number' && Number.isFinite(v)) ? (k==='fresh'?v.toString():v.toFixed(3)) : v;
-    dialRow.appendChild(el('span','chip neutral', `${k} — ${val}`));
+    if (typeof v==='number' && Number.isFinite(v)) {
+      const suffix = (k==='Φ*') ? stars(v) : '';
+      dialRow.appendChild(el('span','chip neutral', `${k} — ${v.toFixed(3)}${suffix}`));
+    } else {
+      dialRow.appendChild(el('span','chip neutral', `${k} — ${v}`));
+    }
   }
   card.appendChild(dialRow);
 
@@ -215,7 +215,7 @@ async function loadFeatured(id, url, title){
   const grid = document.getElementById(id); if (!grid) return;
   try{
     const raw = toRaw(url);
-    const res = await fetch(raw, {cache:'no-store'});
+    const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
     const txt = await res.text();
     const bytes = byteLen(txt);
     const j = JSON.parse(txt);
@@ -228,7 +228,7 @@ async function loadFeatured(id, url, title){
 async function fetchFirst(pathList){
   for (const p of pathList){
     try{
-      const res = await fetch(p + '?v=' + Date.now(), {cache:'no-store'});
+      const res = await fetch(p + (p.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
       if (res.ok) return {path:p, data: await res.json()};
     }catch{}
   }
@@ -268,7 +268,7 @@ document.getElementById('valBtn').addEventListener('click', async (ev)=>{
     if (input.startsWith('{')) { j = JSON.parse(input); bytes = byteLen(JSON.stringify(j)); }
     else {
       const raw = toRaw(input);
-      const res = await fetch(raw, {cache:'no-store'});
+      const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
       if (!res.ok) throw new Error(`fetch failed (${res.status})`);
       const txt = await res.text(); bytes = byteLen(txt); j = JSON.parse(txt);
     }
@@ -284,16 +284,11 @@ document.getElementById('valBtn').addEventListener('click', async (ev)=>{
   }
 });
 
-document.getElementById('copyTpl').addEventListener('click', (e)=>{
+/* ---------- smooth scroll for the Exclusive button ---------- */
+document.getElementById('goExclusive').addEventListener('click', (e)=>{
   e.preventDefault();
-  const tpl = {
-    "receipt_version":"1.5-P","version":"OLR/1.5-P","issued_at":"2025-11-02T00:00:00Z",
-    "attrs":{"status":"CLEAN"},
-    "model":{"family":"demo-llm"},
-    "precision":{"train_dtype":"fp16","infer_dtype":"fp16"},
-    "point":"One clear outcome sentence.","because":"One reason.","but":"One risk.","so":"One action."
-  };
-  navigator.clipboard.writeText(JSON.stringify(tpl,null,2));
+  const sec = document.getElementById('exclusive');
+  if (sec) sec.scrollIntoView({behavior:'smooth', block:'start'});
 });
 
 /* ---------- boot ---------- */
