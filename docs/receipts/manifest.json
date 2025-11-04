@@ -1,5 +1,5 @@
 [
-  "docs/receipts/sample.receipt.json",
+  "receipts/sample.receipt.json",
   "https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json",
   "https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json",
   "https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json"
