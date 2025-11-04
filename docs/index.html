@@ -85,7 +85,7 @@
       </div>
 
       <div class="inline" style="gap:8px;margin-bottom:8px">
-        <input id="addUrl" placeholder="Add receipt by URL (raw GitHub best)"/>
+        <input id="addUrl" placeholder="Add receipt by URL or paste JSON"/>
         <a class="btn" id="addUrlBtn">Add</a>
       </div>
 
@@ -101,12 +101,12 @@
 
 <script>
 /* ---------- constants ---------- */
-/* Feature #1 has two candidate URLs to survive the repo-name hyphen issue. */
+/* Handle COLE repo-name variants; try raw first, then blob URL. */
 const FEATURED = [
   { title: 'COLE-Coherence-Layer-Engine / receipt.mini.json',
     sources: [
-      'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json',
-      'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine/main/docs/receipt.mini.json'
+      'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine/main/docs/receipt.mini.json',
+      'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json'
     ] },
   { title: 'open-receipts / receipt.latest.json',
     sources: [
@@ -119,11 +119,11 @@ const FEATURED = [
       'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json'
     ] },
 ];
-/* Prefer the path that’s actually correct for GH Pages with docs/ as site root. */
+/* If /docs is your Pages root, 'receipts/...' resolves to docs/receipts/... */
 const MANIFEST_PATHS = ['receipts/manifest.json','docs/receipts/manifest.json'];
 const LOCAL_LIMIT = 2;
-const WALLET_KEY = 'ol.wallet.v3';      // bump to avoid stale structure
-const SEEDED_KEY = 'ol.wallet.seeded.v3';
+const WALLET_KEY  = 'ol.wallet.v3';
+const SEEDED_KEY  = 'ol.wallet.seeded.v3';
 
 /* ---------- utils ---------- */
 const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e;};
@@ -211,7 +211,9 @@ async function fetchJsonRaw(u){
   const raw = toRaw(u);
   const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
   if (!res.ok) throw new Error(`fetch failed (${res.status})`);
-  const txt = await res.text(); return {json: JSON.parse(txt), bytes: byteLen(txt), url: raw};
+  const txt = await res.text();
+  const clean = txt.trimStart(); // tolerate BOM/leading whitespace
+  return {json: JSON.parse(clean), bytes: byteLen(clean), url: raw};
 }
 async function fetchFirst(paths){
   for (const p of paths){
@@ -359,10 +361,10 @@ function addRandom(n=1){
 /* ---------- seeding ---------- */
 async function boot(){
   if (!W || !Array.isArray(W.items)) W = {items:[]};
-  const feats = await loadFeatured();   // 3
-  const locals = await loadLocal();     // 2 max
-  const alreadySeeded = localStorage.getItem(SEEDED_KEY)==='1';
-  if (!alreadySeeded || (W.items||[]).length===0){
+  const feats  = await loadFeatured();   // 3
+  const locals = await loadLocal();      // 2 max
+  const seeded = localStorage.getItem(SEEDED_KEY)==='1';
+  if (!seeded || (W.items||[]).length===0){
     W.items = [];
     [...feats, ...locals].forEach(addObjToPack);
     saveWallet(W);
@@ -372,12 +374,24 @@ async function boot(){
 }
 
 /* ---------- wire up ---------- */
-document.getElementById('exportPackBtn').addEventListener('click',()=>{ navigator.clipboard.writeText(JSON.stringify(W,null,2)); alert('Pack JSON copied.'); });
-document.getElementById('clearPackBtn').addEventListener('click',()=>{ if(!confirm('Clear demo pack?'))return; W.items=[]; saveWallet(W); renderPack(); });
-document.getElementById('reseeder').addEventListener('click',()=>{ if(!confirm('Reset & reseed from the 5 tiles?'))return; localStorage.removeItem(SEEDED_KEY); W.items=[]; saveWallet(W); boot(); });
-document.getElementById('addUrlBtn').addEventListener('click', async (e)=>{ e.preventDefault(); const u=addUrlInput.value.trim(); if(!u) return; try{ await addUrlToPack(u); addUrlInput.value=''; }catch{ alert('Add failed'); } });
-document.getElementById('addRand').addEventListener('click',()=> addRandom(1));
-document.getElementById('addRand5').addEventListener('click',()=> addRandom(5));
+exportPackBtn.addEventListener('click',()=>{ navigator.clipboard.writeText(JSON.stringify(W,null,2)); alert('Pack JSON copied.'); });
+clearPackBtn.addEventListener('click',()=>{ if(!confirm('Clear demo pack?'))return; W.items=[]; saveWallet(W); renderPack(); });
+reseederBtn.addEventListener('click',()=>{ if(!confirm('Reset & reseed from the 5 tiles?'))return; localStorage.removeItem(SEEDED_KEY); W.items=[]; saveWallet(W); boot(); });
+/* URL or pasted JSON */
+addUrlBtn.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  const v = addUrlInput.value.trim();
+  if (!v) return;
+  if (v.startsWith('{')) {
+    try { const j = JSON.parse(v); addObjToPack({ json: j }); saveWallet(W); renderPack(); addUrlInput.value=''; }
+    catch { alert('JSON parse failed'); }
+  } else {
+    try { await addUrlToPack(v); addUrlInput.value=''; }
+    catch { alert('URL add failed'); }
+  }
+});
+addRandBtn.addEventListener('click',()=> addRandom(1));
+addRand5Btn.addEventListener('click',()=> addRandom(5));
 
 boot();
 </script>
