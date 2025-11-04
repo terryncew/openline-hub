@@ -30,7 +30,6 @@
   .row:first-child{border-top:0}
   .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600}
   .right{flex:1;padding:10px 14px}
-  /* Pills (no weird ovals) */
   .chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--chipline);background:var(--chip);padding:6px 10px;border-radius:999px;font-size:12px;line-height:1;height:26px}
   .ok{background:rgba(30,166,114,.15);border-color:rgba(30,166,114,.35)}
   .warn{background:rgba(179,139,16,.15);border-color:rgba(179,139,16,.35)}
@@ -109,6 +108,7 @@
       <div class="inline" style="gap:8px;margin-bottom:8px">
         <select id="packSel"></select>
         <a class="btn secondary" id="newPackBtn" href="#">New pack</a>
+        <a class="btn" id="importAllBtn" href="#">Import all</a>
         <a class="btn secondary" id="exportPackBtn" href="#">Copy pack JSON</a>
         <a class="btn secondary" id="clearPackBtn" href="#">Clear pack</a>
       </div>
@@ -153,12 +153,12 @@ const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(
 const byteLen = s => new TextEncoder().encode(s).length;
 function toRaw(u){
   try{
-    const url = new URL(u.trim());
+    const url = new URL(u.trim(), location.href);
     if (url.hostname === 'github.com') {
       const p = url.pathname.split('/').filter(Boolean);
       if (p[2] === 'blob') return `https://raw.githubusercontent.com/${p[0]}/${p[1]}/${p[3]}/${p.slice(4).join('/')}`;
     }
-    return u;
+    return url.toString();
   }catch{ return u; }
 }
 const STATUS_GREEN = s => /^(green|clean|ok)$/i.test(s||'');
@@ -239,7 +239,7 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   dialRow.appendChild(el('span','chip neutral', `κ — ${toTxt('κ', n.dials.kappa)}`));
   dialRow.appendChild(el('span','chip neutral', `Δhol — ${toTxt('Δhol', n.dials.dhol)}`));
   const phiVal = n.dials.phi;
-  const phiChip = el('span','chip neutral', `Φ* — ${toTxt('Φ*', phiVal)}`);
+  const phiChip = el('span','chip neutral', `Φ* — ${toTxt('Φ*', phiVal)}`));
   phiChip.title='Φ* (phi-star): composite coherence (0–1), shown with 0–5★ bucket.';
   dialRow.appendChild(phiChip);
   card.appendChild(dialRow);
@@ -265,9 +265,7 @@ async function loadFeaturedOnce(targetId, url, title){
   if (!res.ok) throw new Error(`fetch failed (${res.status})`);
   const txt = await res.text(); const bytes = byteLen(txt); const j = JSON.parse(txt);
   grid.appendChild(renderUniformTile(title, raw, j, bytes));
-  if (targetId==='feat1'){ // prefill validator with first featured
-    const box = document.getElementById('valUrl'); if (box) box.value = raw;
-  }
+  if (targetId==='feat1'){ const box = document.getElementById('valUrl'); if (box) box.value = raw; }
 }
 
 async function loadFeaturedWithFallback(targetId, primaryUrl, fallbackUrl, title){
@@ -275,7 +273,7 @@ async function loadFeaturedWithFallback(targetId, primaryUrl, fallbackUrl, title
   catch { await loadFeaturedOnce(targetId, fallbackUrl, title + ' (fallback)'); }
 }
 
-/* ---------- local receipts ---------- */
+/* ---------- local receipts from this repo ---------- */
 async function fetchFirst(pathList){
   for (const p of pathList){
     try{
@@ -285,7 +283,6 @@ async function fetchFirst(pathList){
   }
   return null;
 }
-
 async function loadLocal(){
   const target = document.getElementById('local');
   const title  = document.getElementById('localTitle');
@@ -298,7 +295,7 @@ async function loadLocal(){
       const res = await fetch(file + (file.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
       const txt = await res.text(); const bytes = byteLen(txt); const j = JSON.parse(txt);
       target.appendChild(renderUniformTile(file.split('/').slice(-1)[0], file, j, bytes));
-      const spacer = el('div'); spacer.style.height='12px'; target.appendChild(spacer);
+      const spacer = document.createElement('div'); spacer.style.height='12px'; target.appendChild(spacer);
     }catch(e){
       const t = el('div','tile'); t.appendChild(el('div','note',`Failed to load ${file}: ${e.message||'error'}`)); target.appendChild(t);
     }
@@ -367,6 +364,7 @@ const clearPackBtn = document.getElementById('clearPackBtn');
 const addToWalletBtn = document.getElementById('addToWalletBtn');
 const addUrlInput = document.getElementById('addUrl');
 const addUrlBtn = document.getElementById('addUrlBtn');
+const importAllBtn = document.getElementById('importAllBtn');
 const packStats = document.getElementById('packStats');
 const packList = document.getElementById('packList');
 
@@ -386,7 +384,6 @@ function renderPack(){
   ensurePack(W, name);
   const items = W.packs[name].items || [];
 
-  // Stats
   const n = items.length;
   const greens = items.filter(x => STATUS_GREEN(x.status)).length;
   const avg = (arr)=> arr.length ? (arr.reduce((a,b)=>a+(Number.isFinite(b)?b:0),0)/arr.length) : 0;
@@ -396,9 +393,8 @@ function renderPack(){
 
   packStats.textContent = n
     ? `Items: ${n} · GREEN: ${(greens/n*100).toFixed(0)}% · κ(avg): ${avg(kList).toFixed(3)} · Δhol(avg): ${avg(dList).toFixed(3)} · Φ*(avg): ${avg(pList).toFixed(3)}`
-    : 'No items yet. Validate or add by URL to start.';
+    : 'No items yet. Validate, Add by URL, or Import all to start.';
 
-  // List
   packList.innerHTML = '';
   items.forEach((it, idx)=>{
     const tile = el('div','tile');
@@ -439,7 +435,9 @@ function renderPack(){
 
 function addItemToPack(packName, item){
   ensurePack(W, packName);
-  W.packs[packName].items.push(item);
+  // de-dup by URL + bytes signature
+  const exists = (W.packs[packName].items||[]).some(x => (x.url||'')=== (item.url||'') && (x.bytes||0)===(item.bytes||0));
+  if (!exists) W.packs[packName].items.push(item);
   saveWallet(W);
   renderPack();
 }
@@ -494,11 +492,67 @@ addUrlBtn.addEventListener('click', async (e)=>{
   }catch(err){ alert('Add failed: ' + (err.message||'unknown')); }
 });
 
+/* ---------- wallet sources + import-all ---------- */
+// Built-in demo fallback so "Import all" works even with no config.
+const DEMO_SOURCES = {
+  autoload: true,
+  manifests: [
+    'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipts/manifest.json',
+    'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipts/manifest.json',
+    'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipts/manifest.json'
+  ],
+  urls: [
+    'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json'
+  ]
+};
+
+async function loadWalletSources(){
+  try{
+    const res = await fetch('docs/wallet-sources.json?v=' + Date.now(), {cache:'no-store'});
+    if (res.ok){ return await res.json(); }
+  }catch{}
+  return DEMO_SOURCES;
+}
+async function readManifest(u){
+  try{
+    const raw = toRaw(u);
+    const r = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+    if (!r.ok) throw new Error(`fetch failed (${r.status})`);
+    const data = await r.json();
+    if (Array.isArray(data)) return data;
+    return data.files || data.receipts || data.items || data.urls || [];
+  }catch{ return []; }
+}
+async function importAllIntoCurrentPack(){
+  const cfg = await loadWalletSources();
+  const urls = new Set([...(cfg.urls||[])]);
+  for (const m of (cfg.manifests||[])){
+    (await readManifest(m)).forEach(u=>urls.add(u));
+  }
+  let imported = 0;
+  for (const u of urls){
+    try{
+      const raw = toRaw(u);
+      const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+      if (!res.ok) continue;
+      const txt = await res.text(); const bytes = byteLen(txt);
+      const j = JSON.parse(txt); const ck = check(j, bytes); const n = normalize(j);
+      const title = raw.split('/').slice(-1)[0] || 'receipt.json';
+      addItemToPack(currentPack(), {
+        title, url: raw, status: ck.status, version: ck.version, bytes,
+        signals: { kappa: n.dials.kappa, dhol: n.dials.dhol, phi_star: n.dials.phi }
+      });
+      imported++;
+    }catch(e){ console.log('import error', u, e); }
+  }
+  alert(`Imported ${imported} item(s) into "${currentPack()}".`);
+}
+importAllBtn.addEventListener('click',(e)=>{ e.preventDefault(); importAllIntoCurrentPack(); });
+
 /* ---------- boot ---------- */
-/* Init wallet UI */
 renderPackSel(); renderPack();
 
-/* COLE → prefer MINI (sub-KB); fallback to latest to avoid blanks */
+/* Featured receipts (with fallback) */
 loadFeaturedWithFallback(
   'feat1',
   'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json',
@@ -518,8 +572,14 @@ loadFeaturedWithFallback(
   'openline-csm / receipt.latest.json'
 );
 
-/* Local receipts from manifest */
+/* Local receipts from this repo */
 loadLocal();
+
+/* Optional: auto-import demo sources on first visit if pack is empty */
+loadWalletSources().then(cfg=>{
+  const name = currentPack();
+  if ((W.packs[name]?.items||[]).length===0 && cfg.autoload){ importAllIntoCurrentPack(); }
+});
 </script>
 </body>
 </html>
