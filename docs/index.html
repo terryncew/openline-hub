@@ -40,6 +40,7 @@
   textarea{min-height:84px;resize:vertical}
   pre{white-space:pre-wrap;background:var(--tile);border:1px solid var(--line);padding:10px;border-radius:10px}
   select{background:var(--tile);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 10px}
+  details summary{cursor:pointer}
   @media (max-width:560px){ .left{min-width:96px} }
 </style>
 </head>
@@ -77,9 +78,9 @@
       <ul style="margin:0 0 6px 18px">
         <li><b>κ (kappa)</b>: stress/curvature of the run. Lower is calmer. Target ≤ <code>.75</code>.</li>
         <li><b>Δhol</b>: drift from expected behavior. Lower is steadier. Target ≤ <code>.35</code>.</li>
-        <li><b>Φ*</b>: composite coherence (0–1), shown with 0–5★ bucket for quick reads.</li>
+        <li><b>Φ*</b>: composite coherence (0–1), rendered with 0–5★ for quick reads.</li>
       </ul>
-      <div class="note">Why it matters: fast, content-free health for on-call, security, and compliance. Brake / Split / Go, then verify.</div>
+      <div class="note">Use these as guard rails: Brake / Split / Go. Then verify.</div>
     </div>
   </div>
 
@@ -95,7 +96,7 @@
       </div>
       <pre id="valOut" style="margin-top:10px">Waiting…</pre>
       <div class="note" id="whyPass" style="display:none">
-        PASS = (1) within cap (≤640 B green, ≤800 B amber/red), (2) core fields present, (3) guard dials present (κ, Δhol, Φ*). Portable evidence: share safely without exposing prompts or PII.
+        PASS = (1) within cap (≤640 B green, ≤800 B amber/red), (2) core fields present, (3) guard dials present (κ, Δhol, Φ*).
       </div>
     </div>
   </div>
@@ -103,12 +104,11 @@
   <div class="section" id="wallet">
     <h2>Wallet (local packs)</h2>
     <div class="tile">
-      <div class="note">Stored in this browser (localStorage). No server, no tracking.</div>
+      <div class="note">Everything here lives in this browser (localStorage). No server, no tracking.</div>
 
-      <div class="inline" style="gap:8px;margin-bottom:8px">
+      <div class="inline" style="gap:8px;margin:8px 0">
         <select id="packSel"></select>
         <a class="btn secondary" id="newPackBtn" href="#">New pack</a>
-        <a class="btn" id="importAllBtn" href="#">Import all</a>
         <a class="btn secondary" id="exportPackBtn" href="#">Copy pack JSON</a>
         <a class="btn secondary" id="clearPackBtn" href="#">Clear pack</a>
       </div>
@@ -116,7 +116,15 @@
       <div class="inline" style="gap:8px;margin-bottom:8px">
         <input id="addUrl" placeholder="Add by URL (raw GitHub best)"/>
         <a class="btn" id="addUrlBtn" href="#">Add</a>
+        <a class="btn secondary" id="importFeaturedBtn" href="#">Import Featured → Wallet</a>
+        <a class="btn secondary" id="importLocalBtn" href="#">Import Local Manifest → Wallet</a>
+        <a class="btn secondary" id="seedDemoBtn" href="#">Re-seed Demo</a>
       </div>
+
+      <details style="margin-bottom:8px">
+        <summary class="sub">Dashboard (pack triage)</summary>
+        <div id="packDash" class="tile" style="margin-top:8px"></div>
+      </details>
 
       <div id="packStats" class="note">—</div>
       <div id="packList"></div>
@@ -125,21 +133,8 @@
 
   <div class="section">
     <h2 id="localTitle">Local receipts</h2>
-    <div class="note">List files in <code>docs/receipts/manifest.json</code>. Each entry is a JSON URL (relative or absolute).</div>
+    <div class="note">Reads <code>docs/receipts/manifest.json</code>. Each entry is a JSON URL (relative or absolute).</div>
     <div id="local"></div>
-  </div>
-
-  <div class="section" id="demo">
-    <h2>Demo partner offer</h2>
-    <div class="tile">
-      <p>2–3 week hands-on: ship agents with portable receipts and a PASS/AMBER/RED dial.</p>
-      <ul>
-        <li>Drop-in receipts (sub-KB target), no prompts/PII.</li>
-        <li>Guard dials: κ (stress), Δhol (drift), Φ* (0–1 with 0–5★).</li>
-        <li>Offline verify; paste JSON or point at a URL.</li>
-      </ul>
-      <div class="note">Outcome: quick triage signal for on-call, security, and compliance.</div>
-    </div>
   </div>
 
   <div class="section">
@@ -148,23 +143,36 @@
 </div>
 
 <script>
-/* ---------- helpers ---------- */
+/* ================= helpers ================= */
 const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e;};
 const byteLen = s => new TextEncoder().encode(s).length;
+const clamp01 = v => Math.max(0, Math.min(1, v));
+const STATUS_GREEN = s => /^(green|clean|ok)$/i.test((s||'').trim());
 function toRaw(u){
   try{
-    const url = new URL(u.trim(), location.href);
+    const url = new URL(u.trim());
     if (url.hostname === 'github.com') {
       const p = url.pathname.split('/').filter(Boolean);
       if (p[2] === 'blob') return `https://raw.githubusercontent.com/${p[0]}/${p[1]}/${p[3]}/${p.slice(4).join('/')}`;
     }
-    return url.toString();
+    return u;
   }catch{ return u; }
 }
-const STATUS_GREEN = s => /^(green|clean|ok)$/i.test(s||'');
-const clamp01 = v => Math.max(0, Math.min(1, v));
 
-/* ---------- normalizer (signals.* first) ---------- */
+/* Fallback sample so the demo never shows blank */
+const SAMPLE_JSON = {
+  "receipt_version":"1.5-P","version":"OLR/1.5-P","issued_at":"2025-11-03T00:00:00Z",
+  "attrs":{"status":"CLEAN"},
+  "model":{"family":"demo-llm"},
+  "precision":{"train_dtype":"fp16","infer_dtype":"fp16"},
+  "point":"Validated receipt path and caps.",
+  "because":"Manifest and sample are reachable.",
+  "but":"External sources can change.",
+  "so":"Ship with local sample + external fallbacks.",
+  "signals":{"kappa":0.20,"dhol":0.05,"phi_star":0.90}
+};
+
+/* ================= normalizer/check ================= */
 function normalize(r){
   const v = r.version || r.receipt_version || r.receiptVersion || r.sku || '—';
   const status = (r.attrs?.status || r.status || '').toString();
@@ -188,7 +196,6 @@ function normalize(r){
 
   return {version:v, status, model, issued, prec, point, because, but, so, dials:{kappa, dhol, phi}};
 }
-
 function check(r, bytes){
   const errs = [];
   const version = r.version || r.receipt_version || r.receiptVersion;
@@ -202,11 +209,10 @@ function check(r, bytes){
   return {ok: errs.length===0, errs, version: version||'—', status: status||'—', bytes};
 }
 
-/* ---------- renderers ---------- */
+/* ================= renderers ================= */
 function renderUniformTile(title, srcUrl, rec, bytes){
   const n = normalize(rec);
   const t = el('div','tile');
-
   const head = el('div','inline'); head.style.justifyContent='space-between'; head.style.alignItems='center';
   head.appendChild(el('div','', title));
   const pills = el('div'); pills.style.display='flex'; pills.style.gap='8px';
@@ -228,24 +234,18 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   const dialRow = el('div','inline'); dialRow.style.gap='8px'; dialRow.style.margin='10px 14px';
   const toTxt = (k,v)=>{
     if (typeof v==='number' && Number.isFinite(v)){
-      if (k==='Φ*') {
-        const stars = Math.round(clamp01(v)*5);
-        return `${v.toFixed(3)} (${stars}★)`;
-      }
+      if (k==='Φ*') { const stars = Math.round(clamp01(v)*5); return `${v.toFixed(3)} (${stars}★)`; }
       return v.toFixed(3);
     }
     return v==null ? '—' : String(v);
   };
   dialRow.appendChild(el('span','chip neutral', `κ — ${toTxt('κ', n.dials.kappa)}`));
   dialRow.appendChild(el('span','chip neutral', `Δhol — ${toTxt('Δhol', n.dials.dhol)}`));
-  const phiVal = n.dials.phi;
-  const phiChip = el('span','chip neutral', `Φ* — ${toTxt('Φ*', phiVal)}`));
-  phiChip.title='Φ* (phi-star): composite coherence (0–1), shown with 0–5★ bucket.';
+  const phiChip = el('span','chip neutral', `Φ* — ${toTxt('Φ*', n.dials.phi)}`); phiChip.title='Φ* (phi-star): composite coherence (0–1), shown with 0–5★.';
   dialRow.appendChild(phiChip);
   card.appendChild(dialRow);
 
   const footer = el('div','note', `source: ${srcUrl} · bytes=${bytes}`);
-
   const btns = el('div','inline'); btns.style.marginTop='8px';
   const copyUrl = el('a','btn secondary','Copy URL'); copyUrl.href='#';
   copyUrl.onclick = (e)=>{e.preventDefault(); navigator.clipboard.writeText(srcUrl);};
@@ -257,23 +257,25 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   return t;
 }
 
-/* ---------- featured loaders ---------- */
+/* ================= featured loaders (cache for import) ================= */
+const FEATURED_CACHE = [];  // {title,url,json,bytes,ck,normalized}
 async function loadFeaturedOnce(targetId, url, title){
   const grid = document.getElementById(targetId); if (!grid) return;
   const raw = toRaw(url);
   const res = await fetch(raw + '?v=' + Date.now(), {cache:'no-store'});
   if (!res.ok) throw new Error(`fetch failed (${res.status})`);
   const txt = await res.text(); const bytes = byteLen(txt); const j = JSON.parse(txt);
+  const ck = check(j, bytes); const n = normalize(j);
+  FEATURED_CACHE.push({title, url: raw, json:j, bytes, ck, normalized:n});
   grid.appendChild(renderUniformTile(title, raw, j, bytes));
   if (targetId==='feat1'){ const box = document.getElementById('valUrl'); if (box) box.value = raw; }
 }
-
 async function loadFeaturedWithFallback(targetId, primaryUrl, fallbackUrl, title){
   try { await loadFeaturedOnce(targetId, primaryUrl, title); }
   catch { await loadFeaturedOnce(targetId, fallbackUrl, title + ' (fallback)'); }
 }
 
-/* ---------- local receipts from this repo ---------- */
+/* ================= local manifest loader (also returns items) ================= */
 async function fetchFirst(pathList){
   for (const p of pathList){
     try{
@@ -283,26 +285,30 @@ async function fetchFirst(pathList){
   }
   return null;
 }
-async function loadLocal(){
+async function loadLocal(listOnly=false){
   const target = document.getElementById('local');
   const title  = document.getElementById('localTitle');
   const got = await fetchFirst(['docs/receipts/manifest.json','receipts/manifest.json']);
-  if (!got){ return; }
+  const items = [];
+  if (!got){ return items; }
   title.textContent = `Local receipts (from ${got.path})`;
   const list = Array.isArray(got.data) ? got.data : (got.data.files || got.data.receipts || got.data.items || []);
   for (const file of list){
     try{
-      const res = await fetch(file + (file.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+      const url = toRaw(file);
+      const res = await fetch(url + (url.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
       const txt = await res.text(); const bytes = byteLen(txt); const j = JSON.parse(txt);
-      target.appendChild(renderUniformTile(file.split('/').slice(-1)[0], file, j, bytes));
-      const spacer = document.createElement('div'); spacer.style.height='12px'; target.appendChild(spacer);
+      const ck = check(j, bytes); const n = normalize(j);
+      items.push({title: (url.split('/').slice(-1)[0]||'receipt.json'), url, json:j, bytes, ck, normalized:n});
+      if (!listOnly){ target.appendChild(renderUniformTile(items[items.length-1].title, url, j, bytes)); const spacer = el('div'); spacer.style.height='12px'; target.appendChild(spacer); }
     }catch(e){
-      const t = el('div','tile'); t.appendChild(el('div','note',`Failed to load ${file}: ${e.message||'error'}`)); target.appendChild(t);
+      if (!listOnly){ const t = el('div','tile'); t.appendChild(el('div','note',`Failed to load ${file}: ${e.message||'error'}`)); target.appendChild(t); }
     }
   }
+  return items;
 }
 
-/* ---------- validator ---------- */
+/* ================= validator ================= */
 let LAST_PASS = null;
 document.getElementById('valBtn').addEventListener('click', async (ev)=>{
   ev.preventDefault();
@@ -339,19 +345,13 @@ document.getElementById('valBtn').addEventListener('click', async (ev)=>{
 });
 document.getElementById('copyTpl').addEventListener('click', (e)=>{
   e.preventDefault();
-  const tpl = {
-    "receipt_version":"1.5-P","version":"OLR/1.5-P","issued_at":"2025-11-02T00:00:00Z",
-    "attrs":{"status":"CLEAN"},
-    "model":{"family":"demo-llm"},
-    "precision":{"train_dtype":"fp16","infer_dtype":"fp16"},
-    "point":"One clear outcome sentence.","because":"One reason.","but":"One risk.","so":"One action.",
-    "signals":{"kappa":0.20,"dhol":0.00,"phi_star":0.90}
-  };
-  navigator.clipboard.writeText(JSON.stringify(tpl,null,2));
+  navigator.clipboard.writeText(JSON.stringify(SAMPLE_JSON, null, 2));
 });
 
-/* ---------- wallet (localStorage) ---------- */
-const WALLET_KEY = 'ol.wallet.v1';
+/* ================= wallet (localStorage) ================= */
+const WALLET_KEY = 'ol.wallet.v2';      // bump key to avoid old broken state
+const WALLET_SEEDED = 'ol.wallet.seeded.v2';
+
 function loadWallet(){ try{ return JSON.parse(localStorage.getItem(WALLET_KEY)) || {packs:{}}; }catch{ return {packs:{}}; } }
 function saveWallet(w){ localStorage.setItem(WALLET_KEY, JSON.stringify(w)); }
 function listPacks(w){ return Object.keys(w.packs).sort(); }
@@ -364,9 +364,12 @@ const clearPackBtn = document.getElementById('clearPackBtn');
 const addToWalletBtn = document.getElementById('addToWalletBtn');
 const addUrlInput = document.getElementById('addUrl');
 const addUrlBtn = document.getElementById('addUrlBtn');
-const importAllBtn = document.getElementById('importAllBtn');
+const importFeaturedBtn = document.getElementById('importFeaturedBtn');
+const importLocalBtn = document.getElementById('importLocalBtn');
+const seedDemoBtn = document.getElementById('seedDemoBtn');
 const packStats = document.getElementById('packStats');
 const packList = document.getElementById('packList');
+const packDash = document.getElementById('packDash');
 
 let W = loadWallet();
 function currentPack(){ return packSel.value || ''; }
@@ -374,16 +377,58 @@ function currentPack(){ return packSel.value || ''; }
 function renderPackSel(){
   const names = listPacks(W);
   packSel.innerHTML = '';
-  if (names.length===0){ ensurePack(W, 'default'); saveWallet(W); names.push('default'); }
+  if (names.length===0){ ensurePack(W, 'demo'); saveWallet(W); names.push('demo'); }
   names.forEach(n=>{
     const o = document.createElement('option'); o.value = o.textContent = n; packSel.appendChild(o);
   });
 }
+function computeDashboard(items){
+  const n = items.length;
+  if (!n){ packDash.innerHTML = '<div class="note">No items yet.</div>'; return; }
+  const nums = (f)=>items.map(f).filter(Number.isFinite);
+  const avg = (a)=> a.length? (a.reduce((x,y)=>x+y,0)/a.length) : 0;
+  const greens = items.filter(x=>STATUS_GREEN(x.status)).length;
+
+  const kList = nums(x=>x.signals?.kappa);
+  const dList = nums(x=>x.signals?.dhol);
+  const pList = nums(x=>x.signals?.phi_star);
+  const breaches = {
+    kappa: items.filter(x=>Number.isFinite(x.signals?.kappa) && x.signals.kappa>0.75).length,
+    dhol:  items.filter(x=>Number.isFinite(x.signals?.dhol)  && x.signals.dhol>0.35).length,
+    phi:   items.filter(x=>Number.isFinite(x.signals?.phi_star) && x.signals.phi_star<0.80).length
+  };
+
+  const worst = (key, asc=false)=> items
+    .filter(x=>Number.isFinite(x.signals?.[key]))
+    .sort((a,b)=> asc ? (a.signals[key]-b.signals[key]) : (b.signals[key]-a.signals[key]))
+    .slice(0,3)
+    .map(x=>`${x.title||'(item)'} — ${x.signals[key].toFixed(3)}${x.url?` · [open]`:''}`);
+
+  packDash.innerHTML = `
+    <div class="note">Items: ${n} · GREEN: ${(greens/n*100).toFixed(0)}% · κ(avg): ${avg(kList).toFixed(3)} · Δhol(avg): ${avg(dList).toFixed(3)} · Φ*(avg): ${avg(pList).toFixed(3)}</div>
+    <div class="tile" style="margin-top:8px">
+      <div><b>Brake / Split / Go</b></div>
+      <ul style="margin:6px 0 0 18px">
+        <li>κ > .75 (stress): ${breaches.kappa}/${n}</li>
+        <li>Δhol > .35 (drift): ${breaches.dhol}/${n}</li>
+        <li>Φ* < .80 (low coherence): ${breaches.phi}/${n}</li>
+      </ul>
+    </div>
+    <div class="tile" style="margin-top:8px">
+      <div><b>Top offenders</b></div>
+      <div class="note">High κ: ${worst('kappa').join(' | ') || '—'}</div>
+      <div class="note">High Δhol: ${worst('dhol').join(' | ') || '—'}</div>
+      <div class="note">Low Φ*: ${worst('phi_star', true).join(' | ') || '—'}</div>
+    </div>
+  `;
+}
+
 function renderPack(){
   const name = currentPack();
   ensurePack(W, name);
   const items = W.packs[name].items || [];
 
+  // Stats
   const n = items.length;
   const greens = items.filter(x => STATUS_GREEN(x.status)).length;
   const avg = (arr)=> arr.length ? (arr.reduce((a,b)=>a+(Number.isFinite(b)?b:0),0)/arr.length) : 0;
@@ -393,18 +438,22 @@ function renderPack(){
 
   packStats.textContent = n
     ? `Items: ${n} · GREEN: ${(greens/n*100).toFixed(0)}% · κ(avg): ${avg(kList).toFixed(3)} · Δhol(avg): ${avg(dList).toFixed(3)} · Φ*(avg): ${avg(pList).toFixed(3)}`
-    : 'No items yet. Validate, Add by URL, or Import all to start.';
+    : 'No items yet. Import or validate to start.';
 
+  // Dashboard
+  computeDashboard(items);
+
+  // List
   packList.innerHTML = '';
   items.forEach((it, idx)=>{
     const tile = el('div','tile');
     const head = el('div','inline'); head.style.justifyContent='space-between'; head.style.alignItems='center';
     head.appendChild(el('div','', it.title || (it.url||'(pasted)')));
     const pills = el('div'); pills.style.display='flex'; pills.style.gap='8px';
-    const cls = it.status.match(/green|clean|ok/i)?'ok':it.status.match(/amber|warn|check/i)?'warn':it.status.match(/red|risk|bad/i)?'bad':'neutral';
+    const cls = it.status?.match(/green|clean|ok/i)?'ok':it.status?.match(/amber|warn|check/i)?'warn':it.status?.match(/red|risk|bad/i)?'bad':'neutral';
     pills.appendChild(el('span','chip '+cls, it.status || '—'));
     pills.appendChild(el('span','chip neutral', it.version || '—'));
-    pills.appendChild(el('span','chip neutral', `bytes ${it.bytes ?? '—'}`));
+    if (it.bytes!=null) pills.appendChild(el('span','chip neutral', `bytes ${it.bytes}`));
     head.appendChild(pills);
     tile.appendChild(head);
 
@@ -435,9 +484,7 @@ function renderPack(){
 
 function addItemToPack(packName, item){
   ensurePack(W, packName);
-  // de-dup by URL + bytes signature
-  const exists = (W.packs[packName].items||[]).some(x => (x.url||'')=== (item.url||'') && (x.bytes||0)===(item.bytes||0));
-  if (!exists) W.packs[packName].items.push(item);
+  W.packs[packName].items.push(item);
   saveWallet(W);
   renderPack();
 }
@@ -475,7 +522,6 @@ addToWalletBtn.addEventListener('click',(e)=>{
   };
   addItemToPack(currentPack(), item);
 });
-
 addUrlBtn.addEventListener('click', async (e)=>{
   e.preventDefault();
   const u = addUrlInput.value.trim(); if (!u) return;
@@ -492,94 +538,89 @@ addUrlBtn.addEventListener('click', async (e)=>{
   }catch(err){ alert('Add failed: ' + (err.message||'unknown')); }
 });
 
-/* ---------- wallet sources + import-all ---------- */
-// Built-in demo fallback so "Import all" works even with no config.
-const DEMO_SOURCES = {
-  autoload: true,
-  manifests: [
-    'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipts/manifest.json',
-    'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipts/manifest.json',
-    'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipts/manifest.json'
-  ],
-  urls: [
-    'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json'
-  ]
-};
-
-async function loadWalletSources(){
-  try{
-    const res = await fetch('docs/wallet-sources.json?v=' + Date.now(), {cache:'no-store'});
-    if (res.ok){ return await res.json(); }
-  }catch{}
-  return DEMO_SOURCES;
-}
-async function readManifest(u){
-  try{
-    const raw = toRaw(u);
-    const r = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
-    if (!r.ok) throw new Error(`fetch failed (${r.status})`);
-    const data = await r.json();
-    if (Array.isArray(data)) return data;
-    return data.files || data.receipts || data.items || data.urls || [];
-  }catch{ return []; }
-}
-async function importAllIntoCurrentPack(){
-  const cfg = await loadWalletSources();
-  const urls = new Set([...(cfg.urls||[])]);
-  for (const m of (cfg.manifests||[])){
-    (await readManifest(m)).forEach(u=>urls.add(u));
-  }
-  let imported = 0;
-  for (const u of urls){
-    try{
-      const raw = toRaw(u);
-      const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
-      if (!res.ok) continue;
-      const txt = await res.text(); const bytes = byteLen(txt);
-      const j = JSON.parse(txt); const ck = check(j, bytes); const n = normalize(j);
-      const title = raw.split('/').slice(-1)[0] || 'receipt.json';
-      addItemToPack(currentPack(), {
-        title, url: raw, status: ck.status, version: ck.version, bytes,
-        signals: { kappa: n.dials.kappa, dhol: n.dials.dhol, phi_star: n.dials.phi }
-      });
-      imported++;
-    }catch(e){ console.log('import error', u, e); }
-  }
-  alert(`Imported ${imported} item(s) into "${currentPack()}".`);
-}
-importAllBtn.addEventListener('click',(e)=>{ e.preventDefault(); importAllIntoCurrentPack(); });
-
-/* ---------- boot ---------- */
-renderPackSel(); renderPack();
-
-/* Featured receipts (with fallback) */
-loadFeaturedWithFallback(
-  'feat1',
-  'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json',
-  'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.latest.json',
-  'COLE-Coherence-Layer-Engine / receipt'
-);
-loadFeaturedWithFallback(
-  'feat2',
-  'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json',
-  'https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json',
-  'open-receipts / receipt.latest.json'
-);
-loadFeaturedWithFallback(
-  'feat3',
-  'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json',
-  'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json',
-  'openline-csm / receipt.latest.json'
-);
-
-/* Local receipts from this repo */
-loadLocal();
-
-/* Optional: auto-import demo sources on first visit if pack is empty */
-loadWalletSources().then(cfg=>{
-  const name = currentPack();
-  if ((W.packs[name]?.items||[]).length===0 && cfg.autoload){ importAllIntoCurrentPack(); }
+/* Importers */
+importFeaturedBtn.addEventListener('click', (e)=>{
+  e.preventDefault();
+  const name = currentPack(); let count=0;
+  FEATURED_CACHE.forEach(it=>{
+    addItemToPack(name, {
+      title: it.title, url: it.url, status: it.ck.status, version: it.ck.version, bytes: it.bytes,
+      signals: { kappa: it.normalized.dials.kappa, dhol: it.normalized.dials.dhol, phi_star: it.normalized.dials.phi }
+    }); count++;
+  });
+  if (!count) alert('No featured receipts loaded yet.');
 });
+importLocalBtn.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  const name = currentPack();
+  const items = await loadLocal(true);
+  if (!items.length){ alert('No local manifest receipts found.'); return; }
+  items.forEach(it=>{
+    addItemToPack(name, {
+      title: it.title, url: it.url, status: it.ck.status, version: it.ck.version, bytes: it.bytes,
+      signals: { kappa: it.normalized.dials.kappa, dhol: it.normalized.dials.dhol, phi_star: it.normalized.dials.phi }
+    });
+  });
+});
+seedDemoBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
+  localStorage.removeItem(WALLET_SEEDED);
+  seedIfNeeded(true);
+});
+
+/* ================= boot ================= */
+function renderPackSelAndDefault(){
+  renderPackSel();
+  if (!packSel.value) packSel.value='demo';
+  renderPack();
+}
+function seedIfNeeded(force=false){
+  if (!force && localStorage.getItem(WALLET_SEEDED)) return;
+  ensurePack(W, 'demo');
+  // Always include the in-memory SAMPLE_JSON
+  addItemToPack('demo', {
+    title:'sample.receipt.json', url:null, status:'clean', version:'OLR/1.5-P', bytes: JSON.stringify(SAMPLE_JSON).length,
+    signals:{ kappa:SAMPLE_JSON.signals.kappa, dhol:SAMPLE_JSON.signals.dhol, phi_star:SAMPLE_JSON.signals.phi_star }
+  });
+  // If featured already fetched, add them too
+  FEATURED_CACHE.forEach(it=>{
+    addItemToPack('demo', {
+      title: it.title, url: it.url, status: it.ck.status, version: it.ck.version, bytes: it.bytes,
+      signals: { kappa: it.normalized.dials.kappa, dhol: it.normalized.dials.dhol, phi_star: it.normalized.dials.phi }
+    });
+  });
+  localStorage.setItem(WALLET_SEEDED,'1');
+}
+
+async function boot(){
+  renderPackSelAndDefault();
+  // Load featured (these populate FEATURED_CACHE)
+  loadFeaturedWithFallback(
+    'feat1',
+    'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json',
+    'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.latest.json',
+    'COLE-Coherence-Layer-Engine / receipt'
+  );
+  loadFeaturedWithFallback(
+    'feat2',
+    'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json',
+    'https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json',
+    'open-receipts / receipt.latest.json'
+  );
+  loadFeaturedWithFallback(
+    'feat3',
+    'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json',
+    'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json',
+    'openline-csm / receipt.latest.json'
+  );
+
+  // Load local receipts (render tiles) but also allow later import to wallet
+  loadLocal(false);
+
+  // Seed demo (guarantees Wallet isn’t empty on first load)
+  seedIfNeeded(false);
+}
+boot();
 </script>
 </body>
 </html>
