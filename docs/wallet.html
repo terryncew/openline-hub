@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>OpenLine Wallet · Packs</title>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<style>
+  :root{--bg:#0a0c10;--ink:#e7ecf4;--muted:#97a3b6;--line:#1b2230;--tile:#0f141c;--btn:#1e293b;--btnink:#e7ecf4;--btnline:#2a3a55;--ok:#1ea672;--warn:#b38b10;--bad:#d23d3d;--chip:#121925;--chipline:#1b2536}
+  *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Roboto,Helvetica,Arial}
+  a{color:inherit;text-decoration:none} .wrap{max-width:980px;margin:0 auto;padding:18px}
+  header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
+  h1{font-size:20px;margin:2px 0 0} .sub{color:var(--muted);font-size:13px}
+  .section{margin:18px 0} .tile{background:var(--tile);border:1px solid var(--line);border-radius:12px;padding:12px}
+  .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:1px solid var(--btnline);background:var(--btn);color:var(--btnink);font-weight:600}
+  textarea,input{width:100%;background:var(--tile);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px}
+  textarea{min-height:84px;resize:vertical} .grid{display:grid;gap:10px}
+  @media (min-width:720px){ .grid{grid-template-columns:1fr 1fr} }
+  .card{border:1px solid var(--line);border-radius:12px;padding:12px}
+  .row{display:flex;gap:8px;align-items:center;justify-content:space-between}
+  .pill{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--chipline);background:var(--chip);padding:6px 10px;border-radius:999px;font-size:12px;line-height:1;height:26px}
+  .ok{background:rgba(30,166,114,.15);border-color:rgba(30,166,114,.35)} .warn{background:rgba(179,139,16,.15);border-color:rgba(179,139,16,.35)} .bad{background:rgba(210,61,61,.15);border-color:rgba(210,61,61,.35)}
+  .muted{color:var(--muted);font-size:12px} .right{margin-left:auto}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div>
+      <h1>OpenLine Wallet</h1>
+      <div class="sub">Collect receipts · Triage fast · Export packs</div>
+    </div>
+    <div class="inline">
+      <a class="btn" href="./">Hub</a>
+      <a class="btn" href="exclusive.html">Exclusive</a>
+    </div>
+  </header>
+
+  <div class="section tile">
+    <div class="sub"><b>What the dials mean</b> — <b>κ</b> stress (lower = safer), <b>Δhol</b> drift (lower = steadier), <b>Φ*</b> composite coherence 0–1 (shown as 0–5★). Size caps: green ≤ 640 B; amber/red ≤ 800 B.</div>
+  </div>
+
+  <div class="section grid">
+    <div class="tile">
+      <h2 style="margin:0 0 8px">Add receipt</h2>
+      <div class="sub">Paste a URL (raw GitHub preferred) <em>or</em> paste JSON. Local-only; nothing uploads.</div>
+      <textarea id="input" placeholder="https://raw.githubusercontent.com/...  or  { &quot;receipt_version&quot;: ... }"></textarea>
+      <div class="inline" style="margin-top:10px">
+        <a class="btn" id="add">Import</a>
+        <a class="btn" id="clear">Clear all</a>
+      </div>
+    </div>
+
+    <div class="tile">
+      <h2 style="margin:0 0 8px">Build pack</h2>
+      <input id="packname" placeholder="Pack name (e.g., checkout-evals-w42)">
+      <div class="inline" style="margin-top:10px">
+        <a class="btn" id="export">Export pack.json</a>
+        <a class="btn" id="importPack">Import pack.json</a>
+      </div>
+      <div id="summary" class="sub" style="margin-top:10px">0 receipts · GREEN 0 · AMBER 0 · RED 0 · Φ* avg —</div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Receipts</h2>
+    <div id="list" class="grid"></div>
+  </div>
+</div>
+
+<script>
+const enc=new TextEncoder(); const $=s=>document.querySelector(s); const storeKey='ol_wallet_v1';
+function toRaw(u){try{const url=new URL(u.trim()); if(url.hostname==='github.com'){const p=url.pathname.split('/').filter(Boolean); if(p[2]==='blob') return `https://raw.githubusercontent.com/${p[0]}/${p[1]}/${p[3]}/${p.slice(4).join('/')}`;} return u;}catch{ return u; }}
+const byteLen=s=>enc.encode(s).length;
+function statusClass(s){ if(/clean|ok|green/i.test(s))return'ok'; if(/warn|amber|check/i.test(s))return'warn'; if(/red|risk|bad/i.test(s))return'bad'; return'neutral'; }
+function normalize(rec){const status=(rec.attrs?.status||rec.status||'—')+''; const model=rec.model?.family||rec.model?.name||rec.model||'—'; const issued=rec.issued_at||rec.issued||rec.run?.ts||rec.time||rec.date||'—'; const kappa=Number(rec.signals?.kappa ?? rec.kappa ?? rec.κ ?? rec.dials?.kappa ?? rec.telem?.kappa_eff ?? NaN); const dhol=Number(rec.signals?.dhol ?? rec.signals?.delta_hol ?? rec.delta_hol ?? rec.Δhol ?? rec.dials?.delta_hol ?? rec.telem?.delta_hol ?? NaN); const phi=Number(rec.signals?.phi_star ?? rec.phi_star ?? rec.dials?.phi_star ?? NaN); return {status,model,issued,kappa,dhol,phi};}
+function load(){try{return JSON.parse(localStorage.getItem(storeKey)||'[]')}catch{return[]}} function save(rows){localStorage.setItem(storeKey,JSON.stringify(rows))}
+async function sha256(txt){const h=await crypto.subtle.digest('SHA-256',enc.encode(txt));return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+function star(phi){if(!Number.isFinite(phi))return'—';const s=Math.round(Math.max(0,Math.min(1,phi))*5);return `${phi.toFixed(3)} (${s}★)`;}
+function render(){const rows=load(); const list=$('#list'); list.innerHTML=''; let g=0,a=0,r=0, ps=0, pn=0;
+  for(const row of rows){
+    const card=document.createElement('div'); card.className='card';
+    const head=document.createElement('div'); head.className='row';
+    const ttl=document.createElement('div'); ttl.textContent=row.title||row.source_url||'receipt';
+    const pill=document.createElement('span'); pill.className='pill '+statusClass(row.norm.status); pill.textContent=row.norm.status||'—';
+    head.appendChild(ttl); head.appendChild(pill); card.appendChild(head);
+    const meta=document.createElement('div'); meta.className='row';
+    meta.innerHTML=`<span class="muted">${row.bytes} B • ${row.norm.model} • ${row.norm.issued}</span><span class="right muted">Φ*: ${star(row.norm.phi)} · κ ${Number.isFinite(row.norm.kappa)?row.norm.kappa.toFixed(3):'—'} · Δhol ${Number.isFinite(row.norm.dhol)?row.norm.dhol.toFixed(3):'—'}</span>`;
+    card.appendChild(meta);
+    const actions=document.createElement('div'); actions.className='row';
+    const rm=document.createElement('a'); rm.href='#'; rm.className='btn'; rm.textContent='Remove'; rm.onclick=e=>{e.preventDefault(); save(load().filter(x=>x.hash!==row.hash)); render();};
+    const cp=document.createElement('a'); cp.href='#'; cp.className='btn'; cp.textContent='Copy JSON'; cp.onclick=e=>{e.preventDefault(); navigator.clipboard.writeText(row.json);};
+    actions.appendChild(rm); actions.appendChild(cp); card.appendChild(actions);
+    list.appendChild(card);
+    if(/green|ok|clean/i.test(row.norm.status))g++; else if(/amber|warn|check/i.test(row.norm.status))a++; else if(/red|risk|bad/i.test(row.norm.status))r++;
+    if(Number.isFinite(row.norm.phi)){ps+=row.norm.phi;pn++;}
+  }
+  $('#summary').textContent=`${rows.length} receipts · GREEN ${g} · AMBER ${a} · RED ${r} · Φ* avg ${pn?(ps/pn).toFixed(3):'—'}`;
+}
+async function importFromText(txt){
+  let jsonTxt;
+  if(txt.trim().startsWith('{')) jsonTxt=txt.trim();
+  else { const raw=toRaw(txt.trim()); const res=await fetch(raw+(raw.includes('?')?'&':'?')+'v='+Date.now(),{cache:'no-store'}); if(!res.ok) throw new Error(`fetch failed (${res.status})`); jsonTxt=await res.text(); }
+  const bytes=byteLen(jsonTxt); const rec=JSON.parse(jsonTxt); const norm=normalize(rec); const hash=await sha256(jsonTxt);
+  const rows=load(); if(rows.some(r=>r.hash===hash)) return; rows.push({title:rec.title||rec.name||'',source_url:txt.startsWith('{')?'':toRaw(txt),bytes,json:jsonTxt,norm,hash}); save(rows); render();
+}
+function download(fn,txt){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([txt],{type:'application/json'}));a.download=fn;a.click();URL.revokeObjectURL(a.href);}
+function overall(rows){if(rows.some(r=>/red|risk|bad/i.test(r.norm.status)))return'RED'; if(rows.some(r=>/amber|warn|check/i.test(r.norm.status)))return'AMBER'; return'GREEN';}
+function item(row){const n=row.norm; return {source_url:row.source_url,bytes:row.bytes,status:n.status,signals:{kappa:Number.isFinite(n.kappa)?n.kappa:null,dhol:Number.isFinite(n.dhol)?n.dhol:null,phi_star:Number.isFinite(n.phi)?n.phi:null}};}
+$('#add').addEventListener('click',async()=>{const t=$('#input').value||''; if(!t.trim())return; try{await importFromText(t); $('#input').value='';}catch(e){alert(e.message||'Import failed')}})
+$('#clear').addEventListener('click',()=>{if(confirm('Remove all locally stored receipts?')){localStorage.removeItem(storeKey); render();}})
+$('#export').addEventListener('click',()=>{const rows=load(); const name=($('#packname').value||'openline-pack').replace(/[^a-zA-Z0-9._-]+/g,'-'); const pack={pack_version:'OPACK/0.1',created_at:new Date().toISOString(),issuer:'OpenLine Wallet (local)',name,verdict:overall(rows),counts:{total:rows.length,green:rows.filter(r=>/green|ok|clean/i.test(r.norm.status)).length,amber:rows.filter(r=>/amber|warn|check/i.test(r.norm.status)).length,red:rows.filter(r=>/red|risk|bad/i.test(r.norm.status)).length},items:rows.map(item)}; download(`${name}.pack.json`,JSON.stringify(pack));})
+$('#importPack').addEventListener('click',()=>{const input=document.createElement('input'); input.type='file'; input.accept='application/json'; input.onchange=async()=>{const f=input.files[0]; if(!f)return; const txt=await f.text(); const pack=JSON.parse(txt); for(const it of (pack.items||[])){const rec={receipt_version:'1.5-P',attrs:{status:it.status||'green'},signals:{kappa:it.signals?.kappa,dhol:it.signals?.dhol,phi_star:it.signals?.phi_star},model:'(from pack)',issued_at:pack.created_at}; const jsonTxt=JSON.stringify(rec); const bytes=byteLen(jsonTxt); const norm=normalize(rec); const hash=await crypto.subtle.digest('SHA-256',enc.encode(jsonTxt)); const hex=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,'0')).join(''); const rows=load(); if(rows.some(r=>r.hash===hex))continue; rows.push({title:it.source_url||'(pack item)',source_url:it.source_url||'',bytes,json:jsonTxt,norm,hash:hex}); save(rows);} render();}; input.click();})
+render();
+</script>
+</body>
+</html>
