@@ -7,24 +7,31 @@
 <meta name="color-scheme" content="dark light">
 <style>
   :root{--bg:#0a0c10;--ink:#e7ecf4;--muted:#97a3b6;--line:#1b2230;--tile:#0f141c;--btn:#1e293b;--btnink:#e7ecf4;--btnline:#2a3a55;--chip:#121925;--chipline:#1b2536}
-  *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Roboto,Helvetica,Arial}
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Roboto,Helvetica,Arial}
   a{color:inherit;text-decoration:none}
   .wrap{max-width:980px;margin:0 auto;padding:18px}
   header{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:12px}
-  header h1{font-size:20px;margin:2px 0 0} .sub{color:var(--muted);font-size:13px}
-  .section{margin:18px 0} h2{font-size:16px;margin:0 0 8px}
+  header h1{font-size:20px;margin:2px 0 0}
+  .sub{color:var(--muted);font-size:13px}
+  .section{margin:18px 0}
+  h2{font-size:16px;margin:0 0 8px}
   .hero,.tile{background:var(--tile);border:1px solid var(--line);border-radius:12px;padding:12px}
-  .hero{padding:14px} .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+  .hero{padding:14px}
+  .inline{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
   .btn{display:inline-block;padding:8px 12px;border-radius:10px;border:1px solid var(--btnline);background:var(--btn);color:var(--btnink);font-weight:600}
   .tile + .tile{margin-top:12px}
   .card{border:1px solid var(--line);border-radius:10px;margin-top:10px;overflow:hidden}
-  .row{display:flex;gap:14px;border-top:1px solid var(--line)} .row:first-child{border-top:0}
-  .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600} .right{flex:1;padding:10px 14px}
+  .row{display:flex;gap:14px;border-top:1px solid var(--line)}
+  .row:first-child{border-top:0}
+  .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600}
+  .right{flex:1;padding:10px 14px}
   .chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--chipline);background:var(--chip);padding:6px 10px;border-radius:999px;font-size:12px;line-height:1;height:26px}
   .ok{background:rgba(30,166,114,.15);border-color:rgba(30,166,114,.35)}
   .warn{background:rgba(179,139,16,.15);border-color:rgba(179,139,16,.35)}
   .bad{background:rgba(210,61,61,.15);border-color:rgba(210,61,61,.35)}
-  .neutral{opacity:.85} .note{color:var(--muted);font-size:12px;margin:8px 2px}
+  .neutral{opacity:.85}
+  .note{color:var(--muted);font-size:12px;margin:8px 2px}
   input{width:100%;background:var(--tile);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px}
   @media (max-width:560px){ .left{min-width:96px} }
 </style>
@@ -59,7 +66,7 @@
   <!-- LOCAL (2 only) -->
   <div class="section">
     <h2 id="localTitle">Local receipts (2)</h2>
-    <div class="note">From <code>docs/receipts/manifest.json</code>. Only the first two entries are shown.</div>
+    <div class="note">From <code>receipts/manifest.json</code>. Only the first two entries are shown.</div>
     <div id="local"></div>
   </div>
 
@@ -94,30 +101,43 @@
 
 <script>
 /* ---------- constants ---------- */
+/* Feature #1 has two candidate URLs to survive the repo-name hyphen issue. */
 const FEATURED = [
   { title: 'COLE-Coherence-Layer-Engine / receipt.mini.json',
-    url: 'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine/main/docs/receipt.mini.json' },
+    sources: [
+      'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json',
+      'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine/main/docs/receipt.mini.json'
+    ] },
   { title: 'open-receipts / receipt.latest.json',
-    url: 'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json' },
+    sources: [
+      'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json',
+      'https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json'
+    ] },
   { title: 'openline-csm / receipt.latest.json',
-    url: 'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json' },
+    sources: [
+      'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json',
+      'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json'
+    ] },
 ];
-const MANIFEST_PATHS = ['docs/receipts/manifest.json','receipts/manifest.json'];
+/* Prefer the path that’s actually correct for GH Pages with docs/ as site root. */
+const MANIFEST_PATHS = ['receipts/manifest.json','docs/receipts/manifest.json'];
 const LOCAL_LIMIT = 2;
-const WALLET_KEY = 'ol.wallet.v2';  // bump to avoid stale packs
-const SEEDED_KEY = 'ol.wallet.seeded.v2';
+const WALLET_KEY = 'ol.wallet.v3';      // bump to avoid stale structure
+const SEEDED_KEY = 'ol.wallet.seeded.v3';
 
 /* ---------- utils ---------- */
 const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e;};
 const byteLen = s => new TextEncoder().encode(s).length;
-function toRaw(u){ try{
-  const url = new URL(u.trim());
-  if (url.hostname === 'github.com') {
-    const p = url.pathname.split('/').filter(Boolean);
-    if (p[2] === 'blob') return `https://raw.githubusercontent.com/${p[0]}/${p[1]}/${p[3]}/${p.slice(4).join('/')}`;
-  }
-  return u;
-}catch{ return u; } }
+function toRaw(u){
+  try{
+    const url = new URL(u.trim());
+    if (url.hostname === 'github.com') {
+      const p = url.pathname.split('/').filter(Boolean);
+      if (p[2] === 'blob') return `https://raw.githubusercontent.com/${p[0]}/${p[1]}/${p[3]}/${p.slice(4).join('/')}`;
+    }
+    return u;
+  }catch{ return u; }
+}
 const STATUS_GREEN = s => /^(green|clean|ok)$/i.test(String(s||''));
 const clamp01 = v => Math.max(0, Math.min(1, v));
 
@@ -193,31 +213,35 @@ async function fetchJsonRaw(u){
   if (!res.ok) throw new Error(`fetch failed (${res.status})`);
   const txt = await res.text(); return {json: JSON.parse(txt), bytes: byteLen(txt), url: raw};
 }
+async function fetchFirst(paths){
+  for (const p of paths){
+    try{ const res = await fetch(p + '?v=' + Date.now(), {cache:'no-store'}); if(res.ok) return {path:p, data: await res.json()}; }catch{}
+  }
+  return null;
+}
 
+/* ---------- featured & local loaders ---------- */
 async function loadFeatured(){
   const ids = ['feat1','feat2','feat3'];
   const out = [];
   for (let i=0;i<FEATURED.length;i++){
-    try{
-      const r = await fetchJsonRaw(FEATURED[i].url);
-      document.getElementById(ids[i]).appendChild(renderUniformTile(FEATURED[i].title, r.url, r.json, r.bytes));
-      out.push(r);
-    }catch(e){ document.getElementById(ids[i]).textContent='Failed to load.'; }
+    const box = document.getElementById(ids[i]);
+    let loaded = null;
+    for (const src of FEATURED[i].sources){
+      try{ const r = await fetchJsonRaw(src); box.appendChild(renderUniformTile(FEATURED[i].title, r.url, r.json, r.bytes)); loaded = r; break; }
+      catch{}
+    }
+    if (!loaded) box.textContent = 'Failed to load.';
+    else out.push(loaded);
   }
   return out; // [{url,json,bytes}...]
 }
 
-async function fetchFirst(paths){
-  for (const p of paths){
-    try{ const res = await fetch(p + '?v=' + Date.now(), {cache:'no-store'});
-         if(res.ok) return {path:p, data: await res.json()}; }catch{}
-  }
-  return null;
-}
 async function loadLocal(){
   const target = document.getElementById('local'); const title = document.getElementById('localTitle');
   const got = await fetchFirst(MANIFEST_PATHS);
   if(!got){ title.textContent='Local receipts (manifest missing)'; return []; }
+  title.textContent = `Local receipts (from ${got.path})`;
   const listAll = Array.isArray(got.data) ? got.data : (got.data.files || got.data.receipts || got.data.items || []);
   const list = listAll.slice(0, LOCAL_LIMIT);
   const out = [];
@@ -287,8 +311,8 @@ function renderPack(){
     packList.appendChild(tile);
   });
 }
-function addObjToPack(obj){ // obj = {url,json,bytes} or simulated
-  const r = obj.json || obj; // allow a plain receipt too
+function addObjToPack(obj){
+  const r = obj.json || obj;
   const ck = check(r, obj.bytes ?? byteLen(JSON.stringify(r)));
   const n  = normalize(r);
   const item = {
@@ -297,7 +321,6 @@ function addObjToPack(obj){ // obj = {url,json,bytes} or simulated
     status: ck.status, version: ck.version, bytes: ck.bytes,
     signals: { kappa: n.dials.kappa, dhol: n.dials.dhol, phi_star: n.dials.phi }
   };
-  // de-dupe by url+bytes if URL present
   if (item.url){
     const exists = (W.items||[]).some(x => x.url===item.url && x.bytes===item.bytes);
     if (exists) return;
@@ -319,7 +342,7 @@ function makeRandomReceipt(){
   if (bucket < 0.6){ status='CLEAN'; kRange=[0.05,0.50]; dRange=[0.00,0.30]; pRange=[0.80,0.98]; }
   else if (bucket < 0.9){ status='AMBER'; kRange=[0.50,0.90]; dRange=[0.30,0.60]; pRange=[0.45,0.80]; }
   else { status='RED'; kRange=[0.90,1.20]; dRange=[0.60,1.00]; pRange=[0.10,0.45]; }
-  const rec = {
+  return {
     receipt_version:"1.5-P", version:"OLR/1.5-P", issued_at: now,
     attrs:{status}, model:{family: pick(['demo-llm','op-llm','agent-x'])},
     precision:{train_dtype:"fp16", infer_dtype:"fp16"},
@@ -327,7 +350,6 @@ function makeRandomReceipt(){
               dhol:+randBetween(...dRange).toFixed(3),
               phi_star:+randBetween(...pRange).toFixed(3) }
   };
-  return rec;
 }
 function addRandom(n=1){
   for (let i=0;i<n;i++){ addObjToPack(makeRandomReceipt()); }
@@ -336,16 +358,12 @@ function addRandom(n=1){
 
 /* ---------- seeding ---------- */
 async function boot(){
-  // reset structure if missing
   if (!W || !Array.isArray(W.items)) W = {items:[]};
-
-  // Load the 3 featured + first 2 local → render tiles and seed wallet.
-  const feats = await loadFeatured();     // [{url,json,bytes}]
-  const locals = await loadLocal();       // [{url,json,bytes}] (2 max)
-
+  const feats = await loadFeatured();   // 3
+  const locals = await loadLocal();     // 2 max
   const alreadySeeded = localStorage.getItem(SEEDED_KEY)==='1';
   if (!alreadySeeded || (W.items||[]).length===0){
-    W.items = []; // start clean
+    W.items = [];
     [...feats, ...locals].forEach(addObjToPack);
     saveWallet(W);
     localStorage.setItem(SEEDED_KEY,'1');
@@ -354,12 +372,12 @@ async function boot(){
 }
 
 /* ---------- wire up ---------- */
-exportPackBtn.addEventListener('click',()=>{ navigator.clipboard.writeText(JSON.stringify(W,null,2)); alert('Pack JSON copied.'); });
-clearPackBtn.addEventListener('click',()=>{ if(!confirm('Clear demo pack?'))return; W.items=[]; saveWallet(W); renderPack(); });
-reseederBtn.addEventListener('click',()=>{ if(!confirm('Reset & reseed from the 5 tiles?'))return; localStorage.removeItem(SEEDED_KEY); W.items=[]; saveWallet(W); boot(); });
-addUrlBtn.addEventListener('click', async (e)=>{ e.preventDefault(); const u=addUrlInput.value.trim(); if(!u) return; try{ await addUrlToPack(u); addUrlInput.value=''; }catch(err){ alert('Add failed'); } });
-addRandBtn.addEventListener('click',()=> addRandom(1));
-addRand5Btn.addEventListener('click',()=> addRandom(5));
+document.getElementById('exportPackBtn').addEventListener('click',()=>{ navigator.clipboard.writeText(JSON.stringify(W,null,2)); alert('Pack JSON copied.'); });
+document.getElementById('clearPackBtn').addEventListener('click',()=>{ if(!confirm('Clear demo pack?'))return; W.items=[]; saveWallet(W); renderPack(); });
+document.getElementById('reseeder').addEventListener('click',()=>{ if(!confirm('Reset & reseed from the 5 tiles?'))return; localStorage.removeItem(SEEDED_KEY); W.items=[]; saveWallet(W); boot(); });
+document.getElementById('addUrlBtn').addEventListener('click', async (e)=>{ e.preventDefault(); const u=addUrlInput.value.trim(); if(!u) return; try{ await addUrlToPack(u); addUrlInput.value=''; }catch{ alert('Add failed'); } });
+document.getElementById('addRand').addEventListener('click',()=> addRandom(1));
+document.getElementById('addRand5').addEventListener('click',()=> addRandom(5));
 
 boot();
 </script>
