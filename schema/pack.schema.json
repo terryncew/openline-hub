@@ -1,0 +1,43 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "OpenLine Pack",
+  "type": "object",
+  "required": ["pack_version", "created_at", "name", "verdict", "items"],
+  "properties": {
+    "pack_version": { "type": "string", "const": "OPACK/0.1" },
+    "created_at": { "type": "string", "format": "date-time" },
+    "issuer": { "type": "string" },
+    "name": { "type": "string" },
+    "verdict": { "type": "string", "enum": ["GREEN","AMBER","RED"] },
+    "counts": {
+      "type": "object",
+      "properties": {
+        "total": { "type": "integer" },
+        "green": { "type": "integer" },
+        "amber": { "type": "integer" },
+        "red": { "type": "integer" }
+      }
+    },
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["status", "signals"],
+        "properties": {
+          "source_url": { "type": "string" },
+          "bytes": { "type": "integer" },
+          "hash": { "type": "string" },
+          "status": { "type": "string" },
+          "signals": {
+            "type": "object",
+            "properties": {
+              "kappa": { "type": ["number","null"] },
+              "dhol": { "type": ["number","null"] },
+              "phi_star": { "type": ["number","null"] }
+            }
+          }
+        }
+      }
+    }
+  }
+}
