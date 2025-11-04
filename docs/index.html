@@ -30,7 +30,7 @@
   .row:first-child{border-top:0}
   .left{min-width:120px;padding:10px 14px;color:var(--muted);font-weight:600}
   .right{flex:1;padding:10px 14px}
-  /* Pills */
+  /* Pills (no weird ovals) */
   .chip{display:inline-flex;align-items:center;justify-content:center;border:1px solid var(--chipline);background:var(--chip);padding:6px 10px;border-radius:999px;font-size:12px;line-height:1;height:26px}
   .ok{background:rgba(30,166,114,.15);border-color:rgba(30,166,114,.35)}
   .warn{background:rgba(179,139,16,.15);border-color:rgba(179,139,16,.35)}
@@ -40,6 +40,7 @@
   textarea,input{width:100%;background:var(--tile);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:10px}
   textarea{min-height:84px;resize:vertical}
   pre{white-space:pre-wrap;background:var(--tile);border:1px solid var(--line);padding:10px;border-radius:10px}
+  select{background:var(--tile);border:1px solid var(--line);color:var(--ink);border-radius:10px;padding:8px 10px}
   @media (max-width:560px){ .left{min-width:96px} }
 </style>
 </head>
@@ -58,7 +59,7 @@
 
   <div class="section hero">
     <div style="font-size:18px;font-weight:700;margin-bottom:8px">Proof moves; data doesn’t.</div>
-    <div class="sub">Uniform viewer across SKUs (OLR/1.5-P & 1.4L). One-click validator accepts URL or pasted JSON. Triage, not truth.</div>
+    <div class="sub">Uniform viewer for OLR/1.5-P & 1.4L. One-click validator accepts a URL or pasted JSON. Triage, not truth.</div>
     <div class="inline" style="margin-top:10px">
       <a class="btn" href="https://doi.org/10.5281/zenodo.17476985" target="_blank" rel="noopener">Coherence Dynamics v1.2 (Erratum)</a>
     </div>
@@ -71,16 +72,15 @@
     <div id="feat3" style="margin-top:12px"></div>
   </div>
 
-  <!-- Dial legend: exactly once, audience-facing -->
   <div class="section">
-    <h2>Dial legend</h2>
+    <h2>What the dials mean</h2>
     <div class="tile">
-      <ul>
-        <li><b>κ (kappa)</b> — stress signal from the run. Higher = more brittle behavior. Watch for rising κ under load.</li>
-        <li><b>Δhol</b> — drift from the expected path. Higher = the agent wandered. Sudden spikes flag routing/config issues.</li>
-        <li><b>Φ* (phi-star)</b> — composite coherence (0–1). Shown with a 0–5★ bucket for quick read-throughs.</li>
+      <ul style="margin:0 0 6px 18px">
+        <li><b>κ (kappa)</b>: stress/curvature of the run. Lower is calmer. Target ≤ <code>.75</code>.</li>
+        <li><b>Δhol</b>: drift from expected behavior. Lower is steadier. Target ≤ <code>.35</code>.</li>
+        <li><b>Φ*</b>: composite coherence (0–1), shown with 0–5★ bucket for quick reads.</li>
       </ul>
-      <div class="note">These dials are content-free. They travel with the receipt, not the data.</div>
+      <div class="note">Why it matters: fast, content-free health for on-call, security, and compliance. Brake / Split / Go, then verify.</div>
     </div>
   </div>
 
@@ -92,32 +92,53 @@
       <div class="inline" style="margin-top:10px">
         <a class="btn" id="valBtn" href="#">Validate</a>
         <a class="btn secondary" id="copyTpl" href="#">Copy Template</a>
+        <a class="btn secondary" id="addToWalletBtn" href="#" style="display:none">Add last PASS to Wallet</a>
       </div>
       <pre id="valOut" style="margin-top:10px">Waiting…</pre>
       <div class="note" id="whyPass" style="display:none">
-        PASS means: (1) size within cap (≤640 B clean, ≤800 B amber/red),
-        (2) core fields present, (3) guard dials present (κ, Δhol, Φ*).
-        Result is portable—share with SRE/Sec/Legal without exposing content.
+        PASS = (1) within cap (≤640 B green, ≤800 B amber/red), (2) core fields present, (3) guard dials present (κ, Δhol, Φ*). Portable evidence: share safely without exposing prompts or PII.
       </div>
+    </div>
+  </div>
+
+  <div class="section" id="wallet">
+    <h2>Wallet (local packs)</h2>
+    <div class="tile">
+      <div class="note">Stored in this browser (localStorage). No server, no tracking.</div>
+
+      <div class="inline" style="gap:8px;margin-bottom:8px">
+        <select id="packSel"></select>
+        <a class="btn secondary" id="newPackBtn" href="#">New pack</a>
+        <a class="btn secondary" id="exportPackBtn" href="#">Copy pack JSON</a>
+        <a class="btn secondary" id="clearPackBtn" href="#">Clear pack</a>
+      </div>
+
+      <div class="inline" style="gap:8px;margin-bottom:8px">
+        <input id="addUrl" placeholder="Add by URL (raw GitHub best)"/>
+        <a class="btn" id="addUrlBtn" href="#">Add</a>
+      </div>
+
+      <div id="packStats" class="note">—</div>
+      <div id="packList"></div>
     </div>
   </div>
 
   <div class="section">
     <h2 id="localTitle">Local receipts</h2>
-    <div class="note">Place files in <code>docs/receipts/</code> and list them in <code>docs/receipts/manifest.json</code>.</div>
+    <div class="note">List files in <code>docs/receipts/manifest.json</code>. Each entry is a JSON URL (relative or absolute).</div>
     <div id="local"></div>
   </div>
 
   <div class="section" id="demo">
     <h2>Demo partner offer</h2>
     <div class="tile">
-      <p>For teams that want a 2–3 week hands-on: ship agents with portable receipts and a simple PASS/AMBER/RED dial.</p>
+      <p>2–3 week hands-on: ship agents with portable receipts and a PASS/AMBER/RED dial.</p>
       <ul>
         <li>Drop-in receipts (sub-KB target), no prompts/PII.</li>
-        <li>Guard dials: κ (stress), Δhol (drift), Φ* (0–5★).</li>
-        <li>Offline verify; URL or pasted JSON.</li>
+        <li>Guard dials: κ (stress), Δhol (drift), Φ* (0–1 with 0–5★).</li>
+        <li>Offline verify; paste JSON or point at a URL.</li>
       </ul>
-      <div class="note">Outcome: quick triage you can show to SRE, Security, and Legal.</div>
+      <div class="note">Outcome: quick triage signal for on-call, security, and compliance.</div>
     </div>
   </div>
 
@@ -140,8 +161,10 @@ function toRaw(u){
     return u;
   }catch{ return u; }
 }
+const STATUS_GREEN = s => /^(green|clean|ok)$/i.test(s||'');
+const clamp01 = v => Math.max(0, Math.min(1, v));
 
-/* ---------- normalizer ---------- */
+/* ---------- normalizer (signals.* first) ---------- */
 function normalize(r){
   const v = r.version || r.receipt_version || r.receiptVersion || r.sku || '—';
   const status = (r.attrs?.status || r.status || '').toString();
@@ -159,11 +182,11 @@ function normalize(r){
   const but     = claims.but     ?? '—';
   const so      = claims.so      ?? '—';
 
-  const kappa = r.signals?.kappa ?? r.kappa ?? r.κ ?? r.dials?.kappa ?? r.telem?.kappa_eff ?? '—';
-  const dhol  = r.signals?.dhol  ?? r.signals?.delta_hol ?? r.delta_hol ?? r.Δhol ?? r.dials?.delta_hol ?? r.telem?.delta_hol ?? '—';
-  const phi   = r.signals?.phi_star ?? r.phi_star ?? r.dials?.phi_star ?? '—';
+  const kappa = r.signals?.kappa ?? r.kappa ?? r.κ ?? r.dials?.kappa ?? r.telem?.kappa_eff ?? null;
+  const dhol  = r.signals?.dhol  ?? r.signals?.delta_hol ?? r.delta_hol ?? r.Δhol ?? r.dials?.delta_hol ?? r.telem?.delta_hol ?? null;
+  const phi   = r.signals?.phi_star ?? r.phi_star ?? r.dials?.phi_star ?? null;
 
-  return {version:v, status, model, issued, prec, point, because, but, so, dials:{'κ':kappa, 'Δhol':dhol, 'Φ*':phi}};
+  return {version:v, status, model, issued, prec, point, because, but, so, dials:{kappa, dhol, phi}};
 }
 
 function check(r, bytes){
@@ -172,8 +195,8 @@ function check(r, bytes){
   const status  = (r.attrs?.status || r.status || '').toLowerCase();
   if (!version) errs.push('missing receipt_version/version');
   if (!status)  errs.push('missing attrs.status/status');
-  const cleanish = ['clean','coherent','ok','green'].includes(status);
-  const warnish  = ['amber','warn','check','red','risk','bad'].includes(status);
+  const cleanish = /^(clean|coherent|ok|green)$/i.test(status);
+  const warnish  = /^(amber|warn|check|red|risk|bad)$/i.test(status);
   if (cleanish && bytes > 640) errs.push(`CLEAN exceeds 640B (${bytes})`);
   if (warnish  && bytes > 800) errs.push(`${status} exceeds 800B (${bytes})`);
   return {ok: errs.length===0, errs, version: version||'—', status: status||'—', bytes};
@@ -203,20 +226,22 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   card.appendChild(row('SO',n.so));
 
   const dialRow = el('div','inline'); dialRow.style.gap='8px'; dialRow.style.margin='10px 14px';
-  for (const [k,v] of Object.entries(n.dials)){
-    let valTxt = '—';
-    if (typeof v==='number' && Number.isFinite(v)) {
+  const toTxt = (k,v)=>{
+    if (typeof v==='number' && Number.isFinite(v)){
       if (k==='Φ*') {
-        const stars = Math.round(Math.max(0,Math.min(1,v))*5);
-        valTxt = `${v.toFixed(3)} (${stars}★)`;
-      } else {
-        valTxt = v.toFixed(3);
+        const stars = Math.round(clamp01(v)*5);
+        return `${v.toFixed(3)} (${stars}★)`;
       }
-    } else if (v!=null) { valTxt = String(v); }
-    const chip = el('span','chip neutral', `${k} — ${valTxt}`);
-    if (k==='Φ*') chip.title='Φ* (phi-star): composite coherence (0–1); 0–5★ quick bucket.';
-    dialRow.appendChild(chip);
-  }
+      return v.toFixed(3);
+    }
+    return v==null ? '—' : String(v);
+  };
+  dialRow.appendChild(el('span','chip neutral', `κ — ${toTxt('κ', n.dials.kappa)}`));
+  dialRow.appendChild(el('span','chip neutral', `Δhol — ${toTxt('Δhol', n.dials.dhol)}`));
+  const phiVal = n.dials.phi;
+  const phiChip = el('span','chip neutral', `Φ* — ${toTxt('Φ*', phiVal)}`);
+  phiChip.title='Φ* (phi-star): composite coherence (0–1), shown with 0–5★ bucket.';
+  dialRow.appendChild(phiChip);
   card.appendChild(dialRow);
 
   const footer = el('div','note', `source: ${srcUrl} · bytes=${bytes}`);
@@ -226,26 +251,31 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   copyUrl.onclick = (e)=>{e.preventDefault(); navigator.clipboard.writeText(srcUrl);};
   const copyJson = el('a','btn secondary','Copy JSON'); copyJson.href='#';
   copyJson.onclick = (e)=>{e.preventDefault(); navigator.clipboard.writeText(JSON.stringify(rec,null,2));};
+  btns.appendChild(copyUrl); btns.appendChild(copyJson);
+
   t.appendChild(head); t.appendChild(card); t.appendChild(footer); t.appendChild(btns);
   return t;
 }
 
-/* ---------- loaders ---------- */
-async function loadFeatured(id, url, title){
-  const grid = document.getElementById(id); if (!grid) return;
-  try{
-    const raw = toRaw(url);
-    const res = await fetch(raw + '?v=' + Date.now(), {cache:'no-store'});
-    const txt = await res.text();
-    const bytes = byteLen(txt);
-    const j = JSON.parse(txt);
-    grid.appendChild(renderUniformTile(title, raw, j, bytes));
-    if (id==='feat1') document.getElementById('valUrl').value = raw;
-  }catch(e){
-    const tile = el('div','tile'); tile.appendChild(el('div','note',`Failed to load ${title}: ${e.message||'error'}`)); grid.appendChild(tile);
+/* ---------- featured loaders ---------- */
+async function loadFeaturedOnce(targetId, url, title){
+  const grid = document.getElementById(targetId); if (!grid) return;
+  const raw = toRaw(url);
+  const res = await fetch(raw + '?v=' + Date.now(), {cache:'no-store'});
+  if (!res.ok) throw new Error(`fetch failed (${res.status})`);
+  const txt = await res.text(); const bytes = byteLen(txt); const j = JSON.parse(txt);
+  grid.appendChild(renderUniformTile(title, raw, j, bytes));
+  if (targetId==='feat1'){ // prefill validator with first featured
+    const box = document.getElementById('valUrl'); if (box) box.value = raw;
   }
 }
 
+async function loadFeaturedWithFallback(targetId, primaryUrl, fallbackUrl, title){
+  try { await loadFeaturedOnce(targetId, primaryUrl, title); }
+  catch { await loadFeaturedOnce(targetId, fallbackUrl, title + ' (fallback)'); }
+}
+
+/* ---------- local receipts ---------- */
 async function fetchFirst(pathList){
   for (const p of pathList){
     try{
@@ -276,52 +306,219 @@ async function loadLocal(){
 }
 
 /* ---------- validator ---------- */
+let LAST_PASS = null;
 document.getElementById('valBtn').addEventListener('click', async (ev)=>{
   ev.preventDefault();
   const box = document.getElementById('valUrl');
   const out = document.getElementById('valOut');
   const why = document.getElementById('whyPass');
+  const addBtn = document.getElementById('addToWalletBtn');
   let input = (box.value||'').trim();
-  if (!input) { out.textContent='Provide a URL or paste a JSON receipt.'; why.style.display='none'; return; }
+  LAST_PASS = null; addBtn.style.display='none'; why.style.display='none';
+  if (!input) { out.textContent='Provide a URL or paste a JSON receipt.'; return; }
   try{
-    let j, bytes;
+    let j, bytes, src='(pasted)';
     if (input.startsWith('{')) { j = JSON.parse(input); bytes = byteLen(JSON.stringify(j)); }
     else {
-      const raw = toRaw(input);
+      const raw = toRaw(input); src = raw;
       const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
       if (!res.ok) throw new Error(`fetch failed (${res.status})`);
       const txt = await res.text(); bytes = byteLen(txt); j = JSON.parse(txt);
     }
     const result = check(j, bytes);
-    const cap = (result.status==='green'||result.status==='clean'||result.status==='ok') ? 640 : 800;
+    const cap = STATUS_GREEN(result.status) ? 640 : 800;
     const sigs = j.signals ? Object.entries(j.signals).map(([k,v])=>`${k}=${(typeof v==='number')?Number(v).toFixed(3):v}`).join(', ') : '—';
     out.textContent = result.ok
       ? `✅ PASS\nbytes=${result.bytes} (≤${cap}) · status=${result.status} · version=${result.version}\nSignals: ${sigs}`
       : `❌ FAIL\n- ${result.errs.join('\n- ')}`;
-    why.style.display = result.ok ? 'block' : 'none';
+    if (result.ok){
+      why.style.display='block';
+      LAST_PASS = {src, json:j, bytes:result.bytes, status:result.status, version:result.version};
+      addBtn.style.display='inline-block';
+    }
   }catch(e){
-    out.textContent = `❌ ${e.message || 'fetch/parse failed'}`; document.getElementById('whyPass').style.display='none';
+    out.textContent = `❌ ${e.message || 'fetch/parse failed'}`;
   }
 });
-
 document.getElementById('copyTpl').addEventListener('click', (e)=>{
   e.preventDefault();
-  const tpl = {"receipt_version":"1.5-P","version":"OLR/1.5-P","issued_at":"2025-11-02T00:00:00Z","attrs":{"status":"CLEAN"},"model":{"family":"demo-llm"},"precision":{"train_dtype":"fp16","infer_dtype":"fp16"},"point":"One clear outcome sentence.","because":"One reason.","but":"One risk.","so":"One action.","signals":{"kappa":0.2,"dhol":0.0,"phi_star":0.9}};
+  const tpl = {
+    "receipt_version":"1.5-P","version":"OLR/1.5-P","issued_at":"2025-11-02T00:00:00Z",
+    "attrs":{"status":"CLEAN"},
+    "model":{"family":"demo-llm"},
+    "precision":{"train_dtype":"fp16","infer_dtype":"fp16"},
+    "point":"One clear outcome sentence.","because":"One reason.","but":"One risk.","so":"One action.",
+    "signals":{"kappa":0.20,"dhol":0.00,"phi_star":0.90}
+  };
   navigator.clipboard.writeText(JSON.stringify(tpl,null,2));
 });
 
-/* ---------- boot ---------- */
-/* Featured: COLE points to MINI (sub-KB) */
-loadFeatured('feat1',
-  'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json',
-  'COLE-Coherence-Layer-Engine / receipt.mini.json');
-loadFeatured('feat2',
-  'https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json',
-  'open-receipts / receipt.latest.json');
-loadFeatured('feat3',
-  'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json',
-  'openline-csm / receipt.latest.json');
+/* ---------- wallet (localStorage) ---------- */
+const WALLET_KEY = 'ol.wallet.v1';
+function loadWallet(){ try{ return JSON.parse(localStorage.getItem(WALLET_KEY)) || {packs:{}}; }catch{ return {packs:{}}; } }
+function saveWallet(w){ localStorage.setItem(WALLET_KEY, JSON.stringify(w)); }
+function listPacks(w){ return Object.keys(w.packs).sort(); }
+function ensurePack(w, name){ if(!w.packs[name]) w.packs[name] = {items:[]}; }
 
+const packSel = document.getElementById('packSel');
+const newPackBtn = document.getElementById('newPackBtn');
+const exportPackBtn = document.getElementById('exportPackBtn');
+const clearPackBtn = document.getElementById('clearPackBtn');
+const addToWalletBtn = document.getElementById('addToWalletBtn');
+const addUrlInput = document.getElementById('addUrl');
+const addUrlBtn = document.getElementById('addUrlBtn');
+const packStats = document.getElementById('packStats');
+const packList = document.getElementById('packList');
+
+let W = loadWallet();
+function currentPack(){ return packSel.value || ''; }
+
+function renderPackSel(){
+  const names = listPacks(W);
+  packSel.innerHTML = '';
+  if (names.length===0){ ensurePack(W, 'default'); saveWallet(W); names.push('default'); }
+  names.forEach(n=>{
+    const o = document.createElement('option'); o.value = o.textContent = n; packSel.appendChild(o);
+  });
+}
+function renderPack(){
+  const name = currentPack();
+  ensurePack(W, name);
+  const items = W.packs[name].items || [];
+
+  // Stats
+  const n = items.length;
+  const greens = items.filter(x => STATUS_GREEN(x.status)).length;
+  const avg = (arr)=> arr.length ? (arr.reduce((a,b)=>a+(Number.isFinite(b)?b:0),0)/arr.length) : 0;
+  const kList = items.map(x=>x.signals?.kappa).filter(Number.isFinite);
+  const dList = items.map(x=>x.signals?.dhol).filter(Number.isFinite);
+  const pList = items.map(x=>x.signals?.phi_star).filter(Number.isFinite);
+
+  packStats.textContent = n
+    ? `Items: ${n} · GREEN: ${(greens/n*100).toFixed(0)}% · κ(avg): ${avg(kList).toFixed(3)} · Δhol(avg): ${avg(dList).toFixed(3)} · Φ*(avg): ${avg(pList).toFixed(3)}`
+    : 'No items yet. Validate or add by URL to start.';
+
+  // List
+  packList.innerHTML = '';
+  items.forEach((it, idx)=>{
+    const tile = el('div','tile');
+    const head = el('div','inline'); head.style.justifyContent='space-between'; head.style.alignItems='center';
+    head.appendChild(el('div','', it.title || (it.url||'(pasted)')));
+    const pills = el('div'); pills.style.display='flex'; pills.style.gap='8px';
+    const cls = it.status.match(/green|clean|ok/i)?'ok':it.status.match(/amber|warn|check/i)?'warn':it.status.match(/red|risk|bad/i)?'bad':'neutral';
+    pills.appendChild(el('span','chip '+cls, it.status || '—'));
+    pills.appendChild(el('span','chip neutral', it.version || '—'));
+    pills.appendChild(el('span','chip neutral', `bytes ${it.bytes ?? '—'}`));
+    head.appendChild(pills);
+    tile.appendChild(head);
+
+    const row = el('div','inline'); row.style.gap='8px'; row.style.marginTop='8px';
+    const toTxt = (k,v)=>{
+      if (typeof v==='number' && Number.isFinite(v)){
+        if (k==='Φ*'){ const stars=Math.round(clamp01(v)*5); return `${v.toFixed(3)} (${stars}★)`; }
+        return v.toFixed(3);
+      }
+      return v==null?'—':String(v);
+    };
+    row.appendChild(el('span','chip neutral', `κ — ${toTxt('κ', it.signals?.kappa)}`));
+    row.appendChild(el('span','chip neutral', `Δhol — ${toTxt('Δhol', it.signals?.dhol)}`));
+    row.appendChild(el('span','chip neutral', `Φ* — ${toTxt('Φ*', it.signals?.phi_star)}`));
+    tile.appendChild(row);
+
+    const btns = el('div','inline'); btns.style.marginTop='8px';
+    if (it.url){
+      const open = el('a','btn secondary','Open'); open.href=it.url; open.target='_blank'; btns.appendChild(open);
+      const copy = el('a','btn secondary','Copy URL'); copy.href='#'; copy.onclick=(e)=>{e.preventDefault(); navigator.clipboard.writeText(it.url);}; btns.appendChild(copy);
+    }
+    const rm = el('a','btn secondary','Remove'); rm.href='#'; rm.onclick=(e)=>{e.preventDefault(); W.packs[name].items.splice(idx,1); saveWallet(W); renderPack();}; btns.appendChild(rm);
+    tile.appendChild(btns);
+
+    packList.appendChild(tile);
+  });
+}
+
+function addItemToPack(packName, item){
+  ensurePack(W, packName);
+  W.packs[packName].items.push(item);
+  saveWallet(W);
+  renderPack();
+}
+
+newPackBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
+  const n = prompt('New pack name:','pack-'+Math.floor(Math.random()*1e3));
+  if (!n) return;
+  ensurePack(W, n); saveWallet(W); renderPackSel(); packSel.value = n; renderPack();
+});
+exportPackBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
+  const name = currentPack(); ensurePack(W,name);
+  const data = JSON.stringify(W.packs[name], null, 2);
+  navigator.clipboard.writeText(data);
+  alert('Pack JSON copied to clipboard.');
+});
+clearPackBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
+  const name=currentPack();
+  if (!confirm(`Clear all items in pack "${name}"?`)) return;
+  W.packs[name].items = []; saveWallet(W); renderPack();
+});
+packSel.addEventListener('change', ()=> renderPack());
+
+addToWalletBtn.addEventListener('click',(e)=>{
+  e.preventDefault();
+  if (!LAST_PASS) return;
+  const n = normalize(LAST_PASS.json);
+  const title = (LAST_PASS.src && LAST_PASS.src.split('/').slice(-1)[0]) || 'pasted';
+  const item = {
+    title, url: LAST_PASS.src.startsWith('http') ? LAST_PASS.src : null,
+    status: LAST_PASS.status, version: LAST_PASS.version, bytes: LAST_PASS.bytes,
+    signals: { kappa: n.dials.kappa, dhol: n.dials.dhol, phi_star: n.dials.phi }
+  };
+  addItemToPack(currentPack(), item);
+});
+
+addUrlBtn.addEventListener('click', async (e)=>{
+  e.preventDefault();
+  const u = addUrlInput.value.trim(); if (!u) return;
+  try{
+    const raw = toRaw(u);
+    const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
+    if (!res.ok) throw new Error(`fetch failed (${res.status})`);
+    const txt = await res.text(); const bytes = byteLen(txt); const j = JSON.parse(txt);
+    const ck = check(j, bytes); const n = normalize(j);
+    const title = raw.split('/').slice(-1)[0] || 'receipt.json';
+    const item = { title, url: raw, status: ck.status, version: ck.version, bytes: bytes,
+                   signals: { kappa: n.dials.kappa, dhol: n.dials.dhol, phi_star: n.dials.phi } };
+    addItemToPack(currentPack(), item); addUrlInput.value='';
+  }catch(err){ alert('Add failed: ' + (err.message||'unknown')); }
+});
+
+/* ---------- boot ---------- */
+/* Init wallet UI */
+renderPackSel(); renderPack();
+
+/* COLE → prefer MINI (sub-KB); fallback to latest to avoid blanks */
+loadFeaturedWithFallback(
+  'feat1',
+  'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json',
+  'https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.latest.json',
+  'COLE-Coherence-Layer-Engine / receipt'
+);
+loadFeaturedWithFallback(
+  'feat2',
+  'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json',
+  'https://github.com/terryncew/open-receipts/blob/main/docs/receipt.latest.json',
+  'open-receipts / receipt.latest.json'
+);
+loadFeaturedWithFallback(
+  'feat3',
+  'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json',
+  'https://github.com/terryncew/openline-csm/blob/main/docs/receipt.latest.json',
+  'openline-csm / receipt.latest.json'
+);
+
+/* Local receipts from manifest */
 loadLocal();
 </script>
 </body>
