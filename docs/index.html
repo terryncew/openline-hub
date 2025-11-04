@@ -45,10 +45,10 @@
 
   <div class="section hero">
     <div style="font-size:18px;font-weight:700;margin-bottom:8px">Proof moves; data doesn’t.</div>
-    <div class="sub">Viewer + wallet for OLR/1.5-P & 1.4L. This page seeds a demo wallet automatically so you can see it working immediately.</div>
+    <div class="sub">5-tile viewer + live wallet. Auto-seeds on load so you always see stats move.</div>
   </div>
 
-  <!-- FEATURED (3 receipts) -->
+  <!-- FEATURED (3) -->
   <div class="section">
     <h2>Featured receipts</h2>
     <div id="feat1"></div>
@@ -56,15 +56,23 @@
     <div id="feat3" style="margin-top:12px"></div>
   </div>
 
+  <!-- LOCAL (2 only) -->
+  <div class="section">
+    <h2 id="localTitle">Local receipts (2)</h2>
+    <div class="note">From <code>docs/receipts/manifest.json</code>. Only the first two entries are shown.</div>
+    <div id="local"></div>
+  </div>
+
   <!-- WALLET -->
   <div class="section" id="wallet">
-    <h2>Wallet (local demo pack)</h2>
+    <h2>Wallet (demo pack)</h2>
     <div class="tile">
-      <div class="note">LocalStorage only. No server. Auto-seeded from Featured + Local lists below so it never starts empty.</div>
+      <div class="note">LocalStorage only. No server. Seeded from the 5 tiles above. Add random to watch stats swing.</div>
 
       <div class="inline" style="gap:8px;margin-bottom:8px">
-        <select id="packSel"></select>
-        <a class="btn" id="reseeder">Demo Reset & Reseed</a>
+        <a class="btn" id="reseeder">Reset & Reseed</a>
+        <a class="btn" id="addRand">Add Random</a>
+        <a class="btn" id="addRand5">Add 5 Random</a>
         <a class="btn" id="exportPackBtn">Copy pack.json</a>
         <a class="btn" id="clearPackBtn">Clear pack</a>
       </div>
@@ -77,13 +85,6 @@
       <div id="packStats" class="note">—</div>
       <div id="packList"></div>
     </div>
-  </div>
-
-  <!-- LOCAL -->
-  <div class="section">
-    <h2 id="localTitle">Local receipts</h2>
-    <div class="note">Reads <code>docs/receipts/manifest.json</code>. Click a tile → Copy URL → Add to Wallet (already auto-seeded).</div>
-    <div id="local"></div>
   </div>
 
   <div class="section">
@@ -102,8 +103,9 @@ const FEATURED = [
     url: 'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json' },
 ];
 const MANIFEST_PATHS = ['docs/receipts/manifest.json','receipts/manifest.json'];
-const WALLET_KEY = 'ol.wallet.v1';
-const SEEDED_KEY = 'ol.wallet.seeded.v1';
+const LOCAL_LIMIT = 2;
+const WALLET_KEY = 'ol.wallet.v2';  // bump to avoid stale packs
+const SEEDED_KEY = 'ol.wallet.seeded.v2';
 
 /* ---------- utils ---------- */
 const el=(t,c,txt)=>{const e=document.createElement(t); if(c) e.className=c; if(txt!=null) e.textContent=txt; return e;};
@@ -140,7 +142,7 @@ function check(r, bytes){
   const errs=[], version=r.version||r.receipt_version||r.receiptVersion, status=(r.attrs?.status||r.status||'').toLowerCase();
   if(!version) errs.push('missing receipt_version/version');
   if(!status)  errs.push('missing attrs.status/status');
-  const clean = /^(clean|coherent|ok|green)$/.test(status), warnish=/^(amber|warn|check|red|risk|bad)$/.test(status);
+  const clean=/^(clean|coherent|ok|green)$/.test(status), warnish=/^(amber|warn|check|red|risk|bad)$/.test(status);
   if (clean && bytes>640) errs.push(`CLEAN exceeds 640B (${bytes})`);
   if (warnish && bytes>800) errs.push(`${status} exceeds 800B (${bytes})`);
   return {ok:errs.length===0, errs, version:version||'—', status:status||'—', bytes};
@@ -184,7 +186,7 @@ function renderUniformTile(title, srcUrl, rec, bytes){
   return t;
 }
 
-/* ---------- featured & local loaders ---------- */
+/* ---------- data fetching ---------- */
 async function fetchJsonRaw(u){
   const raw = toRaw(u);
   const res = await fetch(raw + (raw.includes('?')?'&':'?') + 'v=' + Date.now(), {cache:'no-store'});
@@ -193,73 +195,63 @@ async function fetchJsonRaw(u){
 }
 
 async function loadFeatured(){
-  const targets = ['feat1','feat2','feat3'];
+  const ids = ['feat1','feat2','feat3'];
   const out = [];
   for (let i=0;i<FEATURED.length;i++){
     try{
       const r = await fetchJsonRaw(FEATURED[i].url);
-      document.getElementById(targets[i]).appendChild(
-        renderUniformTile(FEATURED[i].title, r.url, r.json, r.bytes)
-      );
-      out.push(r.url);
-    }catch(e){
-      document.getElementById(targets[i]).textContent = 'Failed to load featured.';
-    }
+      document.getElementById(ids[i]).appendChild(renderUniformTile(FEATURED[i].title, r.url, r.json, r.bytes));
+      out.push(r);
+    }catch(e){ document.getElementById(ids[i]).textContent='Failed to load.'; }
   }
-  return out;
+  return out; // [{url,json,bytes}...]
 }
 
 async function fetchFirst(paths){
   for (const p of paths){
-    try{ const res = await fetch(p + '?v=' + Date.now(), {cache:'no-store'}); if(res.ok) return {path:p, data: await res.json()}; }catch{}
+    try{ const res = await fetch(p + '?v=' + Date.now(), {cache:'no-store'});
+         if(res.ok) return {path:p, data: await res.json()}; }catch{}
   }
   return null;
 }
 async function loadLocal(){
   const target = document.getElementById('local'); const title = document.getElementById('localTitle');
-  const got = await fetchFirst(MANIFEST_PATHS); if(!got){ title.textContent='Local receipts (no manifest found)'; return []; }
-  title.textContent = `Local receipts (from ${got.path})`;
-  const list = Array.isArray(got.data) ? got.data : (got.data.files || got.data.receipts || got.data.items || []);
-  const urls = [];
+  const got = await fetchFirst(MANIFEST_PATHS);
+  if(!got){ title.textContent='Local receipts (manifest missing)'; return []; }
+  const listAll = Array.isArray(got.data) ? got.data : (got.data.files || got.data.receipts || got.data.items || []);
+  const list = listAll.slice(0, LOCAL_LIMIT);
+  const out = [];
   for (const file of list){
     try{
       const r = await fetchJsonRaw(file);
       target.appendChild(renderUniformTile(file.split('/').slice(-1)[0], r.url, r.json, r.bytes));
       const spacer = document.createElement('div'); spacer.style.height='12px'; target.appendChild(spacer);
-      urls.push(r.url);
+      out.push(r);
     }catch(e){
       const t = el('div','tile'); t.appendChild(el('div','note',`Failed to load ${file}`)); target.appendChild(t);
     }
   }
-  return urls;
+  return out;
 }
 
 /* ---------- wallet ---------- */
-function loadWallet(){ try{ return JSON.parse(localStorage.getItem(WALLET_KEY)) || {packs:{}}; }catch{ return {packs:{}}; } }
+function loadWallet(){ try{ return JSON.parse(localStorage.getItem(WALLET_KEY)) || {items:[]}; }catch{ return {items:[]}; } }
 function saveWallet(w){ localStorage.setItem(WALLET_KEY, JSON.stringify(w)); }
-function ensurePack(w, name){ if(!w.packs[name]) w.packs[name]={items:[]}; }
-function listPacks(w){ return Object.keys(w.packs).sort(); }
-function currentPack(){ return packSel.value || ''; }
 
-const packSel = document.getElementById('packSel');
 const exportPackBtn = document.getElementById('exportPackBtn');
-const clearPackBtn = document.getElementById('clearPackBtn');
-const reseederBtn = document.getElementById('reseeder');
-const addUrlInput = document.getElementById('addUrl');
-const addUrlBtn = document.getElementById('addUrlBtn');
-const packStats = document.getElementById('packStats');
-const packList = document.getElementById('packList');
+const clearPackBtn  = document.getElementById('clearPackBtn');
+const reseederBtn   = document.getElementById('reseeder');
+const addUrlInput   = document.getElementById('addUrl');
+const addUrlBtn     = document.getElementById('addUrlBtn');
+const addRandBtn    = document.getElementById('addRand');
+const addRand5Btn   = document.getElementById('addRand5');
+const packStats     = document.getElementById('packStats');
+const packList      = document.getElementById('packList');
 
 let W = loadWallet();
-function renderPackSel(){
-  const names = listPacks(W); packSel.innerHTML='';
-  if(names.length===0){ ensurePack(W,'demo'); saveWallet(W); names.push('demo'); }
-  names.forEach(n=>{ const o=document.createElement('option'); o.value=o.textContent=n; packSel.appendChild(o); });
-  packSel.value = 'demo';
-}
+
 function renderPack(){
-  const name = currentPack(); ensurePack(W,name);
-  const items = W.packs[name].items || [];
+  const items = W.items || [];
   const greens = items.filter(x=>STATUS_GREEN(x.status)).length;
   const avg = arr => arr.length ? (arr.reduce((a,b)=>a+(Number.isFinite(b)?b:0),0)/arr.length) : 0;
   const kList = items.map(x=>x.signals?.kappa).filter(Number.isFinite);
@@ -267,12 +259,12 @@ function renderPack(){
   const pList = items.map(x=>x.signals?.phi_star).filter(Number.isFinite);
   packStats.textContent = items.length
     ? `Items: ${items.length} · GREEN: ${(greens/items.length*100|0)}% · κ(avg): ${avg(kList).toFixed(3)} · Δhol(avg): ${avg(dList).toFixed(3)} · Φ*(avg): ${avg(pList).toFixed(3)}`
-    : 'No items yet. Auto-seeding… or add a URL.';
+    : 'No items yet. Reseed or Add Random to start.';
   packList.innerHTML='';
   items.forEach((it,idx)=>{
     const tile = el('div','tile');
     const head = el('div','inline'); head.style.justifyContent='space-between'; head.style.alignItems='center';
-    head.appendChild(el('div','', it.title || it.url || '(pasted)'));
+    head.appendChild(el('div','', it.title || it.url || '(simulated)'));
     const pills = el('div'); pills.style.display='flex'; pills.style.gap='8px';
     const cls = it.status.match(/green|clean|ok/i)?'ok':it.status.match(/amber|warn|check/i)?'warn':it.status.match(/red|risk|bad/i)?'bad':'neutral';
     pills.appendChild(el('span','chip '+cls, it.status || '—'));
@@ -289,46 +281,85 @@ function renderPack(){
     tile.appendChild(row);
 
     const btns = el('div','inline'); btns.style.marginTop='8px';
-    if (it.url){ const open=el('a','btn','Open'); open.href=it.url; open.target='_blank'; btns.appendChild(open);
-      const copy=el('a','btn','Copy URL'); copy.href='#'; copy.onclick=(e)=>{e.preventDefault(); navigator.clipboard.writeText(it.url);}; btns.appendChild(copy); }
-    const rm=el('a','btn','Remove'); rm.href='#'; rm.onclick=(e)=>{e.preventDefault(); W.packs[name].items.splice(idx,1); saveWallet(W); renderPack();}; btns.appendChild(rm);
+    if (it.url){ const open=el('a','btn','Open'); open.href=it.url; open.target='_blank'; btns.appendChild(open); }
+    const rm=el('a','btn','Remove'); rm.href='#'; rm.onclick=(e)=>{e.preventDefault(); W.items.splice(idx,1); saveWallet(W); renderPack();}; btns.appendChild(rm);
     tile.appendChild(btns);
     packList.appendChild(tile);
   });
 }
-function addItemToPack(packName, item){
-  ensurePack(W, packName);
-  // de-dupe by url+bytes
-  const exists = W.packs[packName].items.some(x => x.url===item.url && x.bytes===item.bytes);
-  if (!exists){ W.packs[packName].items.push(item); saveWallet(W); }
+function addObjToPack(obj){ // obj = {url,json,bytes} or simulated
+  const r = obj.json || obj; // allow a plain receipt too
+  const ck = check(r, obj.bytes ?? byteLen(JSON.stringify(r)));
+  const n  = normalize(r);
+  const item = {
+    title: (obj.url && obj.url.split('/').slice(-1)[0]) || r.title || 'receipt',
+    url: obj.url || null,
+    status: ck.status, version: ck.version, bytes: ck.bytes,
+    signals: { kappa: n.dials.kappa, dhol: n.dials.dhol, phi_star: n.dials.phi }
+  };
+  // de-dupe by url+bytes if URL present
+  if (item.url){
+    const exists = (W.items||[]).some(x => x.url===item.url && x.bytes===item.bytes);
+    if (exists) return;
+  }
+  (W.items ||= []).push(item);
 }
-async function addUrlToPack(packName, url){
-  const r = await fetchJsonRaw(url); const ck = check(r.json, r.bytes); const n = normalize(r.json);
-  const title = r.url.split('/').slice(-1)[0] || 'receipt.json';
-  addItemToPack(packName, { title, url:r.url, status:ck.status, version:ck.version, bytes:r.bytes,
-                            signals:{kappa:n.dials.kappa,dhol:n.dials.dhol,phi_star:n.dials.phi} });
+async function addUrlToPack(url){
+  const r = await fetchJsonRaw(url);
+  addObjToPack(r); saveWallet(W); renderPack();
+}
+
+/* ---------- random generator ---------- */
+function randBetween(a,b){ return a + Math.random()*(b-a); }
+function pick(arr){ return arr[Math.floor(Math.random()*arr.length)]; }
+function makeRandomReceipt(){
+  const now = new Date().toISOString();
+  const bucket = Math.random();
+  let status, kRange, dRange, pRange;
+  if (bucket < 0.6){ status='CLEAN'; kRange=[0.05,0.50]; dRange=[0.00,0.30]; pRange=[0.80,0.98]; }
+  else if (bucket < 0.9){ status='AMBER'; kRange=[0.50,0.90]; dRange=[0.30,0.60]; pRange=[0.45,0.80]; }
+  else { status='RED'; kRange=[0.90,1.20]; dRange=[0.60,1.00]; pRange=[0.10,0.45]; }
+  const rec = {
+    receipt_version:"1.5-P", version:"OLR/1.5-P", issued_at: now,
+    attrs:{status}, model:{family: pick(['demo-llm','op-llm','agent-x'])},
+    precision:{train_dtype:"fp16", infer_dtype:"fp16"},
+    signals:{ kappa:+randBetween(...kRange).toFixed(3),
+              dhol:+randBetween(...dRange).toFixed(3),
+              phi_star:+randBetween(...pRange).toFixed(3) }
+  };
+  return rec;
+}
+function addRandom(n=1){
+  for (let i=0;i<n;i++){ addObjToPack(makeRandomReceipt()); }
+  saveWallet(W); renderPack();
 }
 
 /* ---------- seeding ---------- */
-async function seedDemo(urls){
-  const seeded = localStorage.getItem(SEEDED_KEY)==='1';
-  if (seeded && (W.packs['demo']?.items?.length||0)>0) return;
-  ensurePack(W,'demo'); saveWallet(W);
-  for (const u of urls){ try{ await addUrlToPack('demo', u); }catch{} }
-  localStorage.setItem(SEEDED_KEY,'1');
-}
 async function boot(){
-  renderPackSel(); renderPack();
-  const f = await loadFeatured();
-  const l = await loadLocal();
-  await seedDemo([...f, ...l]);
+  // reset structure if missing
+  if (!W || !Array.isArray(W.items)) W = {items:[]};
+
+  // Load the 3 featured + first 2 local → render tiles and seed wallet.
+  const feats = await loadFeatured();     // [{url,json,bytes}]
+  const locals = await loadLocal();       // [{url,json,bytes}] (2 max)
+
+  const alreadySeeded = localStorage.getItem(SEEDED_KEY)==='1';
+  if (!alreadySeeded || (W.items||[]).length===0){
+    W.items = []; // start clean
+    [...feats, ...locals].forEach(addObjToPack);
+    saveWallet(W);
+    localStorage.setItem(SEEDED_KEY,'1');
+  }
   renderPack();
 }
-packSel.addEventListener('change', renderPack);
-exportPackBtn.addEventListener('click',()=>{ const name=currentPack(); ensurePack(W,name); navigator.clipboard.writeText(JSON.stringify(W.packs[name],null,2)); alert('Pack JSON copied.'); });
-clearPackBtn.addEventListener('click',()=>{ const name=currentPack(); if(!confirm(`Clear "${name}"?`))return; W.packs[name].items=[]; saveWallet(W); renderPack(); });
-reseederBtn.addEventListener('click', async ()=>{ if(!confirm('Reset & reseed demo wallet?')) return; localStorage.removeItem(SEEDED_KEY); W.packs['demo']={items:[]}; saveWallet(W); await boot(); });
-addUrlBtn.addEventListener('click', async (e)=>{ e.preventDefault(); const u=addUrlInput.value.trim(); if(!u) return; try{ await addUrlToPack(currentPack()||'demo', u); addUrlInput.value=''; renderPack(); }catch(err){ alert('Add failed'); } });
+
+/* ---------- wire up ---------- */
+exportPackBtn.addEventListener('click',()=>{ navigator.clipboard.writeText(JSON.stringify(W,null,2)); alert('Pack JSON copied.'); });
+clearPackBtn.addEventListener('click',()=>{ if(!confirm('Clear demo pack?'))return; W.items=[]; saveWallet(W); renderPack(); });
+reseederBtn.addEventListener('click',()=>{ if(!confirm('Reset & reseed from the 5 tiles?'))return; localStorage.removeItem(SEEDED_KEY); W.items=[]; saveWallet(W); boot(); });
+addUrlBtn.addEventListener('click', async (e)=>{ e.preventDefault(); const u=addUrlInput.value.trim(); if(!u) return; try{ await addUrlToPack(u); addUrlInput.value=''; }catch(err){ alert('Add failed'); } });
+addRandBtn.addEventListener('click',()=> addRandom(1));
+addRand5Btn.addEventListener('click',()=> addRandom(5));
 
 boot();
 </script>
