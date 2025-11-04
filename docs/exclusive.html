@@ -1,46 +1,119 @@
 <!doctype html>
-<html lang="en">
-<head>
 <meta charset="utf-8">
-<title>OpenLine Exclusive Offers</title>
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<meta name="color-scheme" content="dark light">
+<title>OpenLine · Exclusive Offer</title>
 <style>
-  :root{--bg:#0a0c10;--ink:#e7ecf4;--muted:#97a3b6;--line:#1b2230;--tile:#0f141c;--btn:#1e293b;--btnink:#e7ecf4;--btnline:#2a3a55}
-  *{box-sizing:border-box} html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Roboto,Helvetica,Arial}
-  .wrap{max-width:980px;margin:0 auto;padding:18px} h1{font-size:20px;margin:0}
-  .sub{color:var(--muted);font-size:13px;margin-bottom:12px}
-  .tile{background:var(--tile);border:1px solid var(--line);border-radius:12px;padding:12px;margin:14px 0}
-  a.btn{display:inline-block;margin-top:8px;padding:8px 12px;border-radius:10px;border:1px solid var(--btnline);background:var(--btn);color:var(--btnink);font-weight:600;text-decoration:none}
-  ul{margin:8px 0 0 18px}
+  :root{--bg:#ffffff;--ink:#0b0b10;--muted:#6a6f7a;--line:#e9ecf2;--tile:#ffffff}
+  html,body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 -apple-system,system-ui,Segoe UI,Inter,Helvetica,Arial}
+  .wrap{max-width:780px;margin:0 auto;padding:18px}
+  h1{font-size:22px;margin:4px 0 8px}
+  .sub{color:var(--muted)}
+  .card{border:1px solid var(--line);border-radius:12px;padding:14px;margin:12px 0;background:var(--tile)}
+  .chip{display:inline-block;border:1px solid var(--line);border-radius:999px;padding:6px 10px;font-size:12px;margin-right:6px}
+  a.btn{display:inline-block;margin-top:8px;padding:10px 14px;border-radius:10px;border:1px solid var(--line);text-decoration:none;color:inherit}
+  .row{display:flex;gap:8px;flex-wrap:wrap}
 </style>
-</head>
-<body>
-<div class="wrap">
-  <h1>Exclusive Offers</h1>
-  <div class="sub">Receipts-first adoption paths. <b>κ</b> stress (lower is safer), <b>Δhol</b> drift (lower is steadier), <b>Φ*</b> composite coherence (0–1 → 0–5★). Size caps enforce portability.</div>
 
-  <div class="tile">
-    <h2 style="margin:0">Demo Partner (2–3 weeks)</h2>
-    <p>For teams that want a fast, low-risk trial of portable receipts and PASS/AMBER/RED triage.</p>
+<div class="wrap">
+  <h1>Enterprise Exclusive (Big Tech & Insurers)</h1>
+  <div class="sub">Portable proof for agent systems. Offline-verifiable receipts with κ / Δhol / Φ* star score.</div>
+
+  <div class="card">
+    <h3>Who this is for</h3>
     <ul>
-      <li>Drop-in receipts (sub-KB target), no prompts/PII.</li>
-      <li>Wallet to collect; export a single <code>pack.json</code>.</li>
-      <li>Share packs with SRE/Sec/Legal—content-free.</li>
+      <li>Large model/agent stacks needing vendor-neutral audit artifacts.</li>
+      <li>Risk, compliance, or policy teams pricing AI posture.</li>
     </ul>
-    <a class="btn" href="wallet.html">Open Wallet</a>
   </div>
 
-  <div class="tile">
-    <h2 style="margin:0">Big Tech Pilot (policy + posture)</h2>
-    <p>For platforms standardizing proofs across agents and customers.</p>
+  <div class="card">
+    <h3>Offer tiers</h3>
     <ul>
-      <li>Receipt posture policy: caps, κ/Δhol/Φ* thresholds, PASS gates.</li>
-      <li>Pack flows: import/export, offline verify, audit trail.</li>
-      <li>Reference templates: RFP clause, SOC2/ISO appendix language.</li>
+      <li><b>Tier A — Evaluation License (non-exclusive): $12M</b><br>Access to PIK modules and support. Runs anywhere receipts run.</li>
+      <li><b>Tier B — Field-of-Use Exclusivity (add-on): +$10–15M</b><br>Scoped to one product/region/vertical for 12 months. No MFN. No ROFR.</li>
+      <li><b>Optional KPI Kicker (escrowed): +$8–12M</b><br>Paid on independent audit of pre-agreed success gates.</li>
     </ul>
-    <a class="btn" href="./">See Live Hub</a>
+  </div>
+
+  <div class="card">
+    <h3>Success gates (falsifiable)</h3>
+    <div class="chip">ROAS ≥ +1.5% (geo-lift; p&lt;.05)</div>
+    <div class="chip">Energy ≥ −2% J/req (no p95 regress)</div>
+    <div class="chip">Ops incidents ≤ −10%</div>
+    <div class="chip">Receipt posture ≥ 95% green under load</div>
+    <p class="sub">Audited by an independent third party. Payments only on audit PASS.</p>
+  </div>
+
+  <div class="card">
+    <h3>Demo controls</h3>
+    <p class="sub">Seed your browser Wallet so the Hub shows a populated pack on first load. No server, localStorage only.</p>
+    <div class="row">
+      <a class="btn" href="#" id="seed">Seed demo Wallet</a>
+      <a class="btn" href="#" id="clear">Clear demo Wallet</a>
+      <a class="btn" href="./index.html">Back to Hub</a>
+    </div>
   </div>
 </div>
-</body>
-</html>
+
+<script>
+/* Matches index.html’s structure; we don’t touch index.js */
+const KEY='ol.wallet.v1';
+const RAWS=[
+  // local sample inside this repo (fast, stable)
+  location.origin + location.pathname.replace(/\/exclusive\.html?$/,'') + '/receipts/sample.receipt.json',
+  // external raws (stable fallbacks)
+  'https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipt.latest.json',
+  'https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipt.latest.json'
+];
+
+function uniqPush(arr, item){
+  if(!arr.some(x=> (x.url && x.url===item.url) || (!x.url && !item.url && x.title===item.title))) arr.push(item);
+}
+
+async function fetchJSON(u){ const r=await fetch(u,{cache:'no-store'}); if(!r.ok) throw new Error('fetch '+r.status); return r.json(); }
+
+async function seed(){
+  try{
+    const w = JSON.parse(localStorage.getItem(KEY) || '{"packs":{}}');
+    w.packs = w.packs || {};
+    w.packs.demo = w.packs.demo || {items:[]};
+    const items = w.packs.demo.items;
+
+    // Local sample first (guaranteed)
+    const sample = await fetchJSON(RAWS[0]).catch(()=>null);
+    if (sample){
+      uniqPush(items, {
+        title:'sample.receipt.json', url: RAWS[0],
+        status:(sample.attrs?.status||'CLEAN'), version:(sample.version||sample.receipt_version||'OLR/1.5-P'),
+        bytes: JSON.stringify(sample).length,
+        signals:{kappa: sample.signals?.kappa, dhol: sample.signals?.dhol, phi_star: sample.signals?.phi_star}
+      });
+    }
+    // External showcases (bytes optional)
+    for(const u of RAWS.slice(1)){
+      try{
+        const j = await fetchJSON(u);
+        uniqPush(items, {
+          title: u.split('/').slice(-1)[0], url: u,
+          status:(j.attrs?.status||'AMBER'), version:(j.version||j.receipt_version||'OLR'),
+          bytes: JSON.stringify(j).length,
+          signals:{kappa:j.signals?.kappa, dhol:j.signals?.dhol, phi_star:j.signals?.phi_star}
+        });
+      }catch{}
+    }
+    localStorage.setItem(KEY, JSON.stringify(w));
+    alert('Demo Wallet seeded. Open the Hub → Wallet shows a “demo” pack.');
+  }catch(e){ alert('Seed failed: '+(e.message||'error')); }
+}
+
+function clearDemo(){
+  try{
+    const w = JSON.parse(localStorage.getItem(KEY) || '{"packs":{}}');
+    if (w.packs && w.packs.demo){ w.packs.demo = {items:[]}; localStorage.setItem(KEY, JSON.stringify(w)); }
+    alert('Demo Wallet cleared.');
+  }catch(e){ alert('Clear failed: '+(e.message||'error')); }
+}
+
+document.getElementById('seed').onclick = (e)=>{ e.preventDefault(); seed(); };
+document.getElementById('clear').onclick = (e)=>{ e.preventDefault(); clearDemo(); };
+</script>
