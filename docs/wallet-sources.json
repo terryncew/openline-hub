@@ -1,0 +1,12 @@
+{
+  "autoload": true,
+  "manifests": [
+    "docs/receipts/manifest.json",
+    "https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipts/manifest.json",
+    "https://raw.githubusercontent.com/terryncew/open-receipts/main/docs/receipts/manifest.json",
+    "https://raw.githubusercontent.com/terryncew/openline-csm/main/docs/receipts/manifest.json"
+  ],
+  "urls": [
+    "https://raw.githubusercontent.com/terryncew/COLE-Coherence-Layer-Engine-/main/docs/receipt.mini.json"
+  ]
+}
