@@ -1,13 +1,13 @@
 {
-  "receipt_version":"1.5-P",
-  "version":"OLR/1.5-P",
-  "issued_at":"2025-11-03T00:00:00Z",
-  "attrs":{"status":"CLEAN"},
-  "model":{"family":"demo-llm"},
-  "precision":{"train_dtype":"fp16","infer_dtype":"fp16"},
-  "point":"Validated receipt path and caps.",
-  "because":"Manifest and sample are reachable.",
-  "but":"External sources can change.",
-  "so":"Ship with local sample + external fallbacks.",
-  "signals":{"kappa":0.20,"dhol":0.05,"phi_star":0.90}
+  "receipt_version": "1.5-P",
+  "version": "OLR/1.5-P",
+  "issued_at": "2025-11-03T00:00:00Z",
+  "attrs": { "status": "CLEAN" },
+  "model": { "family": "demo-llm" },
+  "precision": { "train_dtype": "fp16", "infer_dtype": "fp16" },
+  "point": "Validated receipt path and caps.",
+  "because": "Manifest and sample are reachable.",
+  "but": "External sources can change.",
+  "so": "Ship with local sample + external fallbacks.",
+  "signals": { "kappa": 0.20, "dhol": 0.05, "phi_star": 0.90 }
 }
