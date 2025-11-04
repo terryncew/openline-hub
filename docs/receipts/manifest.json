@@ -1,4 +1,6 @@
-[
-  "docs/receipts/receipt.clean.json",
-  "docs/receipts/receipt.amber.json"
-]
+{
+  "files": [
+    "receipts/receipt.fp16.json",
+    "receipts/sample.receipt.json"
+  ]
+}
